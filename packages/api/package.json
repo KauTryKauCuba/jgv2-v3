@@ -1,0 +1,31 @@
+{
+	"name": "@jobgiga-app/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./lib/*": {
+			"default": "./src/lib/*.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@jobgiga-app/auth": "workspace:*",
+		"@jobgiga-app/db": "workspace:*",
+		"@orpc/server": "catalog:",
+		"hono": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250822.0",
+		"@jobgiga-app/config": "workspace:*",
+		"@types/node": "^22.13.11",
+		"typescript": "^5.8.2"
+	}
+}

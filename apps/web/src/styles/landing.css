@@ -1,0 +1,457 @@
+/* Landing page styles, from the redesign's globals.css (layout shell,
+   animations for the hero badges, SiriOrb, mockups and verified badge). */
+
+.shell {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 13.28%;
+}
+
+/* For a horizontally scrollable row that has its own visible scroll
+   affordance (drag-to-pan, dot pagination, etc.) — hides the native
+   scrollbar without disabling scrolling itself. */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 1440px) {
+  .shell {
+    padding-inline: 9%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .shell {
+    padding-inline: 5%;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding-inline: 20px;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+/* Earned achievement medals (CompanyBadgesCard/BadgeMedal) — a soft light
+   band sweeps across the disc on a loop, like light catching glossy enamel,
+   to make earned badges read as "alive" rather than a static image. */
+@keyframes badge-shine {
+  0% {
+    transform: translateX(-120%) rotate(20deg);
+  }
+  55%,
+  100% {
+    transform: translateX(140%) rotate(20deg);
+  }
+}
+
+.badge-shine {
+  animation: badge-shine 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-shine {
+    animation: none;
+  }
+}
+
+/* Verified-business checkmark on company logos (VerifiedBadge) — shares the
+   medals' badge-shine sweep. */
+@keyframes verified-badge-tooltip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.verified-badge {
+  cursor: help;
+  filter: drop-shadow(0 1px 2px rgba(0, 137, 144, 0.35));
+}
+
+.verified-badge-tooltip {
+  animation: verified-badge-tooltip-in 0.15s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verified-badge-tooltip {
+    animation: none;
+  }
+}
+
+@keyframes siri-orb-blob-a {
+  0%,
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  33% {
+    transform: translate(10%, 4%) scale(1.2);
+  }
+  66% {
+    transform: translate(2%, 10%) scale(0.9);
+  }
+}
+
+@keyframes siri-orb-blob-b {
+  0%,
+  100% {
+    transform: translate(8%, 6%) scale(1.1);
+  }
+  33% {
+    transform: translate(-10%, -4%) scale(0.95);
+  }
+  66% {
+    transform: translate(-4%, 8%) scale(1.15);
+  }
+}
+
+@keyframes siri-orb-blob-c {
+  0%,
+  100% {
+    transform: translate(0%, 9%) scale(1);
+  }
+  33% {
+    transform: translate(-8%, -8%) scale(1.1);
+  }
+  66% {
+    transform: translate(9%, -2%) scale(0.92);
+  }
+}
+
+.siri-orb-base {
+  background: linear-gradient(135deg, #cff4f6, #fff8de);
+}
+
+.siri-orb-blob {
+  position: absolute;
+  inset: -22%;
+  border-radius: 9999px;
+  filter: blur(3px);
+}
+
+.siri-orb-blob-a {
+  background: radial-gradient(circle at 30% 30%, #07bcca 0%, transparent 65%);
+  animation: siri-orb-blob-a 4.6s ease-in-out infinite;
+}
+
+.siri-orb-blob-b {
+  background: radial-gradient(circle at 72% 38%, #5cd8e0 0%, transparent 65%);
+  animation: siri-orb-blob-b 5.3s ease-in-out infinite;
+}
+
+.siri-orb-blob-c {
+  background: radial-gradient(circle at 50% 75%, #ffe9a6 0%, transparent 65%);
+  animation: siri-orb-blob-c 6.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siri-orb-blob-a,
+  .siri-orb-blob-b,
+  .siri-orb-blob-c {
+    animation: none;
+  }
+}
+
+/* Active state (e.g. while the user is typing) — blobs speed up and the
+   whole orb gets a subtle breathing pulse, so it visibly reacts. */
+@keyframes siri-orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.siri-orb-active {
+  animation: siri-orb-pulse 1.1s ease-in-out infinite;
+}
+
+.siri-orb-active .siri-orb-blob-a {
+  animation-duration: 1.8s;
+}
+
+.siri-orb-active .siri-orb-blob-b {
+  animation-duration: 2.1s;
+}
+
+.siri-orb-active .siri-orb-blob-c {
+  animation-duration: 2.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siri-orb-active {
+    animation: none;
+  }
+}
+
+/* Hero employer-type badges — gentle vertical drift, staggered per badge via
+   inline animation-delay/duration so none of the six bob in lockstep. */
+@keyframes float-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-bob {
+  animation: float-bob 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-bob {
+    animation: none;
+  }
+}
+
+/* Gold hairline border sweep (chat widget) — a gold highlight rotates
+   around the border. */
+@keyframes gold-sweep-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gold-sweep {
+  animation: gold-sweep-spin 7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gold-sweep {
+    animation: none;
+  }
+}
+
+/* AiFillMockup — the "Looking up…" pill breathes with a soft ring pulse,
+   and the skeleton bars below sweep a lighter band through them, standing
+   in for AI actively populating those fields. */
+@keyframes ai-fill-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 137, 144, 0.22);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(0, 137, 144, 0);
+  }
+}
+
+.ai-fill-pulse {
+  animation: ai-fill-pulse 1.8s ease-in-out infinite;
+}
+
+/* Subtle film-grain texture over a gradient card — an SVG feTurbulence
+   noise pattern layered on top via ::after at 15% opacity, so it reads as
+   texture rather than visible speckling. Requires the element to already
+   be `position: relative` and `overflow: hidden` (every gradient card that
+   uses this already is, for the watermark icon clipping). */
+.gradient-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+@keyframes ai-fill-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.ai-fill-shimmer {
+  background: linear-gradient(90deg, #eef1f5 25%, #f8fafb 37%, #eef1f5 63%);
+  background-size: 400px 100%;
+  animation: ai-fill-shimmer 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-fill-pulse,
+  .ai-fill-shimmer {
+    animation: none;
+  }
+}
+
+/* PosterMockup.tsx — alternates between the two poster styles on one
+   shared 8s timeline: the style picker's selection (border + check) moves,
+   the matching poster lifts forward while the other recedes, and a soft
+   shine sweeps across the poster as it becomes active ("just generated").
+   No JS, same reasoning as the other mockup animations. */
+@keyframes poster-mock-style-a {
+  0%, 45% { border-color: var(--color-brand-teal-dark); background-color: var(--color-brand-teal-soft); }
+  50%, 95% { border-color: rgba(0, 0, 0, 0.06); background-color: #ffffff; }
+  100% { border-color: var(--color-brand-teal-dark); background-color: var(--color-brand-teal-soft); }
+}
+@keyframes poster-mock-style-b {
+  0%, 45% { border-color: rgba(0, 0, 0, 0.06); background-color: #ffffff; }
+  50%, 95% { border-color: var(--color-brand-teal-dark); background-color: var(--color-brand-teal-soft); }
+  100% { border-color: rgba(0, 0, 0, 0.06); background-color: #ffffff; }
+}
+@keyframes poster-mock-check-a {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes poster-mock-check-b {
+  0%, 45% { opacity: 0; }
+  50%, 95% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes poster-mock-card-a {
+  0%, 45% { transform: translateY(-6px) scale(1.06) rotate(-2deg); opacity: 1; }
+  50%, 95% { transform: translateY(0) scale(0.94) rotate(-2deg); opacity: 0.55; }
+  100% { transform: translateY(-6px) scale(1.06) rotate(-2deg); opacity: 1; }
+}
+@keyframes poster-mock-card-b {
+  0%, 45% { transform: translateY(0) scale(0.94) rotate(2deg); opacity: 0.55; }
+  50%, 95% { transform: translateY(-6px) scale(1.06) rotate(2deg); opacity: 1; }
+  100% { transform: translateY(0) scale(0.94) rotate(2deg); opacity: 0.55; }
+}
+@keyframes poster-mock-shine-a {
+  0% { transform: translateX(-130%) skewX(-20deg); }
+  15%, 100% { transform: translateX(230%) skewX(-20deg); }
+}
+@keyframes poster-mock-shine-b {
+  0%, 50% { transform: translateX(-130%) skewX(-20deg); }
+  65%, 100% { transform: translateX(230%) skewX(-20deg); }
+}
+.poster-mock-style-a { animation: poster-mock-style-a 8s ease-in-out infinite; }
+.poster-mock-style-b { animation: poster-mock-style-b 8s ease-in-out infinite; }
+.poster-mock-check-a { animation: poster-mock-check-a 8s ease-in-out infinite; }
+.poster-mock-check-b { animation: poster-mock-check-b 8s ease-in-out infinite; }
+.poster-mock-card-a { animation: poster-mock-card-a 8s ease-in-out infinite; }
+.poster-mock-card-b { animation: poster-mock-card-b 8s ease-in-out infinite; }
+.poster-mock-shine-a { animation: poster-mock-shine-a 8s ease-out infinite; }
+.poster-mock-shine-b { animation: poster-mock-shine-b 8s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .poster-mock-style-a,
+  .poster-mock-style-b,
+  .poster-mock-check-a,
+  .poster-mock-check-b,
+  .poster-mock-card-a,
+  .poster-mock-card-b,
+  .poster-mock-shine-a,
+  .poster-mock-shine-b {
+    animation: none;
+  }
+  /* Freeze on the first phase: Playful selected and in front. */
+  .poster-mock-style-a { border-color: var(--color-brand-teal-dark); background-color: var(--color-brand-teal-soft); }
+  .poster-mock-check-b { opacity: 0; }
+  .poster-mock-card-a { transform: translateY(-6px) scale(1.06) rotate(-2deg); }
+  .poster-mock-card-b { transform: scale(0.94) rotate(2deg); opacity: 0.55; }
+  .poster-mock-shine-a,
+  .poster-mock-shine-b { display: none; }
+}
+
+/* AiFillMockup — blinking caret while the company name "types" itself in. */
+@keyframes ai-fill-caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.ai-fill-caret {
+  animation: ai-fill-caret 0.9s step-end infinite;
+}
+
+/* Landing-page mockups — a live number briefly pops and flashes teal when it
+   changes (the element is re-keyed on each new value, so this replays). */
+@keyframes mock-bump {
+  0% {
+    transform: translateY(3px) scale(0.9);
+    color: var(--color-brand-teal-dark);
+    opacity: 0.3;
+  }
+  45% {
+    transform: translateY(0) scale(1.12);
+    color: var(--color-brand-teal-dark);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+  }
+}
+
+.mock-bump {
+  animation: mock-bump 0.55s ease-out;
+}
+
+/* An item arriving somewhere new (e.g. a Kanban card moving columns). */
+@keyframes mock-slide-in {
+  0% {
+    transform: translateX(-14px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.mock-slide-in {
+  animation: mock-slide-in 0.5s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-fill-caret,
+  .mock-bump,
+  .mock-slide-in {
+    animation: none;
+  }
+}
+
+/* Badge medals (companies): a soft shine sweeps across earned medals. */
+@keyframes badge-shine {
+  0% {
+    transform: translateX(-120%) rotate(20deg);
+  }
+  55%,
+  100% {
+    transform: translateX(140%) rotate(20deg);
+  }
+}
+
+.badge-shine {
+  animation: badge-shine 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-shine {
+    animation: none;
+  }
+}

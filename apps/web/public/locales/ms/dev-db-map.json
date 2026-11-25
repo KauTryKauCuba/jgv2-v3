@@ -1,0 +1,25 @@
+{
+  "show": "Tunjukkan peta DB",
+  "hide": "Sembunyikan peta DB ({{count}} di halaman ini)",
+  "hint": "Halakan tetikus pada item bergaris untuk butiran",
+  "kinds": {
+    "both": "Sama dalam v1 dan reka bentuk baharu",
+    "shape": "Dalam kedua-duanya, disimpan secara berbeza",
+    "v2": "Baharu, tiada dalam v1: tambah ke v3",
+    "v1": "Hanya dalam v1: kekalkan",
+    "skip": "Tidak diperlukan dalam v3"
+  },
+  "unknown": "Belum ada dalam peta",
+  "v1": "v1 / v3",
+  "v2": "Reka bentuk baharu",
+  "api": "API v1",
+  "v1Page": "Halaman v1",
+  "v3Page": "Halaman v3",
+  "pageKinds": {
+    "both": "Sama seperti halaman v1",
+    "shape": "Dalam kedua-duanya, kandungan berbeza",
+    "v2": "Baharu, tiada di halaman v1",
+    "v1": "Hanya di halaman v1",
+    "skip": "Tidak diperlukan"
+  }
+}

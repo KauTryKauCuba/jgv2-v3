@@ -1,0 +1,4 @@
+{
+	"extends": "@jobgiga-app/config/tsconfig.base.json",
+	"include": ["src", "env.d.ts", "drizzle.config.ts"]
+}

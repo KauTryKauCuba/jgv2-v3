@@ -1,0 +1,19 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "jobgiga-v3-server",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-01-26",
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {
+		"CORS_ORIGIN": "http://localhost:4400,https://jgv2.v3.jejaku.my"
+	},
+	// Local dev uses a local D1 database. Replace database_id with the real
+	// Cloudflare D1 id before deploying.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "jobgiga-v3",
+			"database_id": "local-jobgiga-v3"
+		}
+	]
+}

@@ -1,0 +1,860 @@
+{
+  "common": {
+    "comingSoon": "Coming soon — this isn't available yet.",
+    "close": "Close",
+    "dropdown": {
+      "search": "Search...",
+      "searchLabel": "Search {{label}}",
+      "noMatches": "No matches found"
+    }
+  },
+  "landing": {
+    "roles": {
+      "employer": "Employer",
+      "jobseeker": "Jobseeker"
+    },
+    "nav": {
+      "findJob": "Find job",
+      "findCompanies": "Find companies",
+      "about": "About",
+      "signIn": "Sign in",
+      "getStarted": "Get started",
+      "switchLanguage": "Switch language (English / Bahasa Melayu)"
+    },
+    "hero": {
+      "viewAs": "View as"
+    },
+    "welcome": {
+      "title": "Welcome to JobGiga"
+    },
+    "time": {
+      "today": "today",
+      "daysAgo": "{{count}}d ago",
+      "weeksAgo": "{{count}}w ago",
+      "monthsAgo": "{{count}}mo ago"
+    },
+    "verified": {
+      "business": {
+        "label": "Verified business",
+        "detail": "JobGiga has checked this company’s SSM registration against its official business registration document."
+      },
+      "phone": {
+        "label": "Phone verified",
+        "detail": "This person confirmed their phone number with a one-time code sent to it."
+      }
+    },
+    "footer": {
+      "tagline": "Hiring in Malaysia, without the forms — talk to an AI assistant that builds your job post or profile.",
+      "forEmployers": "For Employers",
+      "forJobseekers": "For Jobseekers",
+      "company": "Company",
+      "postJob": "Post a job",
+      "findJob": "Find a job",
+      "about": "About",
+      "releaseNotes": "Release notes",
+      "privacy": "Privacy",
+      "security": "Security",
+      "terms": "Terms & Conditions",
+      "copyright": "© {{year}} JobGiga. Made for Malaysia."
+    },
+    "employer": {
+      "hero": {
+        "titleLine1": "Go beyond the summit",
+        "titleLine2": "of traditional job platforms.",
+        "subheading": "Let AI do the work. Let your human touch make the difference."
+      },
+      "industries": {
+        "manufacturing": "Manufacturing",
+        "corporate": "Corporate services",
+        "construction": "Construction",
+        "technology": "Technology",
+        "retail": "Retail & F&B",
+        "logistics": "Logistics",
+        "oilGas": "Oil & gas",
+        "warehousing": "Warehousing"
+      },
+      "hiringStats": {
+        "hiring": {
+          "title": "Companies already hiring here",
+          "subtitle": "Real teams screening real candidates with AI, right now."
+        },
+        "posted": {
+          "title": "Just posted",
+          "subtitle": "The newest roles added to the platform."
+        },
+        "activity": {
+          "title": "Moving fast",
+          "subtitle": "Candidates being shortlisted and interviewed, right now."
+        },
+        "liveRoles_one": "{{count}} live role",
+        "liveRoles_other": "{{count}} live roles",
+        "gettingStarted": "Getting started",
+        "interviewingFor": "Interviewing for {{jobTitle}}",
+        "shortlistedFor": "Shortlisted for {{jobTitle}}",
+        "joinList": "Join the list"
+      },
+      "companies": {
+        "eyebrow": "Who's hiring",
+        "titleLine1": "Companies building their",
+        "titleLine2": "teams on JobGiga",
+        "openRoles_one": "{{count}} open role",
+        "openRoles_other": "{{count}} open roles"
+      },
+      "spotlight": {
+        "eyebrow": "Company spotlight",
+        "titleLine1": "See what companies on",
+        "titleLine2": "JobGiga are building",
+        "showAd": "Show ad {{index}} of {{total}}: {{company}}"
+      },
+      "steps": {
+        "setup": {
+          "eyebrow": "Set up in seconds",
+          "headline": "Your company deserves to stand out",
+          "bullet1Title": "One company name. A complete company profile.",
+          "bullet1Detail": "Starting a company profile shouldn't feel like filling out endless forms — simply give us your company name.",
+          "bullet2Title": "AI creates the foundation.",
+          "bullet2Detail": "Our AI helps build your company profile using the information available on the platform, giving you a strong starting point in seconds.",
+          "bullet3Title": "You refine the story.",
+          "bullet3Detail": "Then your team takes over — because no AI knows your company better than you do."
+        },
+        "writeJobs": {
+          "eyebrow": "Write jobs with AI",
+          "headline": "Create jobs without starting from scratch",
+          "bullet1Title": "Describe the role in your own words",
+          "bullet1Detail": "No blank page, no complicated template — just tell us who you're looking for.",
+          "bullet2Title": "AI writes the first draft",
+          "bullet2Detail": "Your idea becomes a structured, engaging job posting — responsibilities, requirements, and everything candidates need to know.",
+          "bullet3Title": "You make it yours",
+          "bullet3Detail": "Review, refine, and publish whenever it feels right."
+        },
+        "track": {
+          "eyebrow": "Track every posting",
+          "headline": "Every posting, tracked from day one",
+          "bullet1Title": "See status at a glance",
+          "bullet1Detail": "Active, pending review, or still a draft — know exactly where every posting stands.",
+          "bullet2Title": "Views and applicants, live",
+          "bullet2Detail": "Track how each posting performs without switching pages or digging through spreadsheets.",
+          "bullet3Title": "Act the moment it matters",
+          "bullet3Detail": "Jump straight to a posting's applicants, or edit and resubmit one that needs a second look."
+        },
+        "interview": {
+          "eyebrow": "Interview your way",
+          "headline": "Interviews, organized your way",
+          "bullet1Title": "Schedule in a couple of clicks",
+          "bullet1Detail": "Pick a shortlisted candidate, set the round, mode, and time — done.",
+          "bullet2Title": "List, Kanban, or Calendar",
+          "bullet2Detail": "Browse a straightforward list, drag candidates through stages on a board, or plan around a calendar — whichever fits how you work.",
+          "bullet3Title": "Know who's confirmed",
+          "bullet3Detail": "Track responses — pending, accepted, declined, or rescheduled — without chasing anyone down."
+        },
+        "poster": {
+          "eyebrow": "Share it anywhere",
+          "headline": "Turn any posting into a ready-to-share poster",
+          "bullet1Title": "One click from your posting",
+          "bullet1Detail": "Pick an active job and the poster is drawn from its title, pay, location and requirements — nothing to retype.",
+          "bullet2Title": "Choose the look that fits your brand",
+          "bullet2Detail": "Go playful and approachable, or corporate with a real photo and your logo.",
+          "bullet3Title": "Download and post anywhere",
+          "bullet3Detail": "Save it as a PNG, share it on social media or WhatsApp groups, and generate another whenever you need a fresh take."
+        }
+      },
+      "mockups": {
+        "aiFill": {
+          "aboutYou": "About you",
+          "aboutYouHint": "Who’s registering this company.",
+          "uploadPhoto": "Upload photo",
+          "companyName": "Company name",
+          "companyNameHint": "We’ll search public sources to fill out the rest.",
+          "found": "Found",
+          "lookUp": "Look up",
+          "lookingUp": "Looking up…",
+          "companyProfile": "Company profile",
+          "companyProfileHint": "Filled in as AI finds it.",
+          "profileReady": "Profile ready",
+          "ssmLine": "SSM {{ssm}} · Est. {{year}}",
+          "industry": "Industry",
+          "industryValue": "Retail & Consumer",
+          "companySize": "Company size",
+          "companySizeValue": "51–200 employees",
+          "location": "Location",
+          "website": "Website",
+          "description": "Family-run retailer with 12 outlets across Klang Valley, known for everyday essentials since 2009."
+        },
+        "jobPost": {
+          "prompt": "Looking for a friendly sales exec who’s great on the phone…",
+          "applicants": "Applicants",
+          "rankedByFit": "Ranked by fit.",
+          "newCount": "{{count}} new",
+          "waiting": "Waiting for your first applicants…",
+          "describeRole": "Describe the role",
+          "describeRoleHint": "Tell us who you’re looking for, in your own words.",
+          "postedLive": "Posted — now live",
+          "writing": "Writing your job posting…",
+          "writeButton": "Write my job posting",
+          "jobTitle": "Sales Executive",
+          "fullTime": "Full-time",
+          "summary": "Turn warm leads into happy customers over the phone and WhatsApp, in a friendly 8-person sales team.",
+          "whatYoullDo": "What you’ll do",
+          "do1": "Follow up 30–40 leads a day",
+          "do2": "Hit targets, earn commission",
+          "youllNeed": "You’ll need",
+          "need1": "1+ year in sales or service",
+          "need2": "Fluent BM & English",
+          "yourPostings": "Your job postings",
+          "yourPostingsHint": "Everything in one place.",
+          "newPostingSlot": "New posting will appear here",
+          "applicantCount_one": "{{count}} applicant",
+          "applicantCount_other": "{{count}} applicants",
+          "active": "Active",
+          "hrManager": "HR Manager",
+          "draft": "Draft"
+        },
+        "manageJob": {
+          "pipeline": "Pipeline",
+          "atAGlance": "At a glance.",
+          "updatingLive": "Updating live",
+          "yourPostings": "Your job postings",
+          "yourPostingsHint": "Views, applicants, status — all in one place.",
+          "status": {
+            "active": "Active",
+            "pending": "Pending",
+            "draft": "Draft"
+          },
+          "postedDaysAgo": "Posted {{count}}d ago",
+          "postedWeeksAgo": "Posted {{count}}w ago",
+          "postedToday": "Posted today",
+          "approvedJustNow": "Approved just now",
+          "savedAsDraft": "Saved as draft",
+          "today": "+{{count}} today"
+        },
+        "interview": {
+          "interviews": "Interviews",
+          "thisWeek": "This week.",
+          "seeItYourWay": "See it your way",
+          "seeItYourWayHint": "List, Kanban, or Calendar — same data.",
+          "views": {
+            "list": "List",
+            "kanban": "Kanban",
+            "calendar": "Calendar"
+          },
+          "status": {
+            "pending": "Pending",
+            "accepted": "Accepted",
+            "attended": "Attended",
+            "reschedule": "Reschedule"
+          },
+          "columns": {
+            "scheduled": "Scheduled",
+            "interviewed": "Interviewed"
+          },
+          "rows": {
+            "nur": "Round 1 · Online · Today 2:00 PM",
+            "priya": "Round 2 · Onsite · Tomorrow 10:00 AM",
+            "daniel": "Round 1 · Online · Attended",
+            "aiman": "Round 1 · Onsite · Thu 3:30 PM"
+          },
+          "cards": {
+            "nur": "Round 1 · Today 2:00 PM",
+            "priya": "Round 2 · Tomorrow 10:00 AM",
+            "aiman": "Round 1 · Thu 3:30 PM"
+          },
+          "awaitingEvaluation": "Round {{round}} · Awaiting evaluation",
+          "weekdays": "M,T,W,T,F,S,S",
+          "thisMonth": "This month",
+          "calendar": {
+            "newBooking": "Sep 19 · 3:30 PM · Round 1 · Rescheduled",
+            "next": "Sep 18 · 2:00 PM · Round 1"
+          },
+          "justBooked": "Just booked"
+        },
+        "poster": {
+          "generator": "Poster generator",
+          "generatorHint": "Pick a posting and a look.",
+          "styles": {
+            "playful": "Playful & Approachable",
+            "corporate": "Corporate with Photo"
+          },
+          "generate": "Generate poster",
+          "yourPosters": "Your posters",
+          "yourPostersHint": "Ready to download and share.",
+          "weAreHiring": "We’re hiring!",
+          "jobType": "Full-time · Onsite",
+          "applyOnJobGiga": "Apply on JobGiga",
+          "nowHiring": "Now hiring",
+          "applyNow": "Apply now",
+          "download": "Download PNG",
+          "generateAnother": "Generate another"
+        }
+      }
+    },
+    "jobseeker": {
+      "hero": {
+        "titleLine1": "Start With What",
+        "titleLine2": "You Already Have.",
+        "subheading": "Then review it. Refine it. Make it yours."
+      },
+      "badges": {
+        "graphicDesigner": "Graphic Designer",
+        "hrManager": "HR Manager",
+        "softwareEngineer": "Software Engineer",
+        "salesExecutive": "Sales Executive",
+        "warehouseSupervisor": "Warehouse Supervisor",
+        "customerService": "Customer Service Exec.",
+        "warehouseAssistant": "Warehouse Assistant",
+        "marketingExecutive": "Marketing Executive"
+      },
+      "upload": {
+        "title": "Upload your resume, we’ll build your profile",
+        "subtitle": "Our AI reads it and builds your profile for you — no forms to fill in.",
+        "dropzone": "Click to upload or drag and drop",
+        "formats": "PDF, DOC or DOCX · up to 10 MB",
+        "remove": "Remove resume",
+        "continue": "Continue",
+        "tooLarge": "File is too large — max 10 MB.",
+        "wrongType": "Please choose a PDF, DOC or DOCX file."
+      },
+      "howItWorks": {
+        "eyebrow": "How it works",
+        "title": "Applying is this easy",
+        "subtitle": "One upload, and you’re ready to apply — no forms to fill in by hand.",
+        "steps": {
+          "upload": {
+            "title": "Upload your resume",
+            "detail": "Drop in the one you already have — PDF, DOC, or DOCX."
+          },
+          "fill": {
+            "title": "AI fills your profile",
+            "detail": "Skills, experience, and education, pulled straight from it."
+          },
+          "apply": {
+            "title": "Apply in one click",
+            "detail": "Your profile is the application — no repeat forms."
+          }
+        },
+        "filling": "Filling your profile…",
+        "applied": "Applied",
+        "sentInSeconds": "Sent in seconds"
+      },
+      "jobs": {
+        "eyebrow": "Latest openings",
+        "title": "Jobs posted on JobGiga",
+        "noMatches": "No roles match your search. Try adjusting your filters.",
+        "filterLabel": "Filter jobs by location and type",
+        "allLocations": "All locations",
+        "allTypes": "All types",
+        "searchPlaceholder": "Search by job title or company",
+        "locationPlaceholder": "Search by location",
+        "tabsLabel": "Job postings filter",
+        "allJobs": "All jobs",
+        "sampleListing": "Sample listing — real roles open up for applications as employers post them.",
+        "signInToApply": "Sign in as a jobseeker",
+        "toApply": "to apply for this role."
+      },
+      "featured": {
+        "eyebrow": "Featured jobs",
+        "title": "Jobs promoted on JobGiga",
+        "badge": "Featured",
+        "view": "View {{job}} at {{company}}",
+        "showAd": "Show featured job {{index}} of {{total}}: {{job}}"
+      }
+    },
+    "jobs": {
+      "newToYou": "New to you",
+      "posted": "Posted {{ago}}",
+      "openings_one": "{{count}} opening",
+      "openings_other": "{{count}} openings",
+      "jobDescription": "Job description",
+      "skillsRequired": "Skills required",
+      "softSkills": "Soft skills",
+      "languages": "Languages",
+      "workAuthorization": "Accepted work authorization",
+      "location": "Location",
+      "remoteAnywhere": "Remote — work from anywhere",
+      "mapFor": "Map for {{location}}",
+      "employmentType": {
+        "full_time": "Full time",
+        "part_time": "Part time",
+        "contract": "Contract",
+        "internship": "Internship",
+        "freelance": "Freelance",
+        "temporary": "Temporary"
+      },
+      "workArrangement": {
+        "onsite": "Onsite",
+        "hybrid": "Hybrid",
+        "remote": "Remote"
+      },
+      "languageLevel": {
+        "basic": "Basic",
+        "conversational": "Conversational",
+        "fluent": "Fluent",
+        "native": "Native"
+      },
+      "workAuthorizationType": {
+        "citizen": "Malaysian citizen",
+        "permanent_resident": "Permanent resident",
+        "work_pass_holder": "Work pass holder",
+        "needs_sponsorship": "Open to sponsorship"
+      },
+      "salaryPeriod": {
+        "hour": "hour",
+        "day": "day",
+        "month": "month",
+        "year": "year"
+      },
+      "salary": {
+        "range": "RM {{min}} – RM {{max}} per {{unit}}",
+        "from": "From RM {{min}} per {{unit}}",
+        "upTo": "Up to RM {{max}} per {{unit}}",
+        "notDisclosed": "Salary not disclosed"
+      }
+    },
+    "about": {
+      "madeForMalaysia": "Made for Malaysia",
+      "employer": {
+        "eyebrow": "About JobGiga · For employers",
+        "headline": "Hiring in Malaysia, without the forms.",
+        "intro": "JobGiga helps Malaysian employers hire with an AI assistant that sets up your company, writes your job posts and organises your applicants — while you make every hiring decision.",
+        "videoTitle": "From sign-up to your dashboard in under a minute",
+        "videoCaption": "A real recording — the AI's web search is shown sped up.",
+        "principle1Title": "Let AI do the work",
+        "principle1Detail": "Company profiles, job postings and the busywork in between. Describe what you need and the assistant fills in the rest.",
+        "principle2Title": "Your judgement decides",
+        "principle2Detail": "Nothing goes out without you. You review every posting and choose who moves forward.",
+        "principle3Title": "Start with what you have",
+        "principle3Detail": "A company name and a sentence about the role are enough to begin — no blank pages.",
+        "featuresTitle": "Everything you need to hire",
+        "feature1Title": "Set up in seconds",
+        "feature1Detail": "Type your company name and AI builds a complete company profile for you to review.",
+        "feature2Title": "Write jobs with AI",
+        "feature2Detail": "Describe the role in your own words and get a structured posting with responsibilities and requirements.",
+        "feature3Title": "Track every posting",
+        "feature3Detail": "Status, views and applicants for every posting, live, in one place.",
+        "feature4Title": "Top matches first",
+        "feature4Detail": "Applicants are ranked by how well they fit the role, so the strongest ones surface first.",
+        "feature5Title": "Interview your way",
+        "feature5Detail": "Schedule in a couple of clicks and follow interviews in a list, Kanban board or calendar.",
+        "feature6Title": "Share it anywhere",
+        "feature6Detail": "Turn any posting into a ready-to-share poster for social media or print.",
+        "malaysia": "Built around how hiring works here — salaries in RM, SSM-registered companies, and EPF, SOCSO and the other benefits candidates look for.",
+        "cta": "See who's hiring",
+        "other": "Looking for a job? About JobGiga for jobseekers"
+      },
+      "jobseeker": {
+        "eyebrow": "About JobGiga · For jobseekers",
+        "headline": "Job hunting in Malaysia, without the forms.",
+        "intro": "JobGiga turns the resume you already have into a complete profile, so you can apply in one click, stand out with a video pitch and keep track of every application.",
+        "videoTitle": "From your resume to a full profile in under a minute",
+        "videoCaption": "A real recording with a sample resume — the AI step is shown sped up.",
+        "principle1Title": "Start with what you have",
+        "principle1Detail": "The resume you already have is enough to begin — no filling in the same details from scratch.",
+        "principle2Title": "Let AI do the paperwork",
+        "principle2Detail": "Your profile, cover letters and resume, drafted for you in seconds.",
+        "principle3Title": "You stay in control",
+        "principle3Detail": "Review and refine everything before an employer ever sees it.",
+        "featuresTitle": "Everything you need to get hired",
+        "feature1Title": "Start with your resume",
+        "feature1Detail": "Upload a PDF, DOC or DOCX and AI fills in your skills, experience and education.",
+        "feature2Title": "Apply in one click",
+        "feature2Detail": "Your profile is the application — no repeating the same details for every job.",
+        "feature3Title": "Stand out with a video pitch",
+        "feature3Detail": "Record a short video introducing yourself, so employers meet you before the interview.",
+        "feature4Title": "Cover letters with AI",
+        "feature4Detail": "Paste a job posting and get a cover letter written for that role, ready to edit.",
+        "feature5Title": "Resume Designer",
+        "feature5Detail": "Turn your profile into a clean, professional resume and download it in a few clicks.",
+        "feature6Title": "Never miss a job",
+        "feature6Detail": "Save jobs, get alerts for new ones, and track every application in one place.",
+        "malaysia": "Jobs from Malaysian companies — salaries in RM, benefits like EPF and SOCSO spelled out, and locations across every state.",
+        "cta": "Browse jobs",
+        "other": "Hiring instead? About JobGiga for employers"
+      }
+    },
+    "releaseNotes": {
+      "employer": {
+        "eyebrow": "Release notes · For employers",
+        "headline": "What's new for employers",
+        "intro": "A plain-language log of what's changed in JobGiga — newest first.",
+        "releases": {
+          "assistantUpgrade": {
+            "title": "A much more capable assistant",
+            "item1": "Replies now appear word by word, and you can see what it's doing, like \"Searching applicants…\". Press Stop at any time.",
+            "item2": "Full answers when you need them, with tables, headings and lists. Ask it to compare applicants and recommend who to interview, draft an email, or work through a problem.",
+            "item3": "It can search the web for things like market salaries or labour law, and links its sources.",
+            "item4": "Attach a PDF, Word or text file, such as a job description or resume, and ask about it. You can also paste longer text.",
+            "item5": "Regenerate a reply, or edit your last message and try again.",
+            "item6": "Almost everything on your dashboard now works from chat, too: AI interviews, booking ads, generating posters, submitting a posting for review, screening questions, your company details, logo and files, your profile, Top Matches settings and switching company.",
+            "item7": "Nothing changes until you press Confirm. Anything that needs a file lets you pick it right on the card."
+          },
+          "offersTeamCompany": {
+            "title": "Offers, hiring, your team and company details in chat",
+            "item1": "Ask who has an offer, which offers have been waiting a while, who you've hired, and how many openings are really left on each job.",
+            "item2": "Make an offer, confirm a hire or withdraw an offer by asking. The card warns you first if it would over-fill the job, or if the candidate needs to hear from you directly.",
+            "item3": "Owners and admins can see the team, invite someone, change a role, remove a teammate, re-send an invite and assign jobs to a hiring manager from chat.",
+            "item4": "Owners and admins can also update company details like your description, website, contact details, benefits and dress code.",
+            "item5": "Nothing changes until you press Confirm."
+          },
+          "interviewsEvaluations": {
+            "title": "Schedule interviews, run evaluations and draft job postings from chat",
+            "item1": "Ask the assistant to schedule, reschedule or cancel an interview — it shows you exactly what it's about to send before anything happens, and nothing changes until you confirm.",
+            "item2": "Interviewers can submit their evaluation and recommendation straight from the chat, too.",
+            "item3": "Describe a role and the assistant drafts a complete job posting for you — it's saved as a draft only, so you still review and publish it yourself.",
+            "item4": "Close a job posting by just asking.",
+            "item5": "Open several applicants' profiles at once in the chat, including their phone, email and resume when you need them, and see who's phone-verified.",
+            "item6": "Every assistant reply now shows a copy button and the real time/tokens it took to answer."
+          },
+          "smarterAssistantExcel": {
+            "title": "A smarter assistant and Excel export",
+            "item1": "Ask the assistant about your applicants and it looks up the real answer — who's shortlisted, how many applied from Kuala Lumpur, your top matches and where each one stands, one person's skills and experience, who hasn't replied to an interview invite, or when a posting expires. In English or Malay.",
+            "item2": "Hiring managers and panel members only ever get answers about the postings and candidates they can already see.",
+            "item3": "Export applicants to Excel from the Applicants page or any posting's page — exactly the list you've filtered to. Or just ask the assistant to \"export it to Excel\".",
+            "item4": "Exports leave out email addresses and phone numbers, to keep applicants' contact details safe.",
+            "item5": "AI suggestions are more dependable, with a backup ready if one AI service is slow.",
+            "item6": "The chat bar now lives in your dashboard after you sign in, rather than on the public home page."
+          },
+          "guidesDashboard": {
+            "title": "Clearer guides and a smoother dashboard",
+            "item1": "New \"How it works\" guides on the Team and Advertisement pages, explaining team roles and invites, and how company and job ads are booked, reviewed and run.",
+            "item2": "Collapse the dashboard sidebar to icons for more room — it remembers your choice on this device.",
+            "item3": "Dashboard tiles like \"New applicants\" or \"Needs evaluation\" now open Applicants or Interviews already filtered to those people.",
+            "item4": "When you click a sidebar item, it shows a small spinner while the page loads, so you know it's on its way.",
+            "item5": "Pages load faster when lots of people visit at the same time.",
+            "item6": "Seasonal themes now carry through to the colour of the employer page's feature sections."
+          },
+          "legalPages": {
+            "title": "About, release notes, and legal pages",
+            "item1": "New pages in the footer: About, Release notes, Privacy, Security, and Terms & Conditions.",
+            "item2": "Fixed a mobile scrolling glitch where overscrolling past the top or bottom briefly showed a plain white background."
+          },
+          "workLocationsCertificates": {
+            "title": "Applicants' preferred work locations and certification files",
+            "item1": "Applicant profiles now show the towns and areas they'd like to work in, picked from a real place search.",
+            "item2": "Certifications & licenses can include the actual certificate or license file — open it straight from an applicant's profile.",
+            "item3": "More reliable Google sign-in and file uploads after a server restart."
+          },
+          "directoryVideoPitch": {
+            "title": "Company directory and video pitches",
+            "item1": "Browse other companies hiring on JobGiga from a public directory.",
+            "item2": "Applicants can now record a short video pitch, shown alongside their profile.",
+            "item3": "A Resume Designer to turn a jobseeker's profile into a clean, downloadable resume."
+          },
+          "aiAssistant": {
+            "title": "AI chat assistant",
+            "item1": "A chat assistant that can answer questions and act on your account, with history across sessions.",
+            "item2": "The dashboard now works properly on mobile and tablet screens."
+          },
+          "badgesPosters": {
+            "title": "Achievement badges and poster generator",
+            "item1": "Earn badges for hiring milestones, shown on your company profile.",
+            "item2": "Turn any job posting into a ready-to-share poster for social media or print.",
+            "item3": "AI-written cover letters and screening questions for your postings."
+          }
+        }
+      },
+      "jobseeker": {
+        "eyebrow": "Release notes · For jobseekers",
+        "headline": "What's new for jobseekers",
+        "intro": "A plain-language log of what's changed in JobGiga — newest first.",
+        "releases": {
+          "assistantUpgrade": {
+            "title": "A much more capable assistant",
+            "item1": "Replies now appear word by word, with full, well-formatted answers. Press Stop at any time.",
+            "item2": "Attach your resume or a job description (PDF, Word or text) and ask for feedback.",
+            "item3": "Regenerate a reply, or edit your last message and try again.",
+            "item4": "Every reply has a copy button and shows the real time and tokens it took."
+          },
+          "resumeReview": {
+            "title": "Resume Review and a clearer dashboard",
+            "item1": "New Resume Review: your resume on one side and friendly, practical feedback on the other, with each suggestion highlighted on your resume in its own colour. Up to 3 reviews a day.",
+            "item2": "A \"Get feedback\" link on your resume card takes you straight there.",
+            "item3": "My applications on your dashboard now shows each application's progress at a glance.",
+            "item4": "Resume Designer splits your resume into proper pages — no job or course gets cut in half between pages — and the PDF matches exactly what you see.",
+            "item5": "AI features are more dependable, with a backup ready if one AI service is slow.",
+            "item6": "The chat bar now lives in your dashboard after you sign in, rather than on the public home page."
+          },
+          "smootherNavigation": {
+            "title": "Smoother navigation",
+            "item1": "When you click a sidebar item, it shows a small spinner while the page loads, so you know it's on its way.",
+            "item2": "Pages load faster when lots of people visit at the same time.",
+            "item3": "Seasonal themes now carry through to the colour of the Featured jobs section.",
+            "item4": "A cleaner tick on your profile checklist once all the required details are done."
+          },
+          "legalPages": {
+            "title": "About, release notes, and legal pages",
+            "item1": "New pages in the footer: About, Release notes, Privacy, Security, and Terms & Conditions.",
+            "item2": "Fixed a mobile scrolling glitch where overscrolling past the top or bottom briefly showed a plain white background."
+          },
+          "townOrArea": {
+            "title": "Pick your exact town or area",
+            "item1": "Your location and preferred work locations now use a real place search — type an area like \"Kota Damansara\" and it finds the right town and state.",
+            "item2": "Attach the actual file to a certification or license, not just its name.",
+            "item3": "More reliable Google sign-in and file uploads after a server restart."
+          },
+          "videoPitchDesigner": {
+            "title": "Video pitch and Resume Designer",
+            "item1": "Record a short video introducing yourself, shown alongside your profile so employers meet you before the interview.",
+            "item2": "Resume Designer turns your profile into a clean, downloadable resume in a few clicks.",
+            "item3": "Browse a directory of companies hiring on JobGiga."
+          },
+          "aiAssistant": {
+            "title": "AI chat assistant",
+            "item1": "A chat assistant that can answer questions and act on your account, with history across sessions.",
+            "item2": "JobGiga now works properly on mobile and tablet screens."
+          },
+          "coverLettersMatching": {
+            "title": "Cover letters and faster matching",
+            "item1": "Paste a job posting and get a cover letter written for that role, ready to edit.",
+            "item2": "Improved matching so the jobs you're best suited for surface first."
+          }
+        }
+      }
+    },
+    "legal": {
+      "eyebrow": {
+        "employer": "JobGiga · For employers",
+        "jobseeker": "JobGiga · For jobseekers"
+      },
+      "lastUpdated": "Last updated {{date}}",
+      "privacy": {
+        "title": "Privacy Policy",
+        "intro": "This explains what JobGiga collects, why, and what you can do about it. It applies whether you're hiring or job hunting.",
+        "sections": {
+          "collect": {
+            "heading": "What we collect",
+            "b1": "Account basics from sign-in: your name, email and profile photo.",
+            "b2": "Jobseeker profiles: resume, work history, education, skills, phone number, location, certifications, and an optional video pitch.",
+            "b3": "Employer profiles: company details, the SSM registration document you upload for verification, and your team members' details.",
+            "b4": "What you do on JobGiga: job postings viewed, applications submitted, and basic device/browser info, kept for security and to fix problems."
+          },
+          "use": {
+            "heading": "How we use it",
+            "b1": "To match jobseekers with postings and let employers review who applied.",
+            "b2": "To verify a phone number with a one-time code, sent by text or call.",
+            "b3": "To read a resume and fill in a profile for you, and to power the AI assistant and cover-letter writer — your content is sent to our AI service provider to generate that one response, not used to train their models.",
+            "b4": "To send account emails: verification codes, application updates, team invites."
+          },
+          "share": {
+            "heading": "Who we share it with",
+            "p1": "An employer sees a jobseeker's full profile once that person applies to one of their postings — never before. We don't sell personal data.",
+            "b1": "A sign-in provider, to let you sign in without JobGiga handling your password.",
+            "b2": "A messaging provider, to send the phone verification code.",
+            "b3": "An email provider, to send account emails.",
+            "b4": "An AI service provider, to parse resumes and power AI features, as above."
+          },
+          "storage": {
+            "heading": "Where it's kept",
+            "p1": "Uploaded files (resumes, avatars, certifications, company logos, job posters) are stored on our servers behind access controls. Video pitches and AI interview recordings are kept separately and are only reachable through a permission check — never a public link."
+          },
+          "retention": {
+            "heading": "How long we keep it",
+            "p1": "We keep your data while your account is active. AI interview recordings are kept for 30 days and then deleted automatically. An employer can delete their company account from Company Profile, which removes its data; if you'd like your jobseeker account and its data removed, contact us and we'll take care of it."
+          },
+          "rights": {
+            "heading": "Your rights",
+            "p1": "You can review and update most of your information yourself from your profile. For anything else — a copy of your data, a correction, or deleting your account — contact us using the details below."
+          },
+          "children": {
+            "heading": "Children",
+            "p1": "JobGiga is for people old enough to legally work in Malaysia, and isn't intended for children."
+          },
+          "changes": {
+            "heading": "Changes to this policy",
+            "p1": "If this policy changes in a way that matters, we'll update the date at the top and let you know."
+          },
+          "contact": {
+            "heading": "Contact us",
+            "p1": "Questions about this policy or your data? Reach us at the contact details on our Company Profile, or through the AI assistant."
+          }
+        }
+      },
+      "security": {
+        "title": "Security",
+        "intro": "How JobGiga protects your account and the data in it.",
+        "sections": {
+          "signIn": {
+            "heading": "Signing in",
+            "p1": "Sign-in goes through a trusted sign-in provider — JobGiga never sees or stores your password. For an extra layer where it matters (like a phone number on your profile), we verify it with a one-time code rather than trusting what's typed in."
+          },
+          "session": {
+            "heading": "Your session",
+            "p1": "Once you're signed in, your session is a short-lived, signed cookie — not something a page's own code can read or tamper with. It's checked on every request that touches your account or data."
+          },
+          "data": {
+            "heading": "Your data in transit and at rest",
+            "p1": "Traffic between your browser and JobGiga is encrypted (HTTPS). Files you upload — resumes, avatars, certifications, company documents — are stored behind access controls, not exposed publicly by default. Video pitches and AI interview recordings go a step further: they're only reachable through a permission check tied to your account, so a guessed or shared link can't reach them."
+          },
+          "access": {
+            "heading": "Who can see what",
+            "p1": "An employer only sees a jobseeker's profile once that person has actually applied to one of their postings. Within a company, team roles (owner, hiring manager, panel) decide who can edit a posting, see applicants, or just sit on an interview panel — not everyone on a team automatically sees everything."
+          },
+          "platform": {
+            "heading": "Keeping the platform itself secure",
+            "p1": "We apply security updates to the systems JobGiga runs on, and changes to the product go through review before they ship. If you believe you've found a security issue, please tell us rather than testing it against real accounts or data — see Contact below."
+          },
+          "contact": {
+            "heading": "Contact us",
+            "p1": "Found a security problem, or have a question about how something's protected? Reach us at the contact details on our Company Profile, or through the AI assistant."
+          }
+        }
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "intro": "The basics of using JobGiga, for employers and jobseekers alike.",
+        "sections": {
+          "using": {
+            "heading": "Using JobGiga",
+            "p1": "You need an account to post jobs or apply to them. You're responsible for keeping your sign-in secure and for what happens under your account — tell us if you think someone else has access to it."
+          },
+          "posting": {
+            "heading": "What you post",
+            "b1": "Job postings must describe a real role you're genuinely hiring for, with accurate pay, requirements and location.",
+            "b2": "Your profile, resume and any documents you upload (including an SSM registration document) must be accurate and belong to you or your company.",
+            "b3": "No discriminatory, misleading or illegal postings or profile content."
+          },
+          "ai": {
+            "heading": "AI features",
+            "p1": "JobGiga uses AI to parse resumes, draft job postings, write cover letters and power the assistant. It's a drafting tool, not a decision-maker — review anything it produces before relying on it, and you're responsible for what you ultimately post or submit."
+          },
+          "verification": {
+            "heading": "Company verification",
+            "p1": "Employers may be asked to upload an SSM registration document so we can verify the company is real. A badge on a verified company reflects that we checked this document — it isn't an endorsement of the company or any posting it makes."
+          },
+          "prohibited": {
+            "heading": "What you can't do",
+            "b1": "Scrape, copy or resell data from JobGiga.",
+            "b2": "Impersonate a company or person you're not.",
+            "b3": "Try to access another account or data you're not meant to see.",
+            "b4": "Use the platform to do anything illegal under Malaysian law."
+          },
+          "removal": {
+            "heading": "Accounts and postings we may remove",
+            "p1": "We may remove a posting, suspend or close an account that breaks these terms, without it affecting anyone else's use of JobGiga."
+          },
+          "noGuarantee": {
+            "heading": "No guarantee of a hire or a job",
+            "p1": "JobGiga helps employers and jobseekers find each other — it doesn't guarantee a hire, an interview, or a job offer. Hiring decisions are always the employer's own."
+          },
+          "changes": {
+            "heading": "Changes to these terms",
+            "p1": "If these terms change in a way that matters, we'll update the date at the top and let you know."
+          },
+          "law": {
+            "heading": "Governing law",
+            "p1": "These terms are governed by the laws of Malaysia."
+          },
+          "contact": {
+            "heading": "Contact us",
+            "p1": "Questions about these terms? Reach us at the contact details on our Company Profile, or through the AI assistant."
+          }
+        }
+      }
+    }
+  },
+  "companies": {
+    "staff": "{{size}} staff",
+    "directory": {
+      "title": "Find companies",
+      "intro": "Every company on JobGiga — see what they do, where they are, and who's hiring right now.",
+      "searchPlaceholder": "Search companies by name, industry or location...",
+      "searchLabel": "Search companies",
+      "industryLabel": "Industry",
+      "allIndustries": "All industries",
+      "hiringNow": "Hiring now",
+      "summaryAll_one": "{{count}} company on JobGiga",
+      "summaryAll_other": "{{count}} companies on JobGiga",
+      "summaryFiltered_one": "{{count}} company matches your filters",
+      "summaryFiltered_other": "{{count}} companies match your filters",
+      "noneYet": "No companies have joined yet — check back soon.",
+      "noMatches": "No companies match these filters.",
+      "openRoles_one": "{{count}} open role",
+      "openRoles_other": "{{count}} open roles",
+      "notHiring": "Not hiring right now",
+      "badgesLabel_one": "{{count}} badge: {{names}}",
+      "badgesLabel_other": "{{count}} badges: {{names}}"
+    },
+    "highlights": {
+      "eyebrow": "Featured companies",
+      "title": "Meet the teams growing with JobGiga"
+    },
+    "profile": {
+      "back": "← All companies",
+      "founded": "Founded {{year}}",
+      "verifiedContact": "Verified contact",
+      "verifiedContactTitle": "The company owner confirmed their phone number with a text-message code.",
+      "since": "On JobGiga since {{date}}",
+      "badges": "Badges",
+      "badgesSubtitle": "Milestones {{company}} has reached on JobGiga.",
+      "about": "About",
+      "benefits": "Benefits",
+      "workplace": "Workplace",
+      "dressCode": "Dress code: {{value}}",
+      "awards": "Awards & recognition",
+      "office": "Office",
+      "offices_one": "Offices ({{count}})",
+      "offices_other": "Offices ({{count}})",
+      "mapTitle": "Map of {{company}} — {{label}}",
+      "openInMaps": "Open in Maps ↗",
+      "openRoles": "Open roles",
+      "notHiring": "{{company}} isn't hiring right now — check back soon.",
+      "signInToApply": "Sign in to apply →",
+      "getInTouch": "Get in touch",
+      "email": "Email",
+      "website": "Website",
+      "leadership": "Leadership"
+    },
+    "notFound": {
+      "title": "Company not found",
+      "body": "This company isn't on JobGiga, or its page has moved."
+    },
+    "responsiveness": {
+      "withinDay": "Usually replies within a day",
+      "withinTwoDays": "Usually replies within 2 days",
+      "withinWeek": "Usually replies within a week",
+      "slow": "Usually slow to reply",
+      "basedOn_one": "Based on {{count}} recent application",
+      "basedOn_other": "Based on {{count}} recent applications"
+    },
+    "badges": {
+      "profile_completed": {
+        "label": "Company profile completed",
+        "short": "Profile",
+        "description": "Finished every required company profile field."
+      },
+      "logo_added": {
+        "label": "Logo added",
+        "short": "Logo",
+        "description": "Uploaded a company logo."
+      },
+      "profile_boosted": {
+        "label": "Fully boosted profile",
+        "short": "Boosted",
+        "description": "Filled in every optional field that helps you stand out."
+      },
+      "first_job_posted": {
+        "label": "First job posted",
+        "short": "Job",
+        "description": "Posted your first job."
+      },
+      "screening_enabled": {
+        "label": "Screener setup",
+        "short": "Screener",
+        "description": "Turned on screening requirements for a posting."
+      },
+      "first_candidate_screened": {
+        "label": "First candidate screened",
+        "short": "Screened",
+        "description": "Moved an applicant past Applied."
+      },
+      "first_hire": {
+        "label": "First hire",
+        "short": "Hired",
+        "description": "Hired your first candidate."
+      },
+      "team_builder": {
+        "label": "Team builder",
+        "short": "Team",
+        "description": "Invited a teammate."
+      }
+    }
+  }
+}

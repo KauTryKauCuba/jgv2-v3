@@ -1,0 +1,850 @@
+{
+  "common": {
+    "comingSoon": "Akan datang — ciri ini belum tersedia.",
+    "close": "Tutup",
+    "dropdown": {
+      "search": "Cari...",
+      "searchLabel": "Cari {{label}}",
+      "noMatches": "Tiada padanan ditemui"
+    }
+  },
+  "landing": {
+    "roles": {
+      "employer": "Majikan",
+      "jobseeker": "Pencari kerja"
+    },
+    "nav": {
+      "findJob": "Cari kerja",
+      "findCompanies": "Cari syarikat",
+      "about": "Tentang",
+      "signIn": "Log masuk",
+      "getStarted": "Mulakan",
+      "switchLanguage": "Tukar bahasa (English / Bahasa Melayu)"
+    },
+    "hero": {
+      "viewAs": "Lihat sebagai"
+    },
+    "welcome": {
+      "title": "Selamat datang ke JobGiga"
+    },
+    "time": {
+      "today": "hari ini",
+      "daysAgo": "{{count}} hari lalu",
+      "weeksAgo": "{{count}} minggu lalu",
+      "monthsAgo": "{{count}} bulan lalu"
+    },
+    "verified": {
+      "business": {
+        "label": "Perniagaan disahkan",
+        "detail": "JobGiga telah menyemak pendaftaran SSM syarikat ini dengan dokumen pendaftaran perniagaan rasminya."
+      },
+      "phone": {
+        "label": "Telefon disahkan",
+        "detail": "Individu ini telah mengesahkan nombor telefonnya dengan kod sekali guna yang dihantar kepadanya."
+      }
+    },
+    "footer": {
+      "tagline": "Mengambil pekerja di Malaysia, tanpa borang — berbual dengan pembantu AI yang membina iklan jawatan atau profil anda.",
+      "forEmployers": "Untuk Majikan",
+      "forJobseekers": "Untuk Pencari Kerja",
+      "company": "Syarikat",
+      "postJob": "Iklankan jawatan",
+      "findJob": "Cari kerja",
+      "about": "Tentang",
+      "releaseNotes": "Nota keluaran",
+      "privacy": "Privasi",
+      "security": "Keselamatan",
+      "terms": "Terma & Syarat",
+      "copyright": "© {{year}} JobGiga. Dibina untuk Malaysia."
+    },
+    "employer": {
+      "hero": {
+        "titleLine1": "Melangkaui puncak",
+        "titleLine2": "platform pekerjaan tradisional.",
+        "subheading": "Biar AI buat kerja. Biar sentuhan peribadi anda yang membezakan."
+      },
+      "industries": {
+        "manufacturing": "Pembuatan",
+        "corporate": "Perkhidmatan korporat",
+        "construction": "Pembinaan",
+        "technology": "Teknologi",
+        "retail": "Runcit & F&B",
+        "logistics": "Logistik",
+        "oilGas": "Minyak & gas",
+        "warehousing": "Pergudangan"
+      },
+      "hiringStats": {
+        "hiring": {
+          "title": "Syarikat yang sudah mengambil pekerja di sini",
+          "subtitle": "Pasukan sebenar menapis calon sebenar dengan AI, sekarang juga."
+        },
+        "posted": {
+          "title": "Baru diiklankan",
+          "subtitle": "Jawatan terbaharu yang ditambah ke platform."
+        },
+        "activity": {
+          "title": "Bergerak pantas",
+          "subtitle": "Calon sedang disenarai pendek dan ditemu duga, sekarang juga."
+        },
+        "liveRoles_other": "{{count}} jawatan aktif",
+        "gettingStarted": "Baru bermula",
+        "interviewingFor": "Temu duga untuk {{jobTitle}}",
+        "shortlistedFor": "Disenarai pendek untuk {{jobTitle}}",
+        "joinList": "Sertai senarai"
+      },
+      "companies": {
+        "eyebrow": "Siapa yang mengambil pekerja",
+        "titleLine1": "Syarikat yang membina",
+        "titleLine2": "pasukan mereka di JobGiga",
+        "openRoles_other": "{{count}} jawatan kosong"
+      },
+      "spotlight": {
+        "eyebrow": "Sorotan syarikat",
+        "titleLine1": "Lihat apa yang dibina oleh",
+        "titleLine2": "syarikat di JobGiga",
+        "showAd": "Tunjukkan iklan {{index}} daripada {{total}}: {{company}}"
+      },
+      "steps": {
+        "setup": {
+          "eyebrow": "Siap dalam beberapa saat",
+          "headline": "Syarikat anda layak menyerlah",
+          "bullet1Title": "Satu nama syarikat. Profil syarikat yang lengkap.",
+          "bullet1Detail": "Membina profil syarikat tidak sepatutnya terasa seperti mengisi borang yang tidak berkesudahan — berikan sahaja nama syarikat anda.",
+          "bullet2Title": "AI membina asasnya.",
+          "bullet2Detail": "AI kami membantu membina profil syarikat anda menggunakan maklumat yang ada di platform, memberikan titik permulaan yang kukuh dalam beberapa saat.",
+          "bullet3Title": "Anda memperhalusi ceritanya.",
+          "bullet3Detail": "Kemudian pasukan anda mengambil alih — kerana tiada AI yang lebih mengenali syarikat anda berbanding anda sendiri."
+        },
+        "writeJobs": {
+          "eyebrow": "Tulis iklan jawatan dengan AI",
+          "headline": "Cipta iklan jawatan tanpa bermula dari kosong",
+          "bullet1Title": "Terangkan jawatan dengan kata-kata anda sendiri",
+          "bullet1Detail": "Tiada halaman kosong, tiada templat yang rumit — beritahu sahaja siapa yang anda cari.",
+          "bullet2Title": "AI menulis draf pertama",
+          "bullet2Detail": "Idea anda menjadi iklan jawatan yang tersusun dan menarik — tanggungjawab, syarat, dan semua yang calon perlu tahu.",
+          "bullet3Title": "Jadikannya milik anda",
+          "bullet3Detail": "Semak, perhalusi, dan terbitkan bila-bila masa anda rasa sudah sedia."
+        },
+        "track": {
+          "eyebrow": "Pantau setiap iklan",
+          "headline": "Setiap iklan dipantau dari hari pertama",
+          "bullet1Title": "Lihat status sepintas lalu",
+          "bullet1Detail": "Aktif, menunggu semakan, atau masih draf — ketahui dengan tepat kedudukan setiap iklan.",
+          "bullet2Title": "Paparan dan pemohon, secara langsung",
+          "bullet2Detail": "Pantau prestasi setiap iklan tanpa bertukar halaman atau menyelongkar hamparan.",
+          "bullet3Title": "Bertindak tepat pada masanya",
+          "bullet3Detail": "Terus ke senarai pemohon sesuatu iklan, atau sunting dan hantar semula iklan yang perlu disemak semula."
+        },
+        "interview": {
+          "eyebrow": "Temu duga cara anda",
+          "headline": "Temu duga, teratur mengikut cara anda",
+          "bullet1Title": "Jadualkan dengan beberapa klik",
+          "bullet1Detail": "Pilih calon yang disenarai pendek, tetapkan pusingan, mod dan masa — siap.",
+          "bullet2Title": "Senarai, Kanban, atau Kalendar",
+          "bullet2Detail": "Semak senarai yang ringkas, seret calon melalui peringkat di papan, atau rancang mengikut kalendar — pilih yang sesuai dengan cara anda bekerja.",
+          "bullet3Title": "Tahu siapa yang sudah sahkan",
+          "bullet3Detail": "Pantau maklum balas — menunggu, diterima, ditolak, atau dijadual semula — tanpa perlu mengejar sesiapa."
+        },
+        "poster": {
+          "eyebrow": "Kongsi di mana-mana",
+          "headline": "Jadikan sebarang iklan jawatan poster yang sedia dikongsi",
+          "bullet1Title": "Satu klik dari iklan anda",
+          "bullet1Detail": "Pilih jawatan aktif dan poster dibina daripada tajuk, gaji, lokasi dan syaratnya — tiada apa yang perlu ditaip semula.",
+          "bullet2Title": "Pilih gaya yang sesuai dengan jenama anda",
+          "bullet2Detail": "Pilih gaya ceria dan mesra, atau korporat dengan gambar sebenar dan logo anda.",
+          "bullet3Title": "Muat turun dan kongsi di mana-mana",
+          "bullet3Detail": "Simpan sebagai PNG, kongsi di media sosial atau kumpulan WhatsApp, dan jana yang baharu bila-bila masa anda perlukan."
+        }
+      },
+      "mockups": {
+        "aiFill": {
+          "aboutYou": "Tentang anda",
+          "aboutYouHint": "Siapa yang mendaftarkan syarikat ini.",
+          "uploadPhoto": "Muat naik foto",
+          "companyName": "Nama syarikat",
+          "companyNameHint": "Kami akan mencari sumber awam untuk melengkapkan yang lain.",
+          "found": "Dijumpai",
+          "lookUp": "Cari",
+          "lookingUp": "Sedang mencari…",
+          "companyProfile": "Profil syarikat",
+          "companyProfileHint": "Diisi sebaik sahaja AI menemuinya.",
+          "profileReady": "Profil sedia",
+          "ssmLine": "SSM {{ssm}} · Ditubuhkan {{year}}",
+          "industry": "Industri",
+          "industryValue": "Runcit & Pengguna",
+          "companySize": "Saiz syarikat",
+          "companySizeValue": "51–200 pekerja",
+          "location": "Lokasi",
+          "website": "Laman web",
+          "description": "Peruncit milik keluarga dengan 12 cawangan di sekitar Lembah Klang, terkenal dengan barangan keperluan harian sejak 2009."
+        },
+        "jobPost": {
+          "prompt": "Mencari eksekutif jualan yang mesra dan pandai berurusan melalui telefon…",
+          "applicants": "Pemohon",
+          "rankedByFit": "Disusun mengikut kesesuaian.",
+          "newCount": "{{count}} baharu",
+          "waiting": "Menunggu pemohon pertama anda…",
+          "describeRole": "Terangkan jawatan",
+          "describeRoleHint": "Beritahu kami siapa yang anda cari, dengan kata-kata anda sendiri.",
+          "postedLive": "Diiklankan — kini aktif",
+          "writing": "Sedang menulis iklan jawatan anda…",
+          "writeButton": "Tulis iklan jawatan saya",
+          "jobTitle": "Eksekutif Jualan",
+          "fullTime": "Sepenuh masa",
+          "summary": "Tukarkan prospek kepada pelanggan yang gembira melalui telefon dan WhatsApp, dalam pasukan jualan seramai 8 orang yang mesra.",
+          "whatYoullDo": "Tugas anda",
+          "do1": "Susuli 30–40 prospek sehari",
+          "do2": "Capai sasaran, raih komisen",
+          "youllNeed": "Keperluan",
+          "need1": "1+ tahun dalam jualan atau perkhidmatan",
+          "need2": "Fasih BM & Bahasa Inggeris",
+          "yourPostings": "Iklan jawatan anda",
+          "yourPostingsHint": "Semuanya di satu tempat.",
+          "newPostingSlot": "Iklan baharu akan dipaparkan di sini",
+          "applicantCount_other": "{{count}} pemohon",
+          "active": "Aktif",
+          "hrManager": "Pengurus HR",
+          "draft": "Draf"
+        },
+        "manageJob": {
+          "pipeline": "Saluran",
+          "atAGlance": "Sepintas lalu.",
+          "updatingLive": "Dikemas kini secara langsung",
+          "yourPostings": "Iklan jawatan anda",
+          "yourPostingsHint": "Paparan, pemohon, status — semuanya di satu tempat.",
+          "status": {
+            "active": "Aktif",
+            "pending": "Menunggu",
+            "draft": "Draf"
+          },
+          "postedDaysAgo": "Diiklankan {{count}} hari lalu",
+          "postedWeeksAgo": "Diiklankan {{count}} minggu lalu",
+          "postedToday": "Diiklankan hari ini",
+          "approvedJustNow": "Baru diluluskan",
+          "savedAsDraft": "Disimpan sebagai draf",
+          "today": "+{{count}} hari ini"
+        },
+        "interview": {
+          "interviews": "Temu duga",
+          "thisWeek": "Minggu ini.",
+          "seeItYourWay": "Lihat cara anda",
+          "seeItYourWayHint": "Senarai, Kanban, atau Kalendar — data yang sama.",
+          "views": {
+            "list": "Senarai",
+            "kanban": "Kanban",
+            "calendar": "Kalendar"
+          },
+          "status": {
+            "pending": "Menunggu",
+            "accepted": "Diterima",
+            "attended": "Hadir",
+            "reschedule": "Jadual semula"
+          },
+          "columns": {
+            "scheduled": "Dijadualkan",
+            "interviewed": "Sudah ditemu duga"
+          },
+          "rows": {
+            "nur": "Pusingan 1 · Dalam talian · Hari ini 2:00 PTG",
+            "priya": "Pusingan 2 · Bersemuka · Esok 10:00 PG",
+            "daniel": "Pusingan 1 · Dalam talian · Hadir",
+            "aiman": "Pusingan 1 · Bersemuka · Khamis 3:30 PTG"
+          },
+          "cards": {
+            "nur": "Pusingan 1 · Hari ini 2:00 PTG",
+            "priya": "Pusingan 2 · Esok 10:00 PG",
+            "aiman": "Pusingan 1 · Khamis 3:30 PTG"
+          },
+          "awaitingEvaluation": "Pusingan {{round}} · Menunggu penilaian",
+          "weekdays": "I,S,R,K,J,S,A",
+          "thisMonth": "Bulan ini",
+          "calendar": {
+            "newBooking": "19 Sep · 3:30 PTG · Pusingan 1 · Dijadual semula",
+            "next": "18 Sep · 2:00 PTG · Pusingan 1"
+          },
+          "justBooked": "Baru ditempah"
+        },
+        "poster": {
+          "generator": "Penjana poster",
+          "generatorHint": "Pilih iklan dan gaya.",
+          "styles": {
+            "playful": "Ceria & Mesra",
+            "corporate": "Korporat dengan Foto"
+          },
+          "generate": "Jana poster",
+          "yourPosters": "Poster anda",
+          "yourPostersHint": "Sedia untuk dimuat turun dan dikongsi.",
+          "weAreHiring": "Kami sedang mengambil pekerja!",
+          "jobType": "Sepenuh masa · Bersemuka",
+          "applyOnJobGiga": "Mohon di JobGiga",
+          "nowHiring": "Jawatan kosong",
+          "applyNow": "Mohon sekarang",
+          "download": "Muat turun PNG",
+          "generateAnother": "Jana yang lain"
+        }
+      }
+    },
+    "jobseeker": {
+      "hero": {
+        "titleLine1": "Mulakan Dengan",
+        "titleLine2": "Apa Yang Anda Ada.",
+        "subheading": "Kemudian semak. Perhalusi. Jadikannya milik anda."
+      },
+      "badges": {
+        "graphicDesigner": "Pereka Grafik",
+        "hrManager": "Pengurus HR",
+        "softwareEngineer": "Jurutera Perisian",
+        "salesExecutive": "Eksekutif Jualan",
+        "warehouseSupervisor": "Penyelia Gudang",
+        "customerService": "Eksekutif Khidmat Pelanggan",
+        "warehouseAssistant": "Pembantu Gudang",
+        "marketingExecutive": "Eksekutif Pemasaran"
+      },
+      "upload": {
+        "title": "Muat naik resume anda, kami bina profil anda",
+        "subtitle": "AI kami membacanya dan membina profil untuk anda — tiada borang untuk diisi.",
+        "dropzone": "Klik untuk muat naik atau seret dan lepas",
+        "formats": "PDF, DOC atau DOCX · sehingga 10 MB",
+        "remove": "Buang resume",
+        "continue": "Teruskan",
+        "tooLarge": "Fail terlalu besar — maksimum 10 MB.",
+        "wrongType": "Sila pilih fail PDF, DOC atau DOCX."
+      },
+      "howItWorks": {
+        "eyebrow": "Cara ia berfungsi",
+        "title": "Memohon semudah ini",
+        "subtitle": "Satu muat naik, dan anda sedia untuk memohon — tiada borang untuk diisi secara manual.",
+        "steps": {
+          "upload": {
+            "title": "Muat naik resume anda",
+            "detail": "Gunakan resume yang anda sudah ada — PDF, DOC, atau DOCX."
+          },
+          "fill": {
+            "title": "AI mengisi profil anda",
+            "detail": "Kemahiran, pengalaman dan pendidikan, diambil terus daripadanya."
+          },
+          "apply": {
+            "title": "Mohon dengan satu klik",
+            "detail": "Profil anda ialah permohonan anda — tiada borang berulang."
+          }
+        },
+        "filling": "Sedang mengisi profil anda…",
+        "applied": "Sudah memohon",
+        "sentInSeconds": "Dihantar dalam beberapa saat"
+      },
+      "jobs": {
+        "eyebrow": "Jawatan terkini",
+        "title": "Jawatan di JobGiga",
+        "noMatches": "Tiada jawatan yang sepadan dengan carian anda. Cuba ubah penapis anda.",
+        "filterLabel": "Tapis jawatan mengikut lokasi dan jenis",
+        "allLocations": "Semua lokasi",
+        "allTypes": "Semua jenis",
+        "searchPlaceholder": "Cari mengikut jawatan atau syarikat",
+        "locationPlaceholder": "Cari mengikut lokasi",
+        "tabsLabel": "Penapis iklan jawatan",
+        "allJobs": "Semua jawatan",
+        "sampleListing": "Contoh iklan — jawatan sebenar dibuka untuk permohonan apabila majikan mengiklankannya.",
+        "signInToApply": "Log masuk sebagai pencari kerja",
+        "toApply": "untuk memohon jawatan ini."
+      },
+      "featured": {
+        "eyebrow": "Jawatan pilihan",
+        "title": "Jawatan dipromosikan di JobGiga",
+        "badge": "Pilihan",
+        "view": "Lihat {{job}} di {{company}}",
+        "showAd": "Tunjukkan jawatan pilihan {{index}} daripada {{total}}: {{job}}"
+      }
+    },
+    "jobs": {
+      "newToYou": "Baharu untuk anda",
+      "posted": "Diiklankan {{ago}}",
+      "openings_other": "{{count}} kekosongan",
+      "jobDescription": "Huraian tugas",
+      "skillsRequired": "Kemahiran diperlukan",
+      "softSkills": "Kemahiran insaniah",
+      "languages": "Bahasa",
+      "workAuthorization": "Kebenaran bekerja yang diterima",
+      "location": "Lokasi",
+      "remoteAnywhere": "Jarak jauh — bekerja dari mana-mana",
+      "mapFor": "Peta untuk {{location}}",
+      "employmentType": {
+        "full_time": "Sepenuh masa",
+        "part_time": "Separuh masa",
+        "contract": "Kontrak",
+        "internship": "Latihan industri",
+        "freelance": "Bebas",
+        "temporary": "Sementara"
+      },
+      "workArrangement": {
+        "onsite": "Bersemuka",
+        "hybrid": "Hibrid",
+        "remote": "Jarak jauh"
+      },
+      "languageLevel": {
+        "basic": "Asas",
+        "conversational": "Perbualan",
+        "fluent": "Fasih",
+        "native": "Penutur asli"
+      },
+      "workAuthorizationType": {
+        "citizen": "Warganegara Malaysia",
+        "permanent_resident": "Penduduk tetap",
+        "work_pass_holder": "Pemegang pas kerja",
+        "needs_sponsorship": "Terbuka kepada penajaan"
+      },
+      "salaryPeriod": {
+        "hour": "jam",
+        "day": "hari",
+        "month": "bulan",
+        "year": "tahun"
+      },
+      "salary": {
+        "range": "RM {{min}} – RM {{max}} se{{unit}}",
+        "from": "Dari RM {{min}} se{{unit}}",
+        "upTo": "Sehingga RM {{max}} se{{unit}}",
+        "notDisclosed": "Gaji tidak dinyatakan"
+      }
+    },
+    "about": {
+      "madeForMalaysia": "Dibina untuk Malaysia",
+      "employer": {
+        "eyebrow": "Tentang JobGiga · Untuk majikan",
+        "headline": "Mengambil pekerja di Malaysia, tanpa borang.",
+        "intro": "JobGiga membantu majikan di Malaysia mengambil pekerja dengan pembantu AI yang menyediakan profil syarikat, menulis iklan jawatan dan menyusun pemohon anda — sementara anda membuat setiap keputusan pengambilan.",
+        "videoTitle": "Dari pendaftaran ke papan pemuka anda dalam masa kurang seminit",
+        "videoCaption": "Rakaman sebenar — carian web oleh AI dipaparkan dalam kelajuan dipercepatkan.",
+        "principle1Title": "Biar AI buat kerja",
+        "principle1Detail": "Profil syarikat, iklan jawatan dan kerja-kerja remeh di antaranya. Terangkan apa yang anda perlukan dan pembantu akan melengkapkan selebihnya.",
+        "principle2Title": "Pertimbangan anda yang menentukan",
+        "principle2Detail": "Tiada apa yang diterbitkan tanpa anda. Anda menyemak setiap iklan dan memilih siapa yang layak ke peringkat seterusnya.",
+        "principle3Title": "Mulakan dengan apa yang anda ada",
+        "principle3Detail": "Nama syarikat dan satu ayat tentang jawatan sudah cukup untuk bermula — tiada halaman kosong.",
+        "featuresTitle": "Semua yang anda perlukan untuk mengambil pekerja",
+        "feature1Title": "Siap dalam beberapa saat",
+        "feature1Detail": "Taip nama syarikat anda dan AI membina profil syarikat yang lengkap untuk anda semak.",
+        "feature2Title": "Tulis iklan jawatan dengan AI",
+        "feature2Detail": "Terangkan jawatan dengan kata-kata anda sendiri dan dapatkan iklan yang tersusun lengkap dengan tanggungjawab dan syarat.",
+        "feature3Title": "Pantau setiap iklan",
+        "feature3Detail": "Status, paparan dan pemohon bagi setiap iklan, secara langsung, di satu tempat.",
+        "feature4Title": "Calon paling sepadan dahulu",
+        "feature4Detail": "Pemohon disusun mengikut tahap kesesuaian dengan jawatan, supaya calon terbaik muncul dahulu.",
+        "feature5Title": "Temu duga cara anda",
+        "feature5Detail": "Jadualkan dengan beberapa klik dan ikuti temu duga dalam senarai, papan Kanban atau kalendar.",
+        "feature6Title": "Kongsi di mana-mana",
+        "feature6Detail": "Jadikan sebarang iklan jawatan poster yang sedia dikongsi di media sosial atau dicetak.",
+        "malaysia": "Dibina mengikut cara pengambilan pekerja di sini — gaji dalam RM, syarikat berdaftar SSM, serta KWSP, PERKESO dan faedah lain yang dicari oleh calon.",
+        "cta": "Lihat siapa yang mengambil pekerja",
+        "other": "Mencari kerja? Tentang JobGiga untuk pencari kerja"
+      },
+      "jobseeker": {
+        "eyebrow": "Tentang JobGiga · Untuk pencari kerja",
+        "headline": "Mencari kerja di Malaysia, tanpa borang.",
+        "intro": "JobGiga menukar resume yang anda sudah ada kepada profil yang lengkap, supaya anda boleh memohon dengan satu klik, menonjol dengan video pengenalan diri dan menjejak setiap permohonan.",
+        "videoTitle": "Dari resume anda ke profil penuh dalam masa kurang seminit",
+        "videoCaption": "Rakaman sebenar dengan contoh resume — langkah AI dipaparkan dalam kelajuan dipercepatkan.",
+        "principle1Title": "Mulakan dengan apa yang anda ada",
+        "principle1Detail": "Resume yang anda sudah ada cukup untuk bermula — tidak perlu mengisi maklumat yang sama dari awal.",
+        "principle2Title": "Biar AI urus kertas kerja",
+        "principle2Detail": "Profil, surat iringan dan resume anda, didrafkan untuk anda dalam beberapa saat.",
+        "principle3Title": "Anda tetap memegang kawalan",
+        "principle3Detail": "Semak dan perhalusi segalanya sebelum majikan melihatnya.",
+        "featuresTitle": "Semua yang anda perlukan untuk mendapat kerja",
+        "feature1Title": "Mulakan dengan resume anda",
+        "feature1Detail": "Muat naik PDF, DOC atau DOCX dan AI mengisi kemahiran, pengalaman dan pendidikan anda.",
+        "feature2Title": "Mohon dengan satu klik",
+        "feature2Detail": "Profil anda ialah permohonan anda — tidak perlu mengulang maklumat yang sama bagi setiap jawatan.",
+        "feature3Title": "Menonjol dengan video pengenalan",
+        "feature3Detail": "Rakam video ringkas memperkenalkan diri anda, supaya majikan mengenali anda sebelum temu duga.",
+        "feature4Title": "Surat iringan dengan AI",
+        "feature4Detail": "Tampal iklan jawatan dan dapatkan surat iringan yang ditulis untuk jawatan itu, sedia untuk disunting.",
+        "feature5Title": "Pereka Resume",
+        "feature5Detail": "Jadikan profil anda resume yang kemas dan profesional, dan muat turun dalam beberapa klik.",
+        "feature6Title": "Jangan terlepas sebarang jawatan",
+        "feature6Detail": "Simpan jawatan, terima makluman untuk jawatan baharu, dan jejak setiap permohonan di satu tempat.",
+        "malaysia": "Jawatan daripada syarikat Malaysia — gaji dalam RM, faedah seperti KWSP dan PERKESO dinyatakan dengan jelas, dan lokasi di setiap negeri.",
+        "cta": "Lihat jawatan",
+        "other": "Mahu mengambil pekerja? Tentang JobGiga untuk majikan"
+      }
+    },
+    "releaseNotes": {
+      "employer": {
+        "eyebrow": "Nota keluaran · Untuk majikan",
+        "headline": "Apa yang baharu untuk majikan",
+        "intro": "Catatan ringkas tentang perubahan dalam JobGiga, dalam bahasa mudah — yang terbaharu dahulu.",
+        "releases": {
+          "assistantUpgrade": {
+            "title": "Pembantu yang jauh lebih berkebolehan",
+            "item1": "Balasan kini muncul perkataan demi perkataan, dan anda boleh lihat apa yang sedang dibuatnya, seperti \"Mencari pemohon…\". Tekan Henti pada bila-bila masa.",
+            "item2": "Jawapan penuh apabila anda memerlukannya, dengan jadual, tajuk dan senarai. Minta ia membandingkan pemohon dan mencadangkan siapa yang patut ditemu duga, mendraf e-mel, atau menyelesaikan sesuatu masalah.",
+            "item3": "Ia boleh mencari di web untuk perkara seperti gaji pasaran atau undang-undang buruh, dan memautkan sumbernya.",
+            "item4": "Lampirkan fail PDF, Word atau teks, seperti huraian kerja atau resume, dan tanya tentangnya. Anda juga boleh menampal teks yang lebih panjang.",
+            "item5": "Jana semula balasan, atau sunting mesej terakhir anda dan cuba lagi.",
+            "item6": "Hampir semua di papan pemuka anda kini boleh dibuat dari sembang juga: temu duga AI, menempah iklan, menjana poster, menghantar iklan jawatan untuk semakan, soalan saringan, butiran, logo dan fail syarikat, profil anda, tetapan Padanan Terbaik dan menukar syarikat.",
+            "item7": "Tiada apa yang berubah sehingga anda tekan Sahkan. Apa-apa yang memerlukan fail membolehkan anda memilihnya terus pada kad."
+          },
+          "offersTeamCompany": {
+            "title": "Tawaran, pengambilan, pasukan dan butiran syarikat anda dalam sembang",
+            "item1": "Tanya siapa yang telah menerima tawaran, tawaran mana yang sudah lama menunggu, siapa yang telah anda ambil bekerja, dan berapa banyak kekosongan yang sebenarnya tinggal bagi setiap jawatan.",
+            "item2": "Buat tawaran, sahkan pengambilan atau tarik balik tawaran dengan hanya bertanya. Kad akan memberi amaran dahulu jika ia akan melebihi kekosongan jawatan, atau jika calon perlu dihubungi terus oleh anda.",
+            "item3": "Pemilik dan pentadbir boleh melihat pasukan, menjemput seseorang, menukar peranan, mengeluarkan ahli pasukan, menghantar semula jemputan dan menugaskan jawatan kepada pengurus pengambilan dari sembang.",
+            "item4": "Pemilik dan pentadbir juga boleh mengemas kini butiran syarikat seperti huraian, laman web, butiran hubungan, faedah dan kod pakaian.",
+            "item5": "Tiada apa yang berubah sehingga anda tekan Sahkan."
+          },
+          "interviewsEvaluations": {
+            "title": "Jadualkan temu duga, buat penilaian dan draf iklan jawatan dari sembang",
+            "item1": "Minta pembantu menjadualkan, menjadualkan semula atau membatalkan temu duga — ia menunjukkan dengan tepat apa yang akan dihantar sebelum apa-apa berlaku, dan tiada apa yang berubah sehingga anda sahkan.",
+            "item2": "Penemu duga juga boleh menghantar penilaian dan cadangan mereka terus dari sembang.",
+            "item3": "Terangkan sesuatu jawatan dan pembantu akan mendraf iklan jawatan yang lengkap untuk anda — ia hanya disimpan sebagai draf, jadi anda masih menyemak dan menerbitkannya sendiri.",
+            "item4": "Tutup iklan jawatan dengan hanya bertanya.",
+            "item5": "Buka profil beberapa pemohon serentak dalam sembang, termasuk telefon, e-mel dan resume mereka apabila perlu, dan lihat siapa yang telah mengesahkan nombor telefon.",
+            "item6": "Setiap balasan pembantu kini menunjukkan butang salin serta masa dan token sebenar yang digunakan untuk menjawab."
+          },
+          "smarterAssistantExcel": {
+            "title": "Pembantu yang lebih bijak dan eksport Excel",
+            "item1": "Tanya pembantu tentang pemohon anda dan ia mencari jawapan sebenar — siapa yang disenarai pendek, berapa ramai yang memohon dari Kuala Lumpur, padanan terbaik anda dan status setiap seorang, kemahiran dan pengalaman seseorang, siapa yang belum membalas jemputan temu duga, atau bila iklan jawatan tamat. Dalam bahasa Inggeris atau Melayu.",
+            "item2": "Pengurus pengambilan dan ahli panel hanya mendapat jawapan tentang iklan jawatan dan calon yang sudah boleh mereka lihat.",
+            "item3": "Eksport pemohon ke Excel dari halaman Pemohon atau halaman mana-mana iklan jawatan — tepat seperti senarai yang telah anda tapis. Atau minta sahaja pembantu \"eksport ke Excel\".",
+            "item4": "Eksport tidak termasuk alamat e-mel dan nombor telefon, untuk memastikan butiran hubungan pemohon selamat.",
+            "item5": "Cadangan AI lebih boleh diharap, dengan sandaran sedia jika satu perkhidmatan AI perlahan.",
+            "item6": "Bar sembang kini berada di papan pemuka anda selepas log masuk, bukan di halaman utama awam."
+          },
+          "guidesDashboard": {
+            "title": "Panduan yang lebih jelas dan papan pemuka yang lebih lancar",
+            "item1": "Panduan \"Cara ia berfungsi\" baharu di halaman Pasukan dan Iklan, yang menerangkan peranan dan jemputan pasukan, serta cara iklan syarikat dan jawatan ditempah, disemak dan dijalankan.",
+            "item2": "Kecilkan bar sisi papan pemuka kepada ikon untuk ruang yang lebih luas — ia mengingati pilihan anda pada peranti ini.",
+            "item3": "Jubin papan pemuka seperti \"Pemohon baharu\" atau \"Perlu penilaian\" kini membuka Pemohon atau Temu duga yang sudah ditapis kepada orang-orang tersebut.",
+            "item4": "Apabila anda klik item bar sisi, ia menunjukkan ikon pemuatan kecil semasa halaman dimuatkan, supaya anda tahu ia sedang dibuka.",
+            "item5": "Halaman dimuatkan lebih pantas apabila ramai orang melawat pada masa yang sama.",
+            "item6": "Tema bermusim kini turut mewarnai bahagian ciri di halaman majikan."
+          },
+          "legalPages": {
+            "title": "Halaman Tentang, nota keluaran dan undang-undang",
+            "item1": "Halaman baharu di bahagian bawah: Tentang, Nota keluaran, Privasi, Keselamatan, serta Terma & Syarat.",
+            "item2": "Membetulkan gangguan tatal pada telefon di mana menatal melepasi bahagian atas atau bawah menunjukkan latar belakang putih seketika."
+          },
+          "workLocationsCertificates": {
+            "title": "Lokasi kerja pilihan pemohon dan fail pensijilan",
+            "item1": "Profil pemohon kini menunjukkan bandar dan kawasan yang mereka ingin bekerja, dipilih daripada carian tempat sebenar.",
+            "item2": "Pensijilan & lesen boleh menyertakan fail sijil atau lesen sebenar — bukanya terus dari profil pemohon.",
+            "item3": "Log masuk Google dan muat naik fail yang lebih boleh diharap selepas pelayan dimulakan semula."
+          },
+          "directoryVideoPitch": {
+            "title": "Direktori syarikat dan video pengenalan",
+            "item1": "Layari syarikat lain yang sedang mengambil pekerja di JobGiga melalui direktori awam.",
+            "item2": "Pemohon kini boleh merakam video pengenalan ringkas, yang dipaparkan bersama profil mereka.",
+            "item3": "Pereka Resume untuk menukar profil pencari kerja menjadi resume yang kemas dan boleh dimuat turun."
+          },
+          "aiAssistant": {
+            "title": "Pembantu sembang AI",
+            "item1": "Pembantu sembang yang boleh menjawab soalan dan bertindak pada akaun anda, dengan sejarah merentas sesi.",
+            "item2": "Papan pemuka kini berfungsi dengan baik pada skrin telefon dan tablet."
+          },
+          "badgesPosters": {
+            "title": "Lencana pencapaian dan penjana poster",
+            "item1": "Dapatkan lencana untuk pencapaian pengambilan, yang dipaparkan pada profil syarikat anda.",
+            "item2": "Tukar mana-mana iklan jawatan menjadi poster yang sedia dikongsi untuk media sosial atau cetakan.",
+            "item3": "Surat iringan dan soalan saringan yang ditulis oleh AI untuk iklan jawatan anda."
+          }
+        }
+      },
+      "jobseeker": {
+        "eyebrow": "Nota keluaran · Untuk pencari kerja",
+        "headline": "Apa yang baharu untuk pencari kerja",
+        "intro": "Catatan ringkas tentang perubahan dalam JobGiga, dalam bahasa mudah — yang terbaharu dahulu.",
+        "releases": {
+          "assistantUpgrade": {
+            "title": "Pembantu yang jauh lebih berkebolehan",
+            "item1": "Balasan kini muncul perkataan demi perkataan, dengan jawapan penuh yang tersusun kemas. Tekan Henti pada bila-bila masa.",
+            "item2": "Lampirkan resume anda atau huraian kerja (PDF, Word atau teks) dan minta maklum balas.",
+            "item3": "Jana semula balasan, atau sunting mesej terakhir anda dan cuba lagi.",
+            "item4": "Setiap balasan mempunyai butang salin dan menunjukkan masa serta token sebenar yang digunakan."
+          },
+          "resumeReview": {
+            "title": "Semakan Resume dan papan pemuka yang lebih jelas",
+            "item1": "Semakan Resume baharu: resume anda di satu sisi dan maklum balas yang mesra dan praktikal di sisi lain, dengan setiap cadangan diserlahkan pada resume anda dalam warnanya sendiri. Sehingga 3 semakan sehari.",
+            "item2": "Pautan \"Dapatkan maklum balas\" pada kad resume anda membawa anda terus ke sana.",
+            "item3": "Permohonan saya di papan pemuka anda kini menunjukkan kemajuan setiap permohonan sepintas lalu.",
+            "item4": "Pereka Resume membahagikan resume anda kepada halaman yang betul — tiada pekerjaan atau kursus yang terpotong di antara halaman — dan PDF sepadan tepat dengan apa yang anda lihat.",
+            "item5": "Ciri AI lebih boleh diharap, dengan sandaran sedia jika satu perkhidmatan AI perlahan.",
+            "item6": "Bar sembang kini berada di papan pemuka anda selepas log masuk, bukan di halaman utama awam."
+          },
+          "smootherNavigation": {
+            "title": "Navigasi yang lebih lancar",
+            "item1": "Apabila anda klik item bar sisi, ia menunjukkan ikon pemuatan kecil semasa halaman dimuatkan, supaya anda tahu ia sedang dibuka.",
+            "item2": "Halaman dimuatkan lebih pantas apabila ramai orang melawat pada masa yang sama.",
+            "item3": "Tema bermusim kini turut mewarnai bahagian Jawatan pilihan.",
+            "item4": "Tanda semak yang lebih kemas pada senarai semak profil anda apabila semua butiran yang diperlukan telah lengkap."
+          },
+          "legalPages": {
+            "title": "Halaman Tentang, nota keluaran dan undang-undang",
+            "item1": "Halaman baharu di bahagian bawah: Tentang, Nota keluaran, Privasi, Keselamatan, serta Terma & Syarat.",
+            "item2": "Membetulkan gangguan tatal pada telefon di mana menatal melepasi bahagian atas atau bawah menunjukkan latar belakang putih seketika."
+          },
+          "townOrArea": {
+            "title": "Pilih bandar atau kawasan anda yang tepat",
+            "item1": "Lokasi anda dan lokasi kerja pilihan kini menggunakan carian tempat sebenar — taip kawasan seperti \"Kota Damansara\" dan ia akan menemui bandar dan negeri yang betul.",
+            "item2": "Lampirkan fail sebenar pada pensijilan atau lesen, bukan sekadar namanya.",
+            "item3": "Log masuk Google dan muat naik fail yang lebih boleh diharap selepas pelayan dimulakan semula."
+          },
+          "videoPitchDesigner": {
+            "title": "Video pengenalan dan Pereka Resume",
+            "item1": "Rakam video ringkas untuk memperkenalkan diri, yang dipaparkan bersama profil anda supaya majikan mengenali anda sebelum temu duga.",
+            "item2": "Pereka Resume menukar profil anda menjadi resume yang kemas dan boleh dimuat turun dalam beberapa klik.",
+            "item3": "Layari direktori syarikat yang sedang mengambil pekerja di JobGiga."
+          },
+          "aiAssistant": {
+            "title": "Pembantu sembang AI",
+            "item1": "Pembantu sembang yang boleh menjawab soalan dan bertindak pada akaun anda, dengan sejarah merentas sesi.",
+            "item2": "JobGiga kini berfungsi dengan baik pada skrin telefon dan tablet."
+          },
+          "coverLettersMatching": {
+            "title": "Surat iringan dan padanan yang lebih pantas",
+            "item1": "Tampal iklan jawatan dan dapatkan surat iringan yang ditulis untuk jawatan itu, sedia untuk disunting.",
+            "item2": "Padanan yang dipertingkatkan supaya jawatan yang paling sesuai untuk anda dipaparkan dahulu."
+          }
+        }
+      }
+    },
+    "legal": {
+      "eyebrow": {
+        "employer": "JobGiga · Untuk majikan",
+        "jobseeker": "JobGiga · Untuk pencari kerja"
+      },
+      "lastUpdated": "Kemas kini terakhir {{date}}",
+      "privacy": {
+        "title": "Dasar Privasi",
+        "intro": "Ini menerangkan apa yang dikumpul oleh JobGiga, sebabnya, dan apa yang boleh anda lakukan mengenainya. Ia terpakai sama ada anda sedang mengambil pekerja atau mencari kerja.",
+        "sections": {
+          "collect": {
+            "heading": "Apa yang kami kumpul",
+            "b1": "Maklumat asas akaun daripada log masuk: nama, e-mel dan foto profil anda.",
+            "b2": "Profil pencari kerja: resume, sejarah pekerjaan, pendidikan, kemahiran, nombor telefon, lokasi, pensijilan, dan video pengenalan pilihan.",
+            "b3": "Profil majikan: butiran syarikat, dokumen pendaftaran SSM yang anda muat naik untuk pengesahan, dan butiran ahli pasukan anda.",
+            "b4": "Apa yang anda lakukan di JobGiga: iklan jawatan yang dilihat, permohonan yang dihantar, dan maklumat asas peranti/pelayar, yang disimpan untuk keselamatan dan untuk membaiki masalah."
+          },
+          "use": {
+            "heading": "Cara kami menggunakannya",
+            "b1": "Untuk memadankan pencari kerja dengan iklan jawatan dan membolehkan majikan menyemak siapa yang memohon.",
+            "b2": "Untuk mengesahkan nombor telefon dengan kod sekali guna, yang dihantar melalui SMS atau panggilan.",
+            "b3": "Untuk membaca resume dan mengisi profil untuk anda, serta menjalankan pembantu AI dan penulis surat iringan — kandungan anda dihantar kepada penyedia perkhidmatan AI kami untuk menjana respons tersebut sahaja, dan tidak digunakan untuk melatih model mereka.",
+            "b4": "Untuk menghantar e-mel akaun: kod pengesahan, kemas kini permohonan, jemputan pasukan."
+          },
+          "share": {
+            "heading": "Dengan siapa kami berkongsi",
+            "p1": "Majikan hanya melihat profil penuh pencari kerja selepas orang itu memohon salah satu iklan jawatan mereka — tidak sebelum itu. Kami tidak menjual data peribadi.",
+            "b1": "Penyedia log masuk, supaya anda boleh log masuk tanpa JobGiga mengendalikan kata laluan anda.",
+            "b2": "Penyedia pemesejan, untuk menghantar kod pengesahan telefon.",
+            "b3": "Penyedia e-mel, untuk menghantar e-mel akaun.",
+            "b4": "Penyedia perkhidmatan AI, untuk membaca resume dan menjalankan ciri AI, seperti di atas."
+          },
+          "storage": {
+            "heading": "Di mana ia disimpan",
+            "p1": "Fail yang dimuat naik (resume, avatar, pensijilan, logo syarikat, poster jawatan) disimpan di pelayan kami dengan kawalan akses. Video pengenalan dan rakaman temu duga AI disimpan secara berasingan dan hanya boleh dicapai melalui semakan kebenaran — tidak sekali-kali melalui pautan awam."
+          },
+          "retention": {
+            "heading": "Berapa lama kami menyimpannya",
+            "p1": "Kami menyimpan data anda selagi akaun anda aktif. Rakaman temu duga AI disimpan selama 30 hari dan kemudian dipadam secara automatik. Majikan boleh memadam akaun syarikat mereka dari Profil Syarikat, yang akan membuang datanya; jika anda mahu akaun pencari kerja anda dan datanya dibuang, hubungi kami dan kami akan menguruskannya."
+          },
+          "rights": {
+            "heading": "Hak anda",
+            "p1": "Anda boleh menyemak dan mengemas kini kebanyakan maklumat anda sendiri dari profil anda. Untuk perkara lain — salinan data anda, pembetulan, atau pemadaman akaun anda — hubungi kami menggunakan butiran di bawah."
+          },
+          "children": {
+            "heading": "Kanak-kanak",
+            "p1": "JobGiga adalah untuk mereka yang cukup umur untuk bekerja secara sah di Malaysia, dan tidak ditujukan untuk kanak-kanak."
+          },
+          "changes": {
+            "heading": "Perubahan pada dasar ini",
+            "p1": "Jika dasar ini berubah dengan cara yang penting, kami akan mengemas kini tarikh di bahagian atas dan memaklumkan anda."
+          },
+          "contact": {
+            "heading": "Hubungi kami",
+            "p1": "Ada soalan tentang dasar ini atau data anda? Hubungi kami melalui butiran hubungan di Profil Syarikat kami, atau melalui pembantu AI."
+          }
+        }
+      },
+      "security": {
+        "title": "Keselamatan",
+        "intro": "Cara JobGiga melindungi akaun anda dan data di dalamnya.",
+        "sections": {
+          "signIn": {
+            "heading": "Log masuk",
+            "p1": "Log masuk dibuat melalui penyedia log masuk yang dipercayai — JobGiga tidak pernah melihat atau menyimpan kata laluan anda. Untuk lapisan tambahan di tempat yang penting (seperti nombor telefon pada profil anda), kami mengesahkannya dengan kod sekali guna dan bukan sekadar mempercayai apa yang ditaip."
+          },
+          "session": {
+            "heading": "Sesi anda",
+            "p1": "Selepas anda log masuk, sesi anda ialah kuki bertandatangan yang singkat hayatnya — bukan sesuatu yang boleh dibaca atau diubah oleh kod halaman itu sendiri. Ia disemak pada setiap permintaan yang melibatkan akaun atau data anda."
+          },
+          "data": {
+            "heading": "Data anda semasa dihantar dan disimpan",
+            "p1": "Trafik antara pelayar anda dan JobGiga disulitkan (HTTPS). Fail yang anda muat naik — resume, avatar, pensijilan, dokumen syarikat — disimpan dengan kawalan akses dan tidak didedahkan secara awam secara lalai. Video pengenalan dan rakaman temu duga AI dilindungi lebih lagi: ia hanya boleh dicapai melalui semakan kebenaran yang terikat pada akaun anda, jadi pautan yang diteka atau dikongsi tidak boleh mencapainya."
+          },
+          "access": {
+            "heading": "Siapa boleh melihat apa",
+            "p1": "Majikan hanya melihat profil pencari kerja selepas orang itu benar-benar memohon salah satu iklan jawatan mereka. Dalam sesebuah syarikat, peranan pasukan (pemilik, pengurus pengambilan, panel) menentukan siapa yang boleh menyunting iklan jawatan, melihat pemohon, atau hanya menyertai panel temu duga — bukan semua ahli pasukan melihat segala-galanya secara automatik."
+          },
+          "platform": {
+            "heading": "Memastikan platform itu sendiri selamat",
+            "p1": "Kami memasang kemas kini keselamatan pada sistem yang menjalankan JobGiga, dan perubahan pada produk disemak sebelum dilancarkan. Jika anda percaya anda telah menemui isu keselamatan, sila beritahu kami dan jangan mengujinya pada akaun atau data sebenar — lihat Hubungi kami di bawah."
+          },
+          "contact": {
+            "heading": "Hubungi kami",
+            "p1": "Menemui masalah keselamatan, atau ada soalan tentang cara sesuatu dilindungi? Hubungi kami melalui butiran hubungan di Profil Syarikat kami, atau melalui pembantu AI."
+          }
+        }
+      },
+      "terms": {
+        "title": "Terma & Syarat",
+        "intro": "Asas penggunaan JobGiga, untuk majikan dan pencari kerja.",
+        "sections": {
+          "using": {
+            "heading": "Menggunakan JobGiga",
+            "p1": "Anda memerlukan akaun untuk mengiklankan jawatan atau memohonnya. Anda bertanggungjawab memastikan log masuk anda selamat dan atas apa yang berlaku di bawah akaun anda — beritahu kami jika anda fikir orang lain mempunyai akses kepadanya."
+          },
+          "posting": {
+            "heading": "Apa yang anda siarkan",
+            "b1": "Iklan jawatan mesti menerangkan jawatan sebenar yang anda benar-benar ingin isi, dengan gaji, keperluan dan lokasi yang tepat.",
+            "b2": "Profil, resume dan apa-apa dokumen yang anda muat naik (termasuk dokumen pendaftaran SSM) mestilah tepat dan milik anda atau syarikat anda.",
+            "b3": "Tiada iklan jawatan atau kandungan profil yang mendiskriminasi, mengelirukan atau menyalahi undang-undang."
+          },
+          "ai": {
+            "heading": "Ciri AI",
+            "p1": "JobGiga menggunakan AI untuk membaca resume, mendraf iklan jawatan, menulis surat iringan dan menjalankan pembantu. Ia alat untuk mendraf, bukan pembuat keputusan — semak apa sahaja yang dihasilkannya sebelum bergantung padanya, dan anda bertanggungjawab atas apa yang akhirnya anda siarkan atau hantar."
+          },
+          "verification": {
+            "heading": "Pengesahan syarikat",
+            "p1": "Majikan mungkin diminta memuat naik dokumen pendaftaran SSM supaya kami boleh mengesahkan bahawa syarikat itu wujud. Lencana pada syarikat yang disahkan menunjukkan bahawa kami telah menyemak dokumen ini — ia bukan sokongan terhadap syarikat itu atau mana-mana iklan jawatannya."
+          },
+          "prohibited": {
+            "heading": "Apa yang tidak boleh anda lakukan",
+            "b1": "Mengikis, menyalin atau menjual semula data daripada JobGiga.",
+            "b2": "Menyamar sebagai syarikat atau orang lain.",
+            "b3": "Cuba mengakses akaun lain atau data yang tidak sepatutnya anda lihat.",
+            "b4": "Menggunakan platform untuk melakukan apa-apa yang menyalahi undang-undang Malaysia."
+          },
+          "removal": {
+            "heading": "Akaun dan iklan jawatan yang mungkin kami buang",
+            "p1": "Kami mungkin membuang iklan jawatan, menggantung atau menutup akaun yang melanggar terma ini, tanpa menjejaskan penggunaan JobGiga oleh orang lain."
+          },
+          "noGuarantee": {
+            "heading": "Tiada jaminan pengambilan atau pekerjaan",
+            "p1": "JobGiga membantu majikan dan pencari kerja mencari satu sama lain — ia tidak menjamin pengambilan, temu duga, atau tawaran kerja. Keputusan pengambilan sentiasa milik majikan sendiri."
+          },
+          "changes": {
+            "heading": "Perubahan pada terma ini",
+            "p1": "Jika terma ini berubah dengan cara yang penting, kami akan mengemas kini tarikh di bahagian atas dan memaklumkan anda."
+          },
+          "law": {
+            "heading": "Undang-undang yang mentadbir",
+            "p1": "Terma ini ditadbir oleh undang-undang Malaysia."
+          },
+          "contact": {
+            "heading": "Hubungi kami",
+            "p1": "Ada soalan tentang terma ini? Hubungi kami melalui butiran hubungan di Profil Syarikat kami, atau melalui pembantu AI."
+          }
+        }
+      }
+    }
+  },
+  "companies": {
+    "staff": "{{size}} kakitangan",
+    "directory": {
+      "title": "Cari syarikat",
+      "intro": "Setiap syarikat di JobGiga — lihat apa yang mereka buat, di mana mereka berada, dan siapa yang sedang mengambil pekerja.",
+      "searchPlaceholder": "Cari syarikat mengikut nama, industri atau lokasi...",
+      "searchLabel": "Cari syarikat",
+      "industryLabel": "Industri",
+      "allIndustries": "Semua industri",
+      "hiringNow": "Sedang mengambil pekerja",
+      "summaryAll_other": "{{count}} syarikat di JobGiga",
+      "summaryFiltered_other": "{{count}} syarikat sepadan dengan penapis anda",
+      "noneYet": "Belum ada syarikat yang menyertai — sila semak semula nanti.",
+      "noMatches": "Tiada syarikat yang sepadan dengan penapis ini.",
+      "openRoles_other": "{{count}} jawatan kosong",
+      "notHiring": "Tidak mengambil pekerja buat masa ini",
+      "badgesLabel_other": "{{count}} lencana: {{names}}"
+    },
+    "highlights": {
+      "eyebrow": "Syarikat pilihan",
+      "title": "Kenali pasukan yang berkembang bersama JobGiga"
+    },
+    "profile": {
+      "back": "← Semua syarikat",
+      "founded": "Ditubuhkan {{year}}",
+      "verifiedContact": "Hubungan disahkan",
+      "verifiedContactTitle": "Pemilik syarikat telah mengesahkan nombor telefon mereka dengan kod SMS.",
+      "since": "Di JobGiga sejak {{date}}",
+      "badges": "Lencana",
+      "badgesSubtitle": "Pencapaian yang telah dicapai oleh {{company}} di JobGiga.",
+      "about": "Tentang",
+      "benefits": "Faedah",
+      "workplace": "Tempat kerja",
+      "dressCode": "Kod pakaian: {{value}}",
+      "awards": "Anugerah & pengiktirafan",
+      "office": "Pejabat",
+      "offices_other": "Pejabat ({{count}})",
+      "mapTitle": "Peta {{company}} — {{label}}",
+      "openInMaps": "Buka dalam Peta ↗",
+      "openRoles": "Jawatan kosong",
+      "notHiring": "{{company}} tidak mengambil pekerja buat masa ini — sila semak semula nanti.",
+      "signInToApply": "Log masuk untuk memohon →",
+      "getInTouch": "Hubungi",
+      "email": "E-mel",
+      "website": "Laman web",
+      "leadership": "Kepimpinan"
+    },
+    "notFound": {
+      "title": "Syarikat tidak ditemui",
+      "body": "Syarikat ini tiada di JobGiga, atau halamannya telah berpindah."
+    },
+    "responsiveness": {
+      "withinDay": "Biasanya membalas dalam masa sehari",
+      "withinTwoDays": "Biasanya membalas dalam masa 2 hari",
+      "withinWeek": "Biasanya membalas dalam masa seminggu",
+      "slow": "Biasanya lambat membalas",
+      "basedOn_other": "Berdasarkan {{count}} permohonan terkini"
+    },
+    "badges": {
+      "profile_completed": {
+        "label": "Profil syarikat lengkap",
+        "short": "Profil",
+        "description": "Melengkapkan setiap ruangan wajib profil syarikat."
+      },
+      "logo_added": {
+        "label": "Logo ditambah",
+        "short": "Logo",
+        "description": "Memuat naik logo syarikat."
+      },
+      "profile_boosted": {
+        "label": "Profil dipertingkat sepenuhnya",
+        "short": "Hebat",
+        "description": "Mengisi setiap ruangan pilihan yang membantu anda menonjol."
+      },
+      "first_job_posted": {
+        "label": "Jawatan pertama diiklankan",
+        "short": "Jawatan",
+        "description": "Mengiklankan jawatan pertama anda."
+      },
+      "screening_enabled": {
+        "label": "Saringan disediakan",
+        "short": "Saringan",
+        "description": "Menghidupkan syarat saringan untuk iklan jawatan."
+      },
+      "first_candidate_screened": {
+        "label": "Calon pertama disaring",
+        "short": "Disaring",
+        "description": "Memindahkan pemohon melepasi peringkat Dimohon."
+      },
+      "first_hire": {
+        "label": "Pengambilan pertama",
+        "short": "Diambil",
+        "description": "Mengambil calon pertama anda bekerja."
+      },
+      "team_builder": {
+        "label": "Pembina pasukan",
+        "short": "Pasukan",
+        "description": "Menjemput rakan sepasukan."
+      }
+    }
+  }
+}

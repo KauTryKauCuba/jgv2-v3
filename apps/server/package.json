@@ -1,0 +1,23 @@
+{
+	"name": "server",
+	"main": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev --port 4401",
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@jobgiga-app/api": "workspace:*",
+		"@jobgiga-app/auth": "workspace:*",
+		"@jobgiga-app/db": "workspace:*",
+		"@orpc/server": "catalog:",
+		"hono": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250822.0",
+		"@jobgiga-app/config": "workspace:*",
+		"@types/node": "^22.13.11",
+		"typescript": "^5.8.2",
+		"wrangler": "^4.40.3"
+	}
+}

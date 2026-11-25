@@ -1,0 +1,25 @@
+{
+  "show": "Show DB map",
+  "hide": "Hide DB map ({{count}} on this page)",
+  "hint": "Hover an outlined item for details",
+  "kinds": {
+    "both": "Same in v1 and the redesign",
+    "shape": "In both, stored differently",
+    "v2": "New, not in v1: add to v3",
+    "v1": "Only in v1: keep",
+    "skip": "Not needed in v3"
+  },
+  "unknown": "Not in the map yet",
+  "v1": "v1 / v3",
+  "v2": "Redesign",
+  "api": "v1 API",
+  "v1Page": "v1 page",
+  "v3Page": "v3 page",
+  "pageKinds": {
+    "both": "Same as v1's page",
+    "shape": "In both, different content",
+    "v2": "New, not on v1's page",
+    "v1": "Only on v1's page",
+    "skip": "Not needed"
+  }
+}

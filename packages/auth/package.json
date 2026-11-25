@@ -1,0 +1,25 @@
+{
+	"name": "@jobgiga-app/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@jobgiga-app/db": "workspace:*",
+		"better-auth": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250822.0",
+		"@jobgiga-app/config": "workspace:*",
+		"@types/node": "^22.13.11",
+		"typescript": "^5.8.2"
+	}
+}

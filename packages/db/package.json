@@ -1,0 +1,26 @@
+{
+	"name": "@jobgiga-app/db",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./schema/*": "./src/schema/*.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
+	},
+	"dependencies": {
+		"drizzle-orm": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250822.0",
+		"@jobgiga-app/config": "workspace:*",
+		"@types/node": "^22.13.11",
+		"dotenv": "^17.2.2",
+		"drizzle-kit": "^0.31.2",
+		"typescript": "^5.8.2"
+	}
+}

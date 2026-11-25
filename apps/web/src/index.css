@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/landing.css";
+
+/* Brand colours. v1's brand-01/brand-02 names are kept for shared UI; the
+   brand-teal-* / brand-gold-* names come from the redesign's design system
+   (employer = teal, jobseeker = gold) and are what the landing pages use. */
+@theme {
+  --color-bg-01: #E6F3F4;
+  --color-brand-01: #008990;
+  --color-brand-02: #07BCCA;
+  --color-brand-01-100: #E6F8FA;
+
+  --color-brand-teal: #07bcca;
+  --color-brand-teal-dark: #008990;
+  --color-brand-teal-soft: #e6f9fa;
+  --color-brand-teal-page: #f2faf5;
+  --color-brand-gold: #ffe9a6;
+  --color-brand-gold-dark: #a67c00;
+  --color-brand-gold-soft: #fff3d6;
+  --color-brand-gold-page: #fdfaf0;
+  --color-brand-ink: #141b2e;
+}
+
+@theme inline {
+  /* Plus Jakarta Sans, same as v1. */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* The redesign's type scale: every text-* size used on the landing pages. */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 28px;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0); /* #fff */
+  --foreground: oklch(0.2 0.03 265); /* #141b2e brand ink */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.03 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.03 265);
+  --primary: oklch(0.5732 0.097475 201.1407); /* JobGiga teal #008990 */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.7255 0.123 204.33); /* JobGiga cyan #07bcca */
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.97 0 0); /* #f5f5f5 */
+  --muted-foreground: oklch(0.556 0 0); /* #737373 */
+  --accent: oklch(0.7255 0.123 204.33);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325); /* #e7000b */
+  --border: oklch(0.922 0 0); /* #e5e5e5 */
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.7255 0.123 204.33);
+
+  /* Landing page gradients and bands (redesign). */
+  --brand-gradient-employer: linear-gradient(90deg, #00757b 0%, #008990 35%, #07a4af 60%, #c99a1e 100%);
+  --brand-gradient-jobseeker: linear-gradient(90deg, #8a6600 0%, #a67c00 35%, #c99a1e 60%, #0a8f98 100%);
+  --band-employer: #e3f2eb;
+  --band-gradient-employer: linear-gradient(120deg, #ddf0e8 0%, #e3f2eb 45%, #fbf3dc 100%);
+  --band-jobseeker: #f8eed6;
+  --band-gradient-jobseeker: linear-gradient(120deg, #fbefcf 0%, #f8eed6 45%, #dcefeb 100%);
+  --ribbon-teal-light: #5cd8e0;
+  --ribbon-teal-pale: #cff4f6;
+  --ribbon-gold-vivid: #c99a2e;
+}
+
+html,
+body {
+  /* Stops the mobile bounce from revealing white behind the page colour. */
+  overscroll-behavior-y: none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background font-sans;
+    /* Light only — no dark variant exists. */
+    color-scheme: light;
+    color: var(--color-brand-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
