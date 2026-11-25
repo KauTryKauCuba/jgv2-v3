@@ -1,9 +1,10 @@
 {
 	"name": "server",
-	"main": "src/index.ts",
+	"main": "src/worker.ts",
 	"type": "module",
 	"scripts": {
 		"dev": "wrangler dev --port 4401",
+		"dev:bun": "bun run --hot src/bun.ts",
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
@@ -16,6 +17,7 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20250822.0",
 		"@jobgiga-app/config": "workspace:*",
+		"@types/bun": "^1.2.18",
 		"@types/node": "^22.13.11",
 		"typescript": "^5.8.2",
 		"wrangler": "^4.40.3"

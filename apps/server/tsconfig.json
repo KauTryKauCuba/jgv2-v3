@@ -1,6 +1,7 @@
 {
 	"extends": "@jobgiga-app/config/tsconfig.base.json",
 	"compilerOptions": {
+		"types": ["node", "bun", "@cloudflare/workers-types"],
 		"paths": {
 			"@/*": ["./src/*"]
 		}

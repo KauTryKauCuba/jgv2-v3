@@ -1,4 +1,7 @@
 {
 	"extends": "@jobgiga-app/config/tsconfig.base.json",
-	"include": ["src", "env.d.ts", "drizzle.config.ts"]
+	"compilerOptions": {
+		"types": ["node", "bun", "@cloudflare/workers-types"]
+	},
+	"include": ["src", "env.d.ts", "drizzle.config.ts", "drizzle.config.local.ts"]
 }

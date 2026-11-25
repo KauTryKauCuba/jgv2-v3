@@ -1,7 +1,7 @@
 {
 	"$schema": "../../node_modules/wrangler/config-schema.json",
 	"name": "jobgiga-v3-server",
-	"main": "src/index.ts",
+	"main": "src/worker.ts",
 	"compatibility_date": "2026-01-26",
 	"compatibility_flags": ["nodejs_compat"],
 	"vars": {
@@ -13,7 +13,10 @@
 		{
 			"binding": "DB",
 			"database_name": "jobgiga-v3",
-			"database_id": "local-jobgiga-v3"
+			"database_id": "local-jobgiga-v3",
+			// Same folder the Bun/SQLite path migrates from (packages/db) — one
+			// migrations folder for both, per the backend portability plan.
+			"migrations_dir": "../../packages/db/src/migrations"
 		}
 	]
 }
