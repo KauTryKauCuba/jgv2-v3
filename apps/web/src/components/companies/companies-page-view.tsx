@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { AnimatedRibbon } from "@/components/landing/animated-ribbon";
-import { CompanyHighlights } from "@/components/landing/employer/company-highlights";
+import { CompanyHighlights, type HighlightCompany } from "@/components/landing/employer/company-highlights";
 import { Footer } from "@/components/landing/footer";
 import { Navbar } from "@/components/landing/navbar";
 import { listCompanies } from "@/data/companies/sample-companies";
@@ -16,12 +16,26 @@ import { CompanyDirectoryView } from "./company-directory-view";
 export function CompaniesPageView() {
   const { t } = useTranslation("common");
   const companies = listCompanies();
+  // Like the redesign's getEmployersWithPostings(6): companies with postings,
+  // most open roles first, ahead of the curated showcase companies.
+  const highlightCompanies: HighlightCompany[] = companies
+    .filter((c) => c.jobs.length > 0)
+    .sort((a, b) => b.jobs.length - a.jobs.length)
+    .slice(0, 6)
+    .map((c) => ({
+      companyName: c.companyName,
+      industry: c.industry,
+      location: c.location,
+      logoUrl: c.logoUrl,
+      activeCount: c.jobs.length,
+      totalCount: c.jobs.length,
+    }));
 
   return (
     <main className="flex min-h-[100svh] flex-col overflow-x-clip bg-brand-teal-page pb-[92px]">
       <Navbar pageRole="employer" />
       <div className="shell pt-[clamp(2px,calc(9vh-46px),50px)]">
-        <CompanyHighlights variant="page" accent="employer" />
+        <CompanyHighlights variant="page" accent="employer" realCompanies={highlightCompanies} />
         {/* Above the showcase row, on the page's own background, so its cards
             tuck in behind this whole section as the page scrolls. */}
         <div className="relative z-[2] bg-brand-teal-page pt-[32px]">

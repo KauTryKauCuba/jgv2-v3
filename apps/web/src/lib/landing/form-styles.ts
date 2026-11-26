@@ -12,3 +12,13 @@ export function gradientFrameClass(accent: "teal" | "gold" = "gold") {
     ? `rounded-[20px] bg-gradient-to-br from-brand-gold via-white to-brand-gold p-px ${GRADIENT_FRAME_SHADOW}`
     : `rounded-[20px] bg-gradient-to-br from-brand-teal via-white to-brand-teal p-px ${GRADIENT_FRAME_SHADOW}`;
 }
+
+/** The redesign's text input style (formStyles.inputClass). */
+export function inputClass(accent: "teal" | "gold" = "teal") {
+  return `h-[38px] w-full rounded-[12px] border border-black/[0.1] px-[14px] text-sm text-[#141B2E] outline-none placeholder:text-[#9AA3B2] focus:border-brand-${accent === "gold" ? "gold-dark" : "teal-dark"}`;
+}
+
+/** The redesign's textarea style (formStyles.textareaClass). */
+export function textareaClass(accent: "teal" | "gold" = "teal", opts?: { autoResize?: boolean }) {
+  return `w-full rounded-[12px] border border-black/[0.1] px-[14px] py-[10px] text-sm text-[#141B2E] outline-none placeholder:text-[#9AA3B2] focus:border-brand-${accent === "gold" ? "gold-dark" : "teal-dark"}${opts?.autoResize ? " resize-none overflow-hidden" : ""}`;
+}

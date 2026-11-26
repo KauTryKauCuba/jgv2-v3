@@ -800,7 +800,26 @@
       "getInTouch": "Get in touch",
       "email": "Email",
       "website": "Website",
-      "leadership": "Leadership"
+      "leadership": "Leadership",
+      "phone": "Phone",
+      "employmentType": {
+        "full_time": "Full-time",
+        "part_time": "Part-time",
+        "contract": "Contract",
+        "internship": "Internship",
+        "freelance": "Freelance",
+        "temporary": "Temporary"
+      },
+      "workArrangement": {
+        "onsite": "On-site",
+        "hybrid": "Hybrid",
+        "remote": "Remote"
+      },
+      "salary": {
+        "range": "RM{{min}}–{{max}}/{{unit}}",
+        "from": "From RM{{min}}/{{unit}}",
+        "upTo": "Up to RM{{max}}/{{unit}}"
+      }
     },
     "notFound": {
       "title": "Company not found",
@@ -855,6 +874,127 @@
         "short": "Team",
         "description": "Invited a teammate."
       }
+    },
+    "badgesCard": {
+      "title": "Badges",
+      "subtitle": "Milestones your company has reached.",
+      "locked": "Locked"
     }
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "welcomeBack": "Welcome back",
+    "createAccountTitle": "Create your account",
+    "enterEmailToContinue": "Enter your email to continue.",
+    "createAccountSubtitle": "Create your {{role}} account to continue.",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "emailAddress": "Email address",
+    "emailPlaceholder": "you@company.com",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "invalidEmail": "Enter a valid email address.",
+    "sendCodeError": "Couldn't send the code.",
+    "enterYourCode": "Enter your code",
+    "codeSentToPrefix": "We sent a 6-digit code to",
+    "digitLabel": "Digit {{n}} of 6",
+    "verifying": "Verifying…",
+    "verifyCodeError": "That code isn't right.",
+    "createAccountCta": "Create account",
+    "useDifferentEmail": "Use a different email",
+    "resendCode": "Resend code",
+    "resending": "Resending…",
+    "resendError": "Couldn't resend the code.",
+    "signedIn": "Signed in.",
+    "signOut": "Sign out",
+    "signedOut": "Signed out.",
+    "accountNotFound": "We couldn't find an account with that email. Try Get started instead."
+  },
+  "form": {
+    "complete": "Complete",
+    "month": "Month",
+    "year": "Year",
+    "present": "Present",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
+    "phone": {
+      "sendError": "We couldn't send the code. Try again.",
+      "checkError": "We couldn't check the code. Try again.",
+      "mobileOnly": "Only mobile numbers can be verified — we text the code.",
+      "verified": "Phone verified",
+      "changeNumber": "Change number",
+      "verifyPrompt": "Verify this number — get the 6-digit code by:",
+      "calling": "Calling…",
+      "sending": "Sending…",
+      "callMe": "Call me",
+      "textMe": "Text me",
+      "callingHint": "We're calling +60 {{phone}} — answer and listen for the 6-digit code, then enter it here.",
+      "textedHint": "Enter the 6-digit code we texted to +60 {{phone}}.",
+      "codeLabel": "6-digit verification code",
+      "checking": "Checking…",
+      "confirm": "Confirm",
+      "resendIn": "Resend in {{seconds}}s",
+      "callAgain": "Call again",
+      "resendText": "Resend text",
+      "textInstead": "Text me the code instead",
+      "callInstead": "Didn’t get the text? Call me with the code"
+    },
+    "address": {
+      "osmCredit": "Address data © OpenStreetMap contributors"
+    },
+    "place": {
+      "placeholder": "Search a town or area",
+      "searchPlaceholder": "e.g. Kota Damansara, Petaling Jaya",
+      "searchLabel": "Search {{label}}",
+      "typeHint": "Type a town or area…",
+      "searching": "Searching…",
+      "noMatches": "No matches. Try the nearest town.",
+      "busy": "Area search is busy right now, so only towns are shown."
+    },
+    "richText": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list"
+    }
+  },
+  "dashboardPlaceholder": {
+    "title": "Your dashboard is on its way",
+    "body": "Your profile is saved. The dashboard is still being built in this version of JobGiga — check back soon.",
+    "back": "Back to home"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "accountMenu": "Account menu",
+    "aiUsage": "AI Usage",
+    "aiUsageSummary": "{{calls}} calls · {{tokens}} tokens",
+    "loading": "Loading…",
+    "switchTo": "Switch to {{role}}",
+    "switching": "Switching…",
+    "switchError": "Couldn't switch roles.",
+    "roleEmployer": "employer",
+    "roleJobseeker": "jobseeker",
+    "switchConfirm1Title": "Thinking about the {{role}} side too?",
+    "switchConfirm1Body": "Switching now will pause what you’re setting up here and take you to start your {{role}} profile instead. No stress — everything you’ve filled in so far is already saved, so you can hop back and pick up right where you left off, anytime.",
+    "switchConfirm1Yes": "Yes, let’s switch",
+    "switchConfirm1No": "Not right now",
+    "switchConfirm2Title": "Just double-checking!",
+    "switchConfirm2Body": "You’re about to start a separate {{role}} profile under this same account. Ready to go?",
+    "switchConfirm2Yes": "Yes, I’m sure — switch now",
+    "switchConfirm2Back": "Wait, go back"
   }
 }

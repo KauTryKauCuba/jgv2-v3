@@ -535,3 +535,424 @@ export function UserCheckIcon({
     </svg>
   );
 }
+
+export function SignOutIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M6.4 14H3.2a.8.8 0 0 1-.8-.8V2.8a.8.8 0 0 1 .8-.8h3.2" />
+      <path d="M10.4 11.2 13.6 8l-3.2-3.2" />
+      <path d="M13.6 8H6" />
+    </svg>
+  );
+}
+
+export function MicIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <rect x="4.8" y="1.2" width="4.4" height="7" rx="2.2" />
+      <path d="M2.4 6.6a4.6 4.6 0 0 0 9.2 0" />
+      <path d="M7 11.2v1.6M5 12.8h4" />
+    </svg>
+  );
+}
+
+export function ArrowUp({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M7 11.2V3.2M3.4 6.6 7 3l3.6 3.6" />
+    </svg>
+  );
+}
+
+export function DownloadIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M8 2.4v8M4.8 7.2 8 10.4l3.2-3.2" />
+      <path d="M2.4 10.4v2a1.2 1.2 0 0 0 1.2 1.2h8.8a1.2 1.2 0 0 0 1.2-1.2v-2" />
+    </svg>
+  );
+}
+
+export function PaperclipIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable="false">
+      <path d="M13.5 7.5 8 13a3.4 3.4 0 0 1-4.8-4.8l5.6-5.6a2.2 2.2 0 0 1 3.2 3.2L6.4 11.4a1 1 0 0 1-1.5-1.5L10 4.8" />
+    </svg>
+  );
+}
+
+export function RefreshIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable="false">
+      <path d="M13.4 8A5.4 5.4 0 1 1 11.8 4.2L13.4 5.8" />
+      <path d="M13.4 2.6v3.2h-3.2" />
+    </svg>
+  );
+}
+
+export function GiftIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <rect x="2" y="5.5" width="12" height="3" rx="0.8" />
+      <path d="M3 8.5V13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8.5M8 5.5V14" />
+      <path d="M8 5.5C6.8 5.5 5 5 5 3.6 5 2.8 5.6 2.3 6.3 2.3 7.5 2.3 8 4 8 5.5zM8 5.5c1.2 0 3-.5 3-1.9 0-.8-.6-1.3-1.3-1.3C8.5 2.3 8 4 8 5.5z" />
+    </svg>
+  );
+}
+
+/** Two nodes on the left linked to two on the right — the superadmin's Matching page. */
+
+export function ConnectionsIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <circle cx="3" cy="4" r="1.6" />
+      <circle cx="3" cy="12" r="1.6" />
+      <circle cx="13" cy="4" r="1.6" />
+      <circle cx="13" cy="12" r="1.6" />
+      <path d="M4.6 4h6.8M4.5 4.8l7 6.4M4.6 12h6.8" />
+    </svg>
+  );
+}
+
+export function PaletteIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M8 2a6 6 0 0 0 0 12c.9 0 1.4-.6 1.4-1.3 0-.4-.2-.7-.4-1-.2-.3-.4-.6-.4-1 0-.7.6-1.3 1.3-1.3H11a3 3 0 0 0 3-3C14 4.4 11.3 2 8 2z" />
+      <circle cx="5" cy="7" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="7.4" cy="4.6" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="10.6" cy="5.4" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M7 2.4v9.2M2.4 7h9.2" />
+    </svg>
+  );
+}
+
+export function HomeIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M2.4 7.2 8 2.4l5.6 4.8" />
+      <path d="M3.6 6.4v6.8a.8.8 0 0 0 .8.8h7.2a.8.8 0 0 0 .8-.8V6.4" />
+      <path d="M6.4 14V10.4h3.2V14" />
+    </svg>
+  );
+}
+
+export function StackIcon({
+  className = "",
+  strokeWidth = 1.4,
+  style,
+}: {
+  className?: string;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      style={style}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M7 1.4 12.6 4 7 6.6 1.4 4Z" />
+      <path d="M1.4 7 7 9.6 12.6 7" />
+      <path d="M1.4 10 7 12.6 12.6 10" />
+    </svg>
+  );
+}
+
+export function LockIcon({
+  className = "",
+  strokeWidth = 1.4,
+  style,
+}: {
+  className?: string;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      style={style}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <rect x="2.8" y="6.4" width="8.4" height="5.8" rx="1.2" />
+      <path d="M4.6 6.4V4.6a2.4 2.4 0 0 1 4.8 0v1.8" />
+    </svg>
+  );
+}
+
+export function XCircleIcon({
+  className = "",
+  strokeWidth = 1.4,
+  style,
+}: {
+  className?: string;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      style={style}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <circle cx="7" cy="7" r="5.6" />
+      <path d="M5.2 5.2 8.8 8.8M8.8 5.2 5.2 8.8" />
+    </svg>
+  );
+}
+
+export function FlagIcon({
+  className = "",
+  strokeWidth = 1.4,
+  style,
+}: {
+  className?: string;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      style={style}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M3.4 1.4v11.2" />
+      <path d="M3.4 2.2h6.8l-1.8 2.4 1.8 2.4H3.4" />
+    </svg>
+  );
+}
+
+export function HeartIcon({ className = "", filled = false }: { className?: string; filled?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M7 12.2S1.4 8.9 1.4 5.1A2.9 2.9 0 0 1 7 3.6a2.9 2.9 0 0 1 5.6 1.5C12.6 8.9 7 12.2 7 12.2Z" />
+    </svg>
+  );
+}
+
+export function CopyIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <rect x="4.8" y="4.8" width="7.6" height="7.6" rx="1.2" />
+      <path d="M2.6 9.2A1.2 1.2 0 0 1 1.6 8V2.8a1.2 1.2 0 0 1 1.2-1.2H8a1.2 1.2 0 0 1 1.2 1.2" />
+    </svg>
+  );
+}
+
+export function TrashIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M2.2 3.8h9.6" />
+      <path d="M5 3.8V2.4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.4" />
+      <path d="M3.4 3.8 4 12a1 1 0 0 0 1 0.9h4a1 1 0 0 0 1-0.9l0.6-8.2" />
+      <path d="M5.8 6.4v4M8.2 6.4v4" />
+    </svg>
+  );
+}
+
+export function DotsIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 14 14" className={className} fill="currentColor" aria-hidden focusable="false">
+      <circle cx="3" cy="7" r="1.3" />
+      <circle cx="7" cy="7" r="1.3" />
+      <circle cx="11" cy="7" r="1.3" />
+    </svg>
+  );
+}
+
+export function MegaphoneIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M2.4 6.4v3.2a.8.8 0 0 0 .8.8h1.6l6 3.2V2.4l-6 3.2H3.2a.8.8 0 0 0-.8.8Z" />
+      <path d="M4.8 10.4 5.6 14h1.6l-.6-3.2" />
+      <path d="M12.8 6.2a2.4 2.4 0 0 1 0 3.6" />
+    </svg>
+  );
+}
+
+// A 2x2 grid of squares — the navbar's "Tools" menu button (ToolsMenu.tsx).
+
+export function GridIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <rect x="1.4" y="1.4" width="4.6" height="4.6" rx="1" />
+      <rect x="8" y="1.4" width="4.6" height="4.6" rx="1" />
+      <rect x="1.4" y="8" width="4.6" height="4.6" rx="1" />
+      <rect x="8" y="8" width="4.6" height="4.6" rx="1" />
+    </svg>
+  );
+}

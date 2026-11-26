@@ -66,7 +66,7 @@ export function ReleaseNotesView({ role }: { role: ReleaseNoteRole }) {
                   <ul className="mt-[12px] flex flex-col gap-[8px]">
                     {Array.from({ length: release.itemCount }, (_, n) => (
                       <li key={n} className="flex gap-[8px] text-sm leading-[21px] text-[#4B5468]">
-                        <span aria-hidden className={`mt-[8px] h-[4px] w-[4px] shrink-0 rounded-full ${bullet}`} />
+                        <span aria-hidden className={`mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full ${bullet}`} />
                         {t(`${rk}.item${n + 1}`)}
                       </li>
                     ))}

@@ -791,7 +791,26 @@
       "getInTouch": "Hubungi",
       "email": "E-mel",
       "website": "Laman web",
-      "leadership": "Kepimpinan"
+      "leadership": "Kepimpinan",
+      "phone": "Telefon",
+      "employmentType": {
+        "full_time": "Sepenuh masa",
+        "part_time": "Separuh masa",
+        "contract": "Kontrak",
+        "internship": "Latihan industri",
+        "freelance": "Bebas",
+        "temporary": "Sementara"
+      },
+      "workArrangement": {
+        "onsite": "Bersemuka",
+        "hybrid": "Hibrid",
+        "remote": "Jarak jauh"
+      },
+      "salary": {
+        "range": "RM{{min}}–{{max}}/{{unit}}",
+        "from": "Dari RM{{min}}/{{unit}}",
+        "upTo": "Sehingga RM{{max}}/{{unit}}"
+      }
     },
     "notFound": {
       "title": "Syarikat tidak ditemui",
@@ -845,6 +864,127 @@
         "short": "Pasukan",
         "description": "Menjemput rakan sepasukan."
       }
+    },
+    "badgesCard": {
+      "title": "Lencana",
+      "subtitle": "Pencapaian yang telah dicapai syarikat anda.",
+      "locked": "Terkunci"
     }
+  },
+  "auth": {
+    "signIn": "Log masuk",
+    "getStarted": "Mulakan",
+    "welcomeBack": "Selamat kembali",
+    "createAccountTitle": "Cipta akaun anda",
+    "enterEmailToContinue": "Masukkan e-mel anda untuk teruskan.",
+    "createAccountSubtitle": "Cipta akaun {{role}} anda untuk teruskan.",
+    "continueWithGoogle": "Teruskan dengan Google",
+    "or": "atau",
+    "emailAddress": "Alamat e-mel",
+    "emailPlaceholder": "anda@syarikat.com",
+    "sendCode": "Hantar kod",
+    "sending": "Menghantar…",
+    "invalidEmail": "Masukkan alamat e-mel yang sah.",
+    "sendCodeError": "Tidak dapat menghantar kod.",
+    "enterYourCode": "Masukkan kod anda",
+    "codeSentToPrefix": "Kami telah menghantar kod 6-digit ke",
+    "digitLabel": "Digit {{n}} daripada 6",
+    "verifying": "Mengesahkan…",
+    "verifyCodeError": "Kod itu tidak betul.",
+    "createAccountCta": "Cipta akaun",
+    "useDifferentEmail": "Gunakan e-mel lain",
+    "resendCode": "Hantar semula kod",
+    "resending": "Menghantar semula…",
+    "resendError": "Tidak dapat menghantar semula kod.",
+    "signedIn": "Berjaya log masuk.",
+    "signOut": "Log keluar",
+    "signedOut": "Berjaya log keluar.",
+    "accountNotFound": "Kami tidak menjumpai akaun dengan e-mel itu. Cuba Mulakan sebaliknya."
+  },
+  "form": {
+    "complete": "Selesai",
+    "month": "Bulan",
+    "year": "Tahun",
+    "present": "Kini",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mac",
+      "apr": "Apr",
+      "may": "Mei",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Ogo",
+      "sep": "Sep",
+      "oct": "Okt",
+      "nov": "Nov",
+      "dec": "Dis"
+    },
+    "phone": {
+      "sendError": "Kami tidak dapat menghantar kod. Cuba lagi.",
+      "checkError": "Kami tidak dapat menyemak kod. Cuba lagi.",
+      "mobileOnly": "Hanya nombor telefon bimbit boleh disahkan — kami hantar kod melalui SMS.",
+      "verified": "Telefon disahkan",
+      "changeNumber": "Tukar nombor",
+      "verifyPrompt": "Sahkan nombor ini — dapatkan kod 6 digit melalui:",
+      "calling": "Memanggil…",
+      "sending": "Menghantar…",
+      "callMe": "Telefon saya",
+      "textMe": "SMS saya",
+      "callingHint": "Kami sedang memanggil +60 {{phone}} — jawab dan dengar kod 6 digit, kemudian masukkannya di sini.",
+      "textedHint": "Masukkan kod 6 digit yang kami SMS ke +60 {{phone}}.",
+      "codeLabel": "Kod pengesahan 6 digit",
+      "checking": "Menyemak…",
+      "confirm": "Sahkan",
+      "resendIn": "Hantar semula dalam {{seconds}}s",
+      "callAgain": "Telefon lagi",
+      "resendText": "Hantar semula SMS",
+      "textInstead": "SMS kod kepada saya",
+      "callInstead": "Tidak terima SMS? Telefon saya dengan kod"
+    },
+    "address": {
+      "osmCredit": "Data alamat © penyumbang OpenStreetMap"
+    },
+    "place": {
+      "placeholder": "Cari bandar atau kawasan",
+      "searchPlaceholder": "cth. Kota Damansara, Petaling Jaya",
+      "searchLabel": "Cari {{label}}",
+      "typeHint": "Taip bandar atau kawasan…",
+      "searching": "Mencari…",
+      "noMatches": "Tiada padanan. Cuba bandar terdekat.",
+      "busy": "Carian kawasan sibuk sekarang, jadi hanya bandar dipaparkan."
+    },
+    "richText": {
+      "bold": "Tebal",
+      "italic": "Condong",
+      "underline": "Garis bawah",
+      "bulletList": "Senarai titik",
+      "numberedList": "Senarai bernombor"
+    }
+  },
+  "dashboardPlaceholder": {
+    "title": "Papan pemuka anda akan tiba",
+    "body": "Profil anda telah disimpan. Papan pemuka masih dibina dalam versi JobGiga ini — sila kembali nanti.",
+    "back": "Kembali ke laman utama"
+  },
+  "nav": {
+    "dashboard": "Papan pemuka",
+    "accountMenu": "Menu akaun",
+    "aiUsage": "Penggunaan AI",
+    "aiUsageSummary": "{{calls}} panggilan · {{tokens}} token",
+    "loading": "Memuatkan…",
+    "switchTo": "Tukar ke {{role}}",
+    "switching": "Menukar…",
+    "switchError": "Tidak dapat menukar peranan.",
+    "roleEmployer": "majikan",
+    "roleJobseeker": "pencari kerja",
+    "switchConfirm1Title": "Berminat dengan bahagian {{role}} juga?",
+    "switchConfirm1Body": "Menukar sekarang akan menjeda apa yang sedang anda sediakan di sini dan membawa anda untuk memulakan profil {{role}} anda. Jangan risau — semua yang telah anda isi setakat ini sudah disimpan, jadi anda boleh kembali dan sambung semula bila-bila masa.",
+    "switchConfirm1Yes": "Ya, jom tukar",
+    "switchConfirm1No": "Bukan sekarang",
+    "switchConfirm2Title": "Sekadar memastikan!",
+    "switchConfirm2Body": "Anda akan memulakan profil {{role}} yang berasingan di bawah akaun yang sama. Sedia?",
+    "switchConfirm2Yes": "Ya, saya pasti — tukar sekarang",
+    "switchConfirm2Back": "Tunggu, kembali"
   }
 }

@@ -11,3 +11,4 @@ dist
 *.sqlite-shm
 *.sqlite-wal
 *.db
+apps/server/storage/

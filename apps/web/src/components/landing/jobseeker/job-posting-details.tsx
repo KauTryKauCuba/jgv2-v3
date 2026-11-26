@@ -106,10 +106,6 @@ export function JobPostingDetails({ posting }: { posting: JobPosting }) {
   // A remote role with no office address has no map, and no second "Remote"
   // chip next to the work arrangement one.
   const remoteOnly = isRemoteOnly(posting);
-  const responsibilities = posting.responsibilities
-    .split("·")
-    .map((item) => item.trim())
-    .filter(Boolean);
 
   return (
     <>
@@ -137,11 +133,10 @@ export function JobPostingDetails({ posting }: { posting: JobPosting }) {
 
       <div className="mt-[20px]">
         <p className="text-xs text-[#141B2E]">{t(`${K}.jobDescription`)}</p>
-        <ul data-db="job.responsibilities" className="mt-[6px] list-disc pl-[20px] text-sm leading-[22px] text-[#4B5468]">
-          {responsibilities.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
+        {/* Shown as written, like the redesign (one paragraph for the samples). */}
+        <p data-db="job.responsibilities" className="mt-[6px] text-sm leading-[22px] text-[#4B5468]">
+          {posting.responsibilities}
+        </p>
       </div>
 
       {posting.skills.length > 0 && (
@@ -186,14 +181,8 @@ export function JobPostingDetails({ posting }: { posting: JobPosting }) {
         </div>
       )}
 
-      {posting.workAuthorizations.length > 0 && (
-        <div className="mt-[16px]">
-          <p className="text-xs text-[#141B2E]">{t(`${K}.workAuthorization`)}</p>
-          <p data-db="job.work_eligibility" className="mt-[2px] text-sm text-[#4B5468]">
-            {posting.workAuthorizations.map((w) => t(`${K}.workAuthorizationType.${w}`)).join(", ")}
-          </p>
-        </div>
-      )}
+      {/* TODO(api): like the redesign, list work authorization only inside a
+          "Screening requirements" block when the posting has screening on. */}
 
       <div className="mt-[16px]">
         <p className="text-xs text-[#141B2E]">{t(`${K}.location`)}</p>

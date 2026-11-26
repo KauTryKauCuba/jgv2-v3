@@ -19,13 +19,19 @@
 		"@jobgiga-app/auth": "workspace:*",
 		"@jobgiga-app/db": "workspace:*",
 		"@orpc/server": "catalog:",
+		"drizzle-orm": "catalog:",
 		"hono": "catalog:",
+		"malaysia-postcodes": "^3.0.0",
+		"mammoth": "^1.12.2",
+		"sanitize-html": "^2.18.2",
+		"unpdf": "^1.8.1",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20250822.0",
 		"@jobgiga-app/config": "workspace:*",
 		"@types/node": "^22.13.11",
+		"@types/sanitize-html": "^2.16.2",
 		"typescript": "^5.8.2"
 	}
 }

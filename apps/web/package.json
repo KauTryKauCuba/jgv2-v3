@@ -18,6 +18,7 @@
     "@tanstack/react-router": "^1.114.25",
     "better-auth": "catalog:",
     "clsx": "^2.1.1",
+    "dompurify": "^3.5.0",
     "i18next": "^26.2.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^4.0.0",

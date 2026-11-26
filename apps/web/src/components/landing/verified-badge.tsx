@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 // ssmVerificationStatus on employerProfiles).
 
 /** Flat icon for inline status pills (fill follows the text colour). */
-function VerifiedBadgeIcon({ className = "" }: { className?: string }) {
+export function VerifiedBadgeIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
       <circle cx="10" cy="10" r="10" fill="currentColor" />

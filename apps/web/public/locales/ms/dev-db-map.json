@@ -21,5 +21,8 @@
     "v2": "Baharu, tiada di halaman v1",
     "v1": "Hanya di halaman v1",
     "skip": "Tidak diperlukan"
-  }
+  },
+  "v1Only": "v1",
+  "v3": "v3 simpan di",
+  "v3Api": "API v3"
 }

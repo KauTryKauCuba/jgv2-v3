@@ -12,6 +12,7 @@ export function Hero({
   overlay,
   belowNav,
   showRoleToggle = true,
+  subheadingClassName = "mb-[18px]",
 }: {
   heading: React.ReactNode;
   subheading: React.ReactNode;
@@ -21,6 +22,8 @@ export function Hero({
   overlay?: React.ReactNode;
   belowNav?: React.ReactNode;
   showRoleToggle?: boolean;
+  /** Spacing under the subheading — the onboarding pages use a larger gap. */
+  subheadingClassName?: string;
 }) {
   const { t } = useTranslation("common");
   const isJobseeker = useLocation({ select: (location) => location.pathname === "/jobseeker" });
@@ -55,7 +58,7 @@ export function Hero({
           {heading}
         </h1>
 
-        <p className="mx-auto mt-[18px] mb-[18px] max-w-[560px] text-sm leading-[24px] text-[#4B5468]">
+        <p className={`mx-auto mt-[18px] max-w-[560px] text-sm leading-[24px] text-[#4B5468] ${subheadingClassName}`}>
           {subheading}
         </p>
 

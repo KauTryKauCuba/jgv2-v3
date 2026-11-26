@@ -3,9 +3,17 @@
  * dot pattern so a card or page header never shows an empty box. Fills its
  * parent; the parent sets the size and rounding.
  */
-export function CompanyBanner({ url, eager = false }: { url: string | null; eager?: boolean }) {
+export function CompanyBanner({
+  url,
+  className = "",
+  eager = false,
+}: {
+  url: string | null | undefined;
+  className?: string;
+  eager?: boolean;
+}) {
   if (url) {
-    return <img src={url} alt="" loading={eager ? "eager" : "lazy"} className="h-full w-full object-cover" />;
+    return <img src={url} alt="" loading={eager ? "eager" : "lazy"} className={`h-full w-full object-cover ${className}`} />;
   }
   return (
     <div

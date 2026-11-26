@@ -135,7 +135,9 @@ export function Dropdown<T extends string>({
           <ul
             role="listbox"
             aria-label={label}
-            className="flex max-h-[260px] flex-col gap-[2px] overflow-y-auto"
+            className={`flex max-h-[260px] flex-col gap-[2px] overflow-y-auto ${
+              accent === "gold" ? "scrollbar-thin-gold" : "scrollbar-thin-teal"
+            }`}
           >
             {filteredOptions.length === 0 ? (
               <li className="px-[10px] py-[10px] text-sm text-[#9AA3B2]">{t("common.dropdown.noMatches")}</li>

@@ -1,4 +1,5 @@
 import { FIELD_MAP, type FieldKind } from "./field-data";
+import { ONBOARDING } from "./onboarding";
 
 // Development-only: what each `data-db="…"` element on the pages maps to.
 // Most keys are database fields; "about.page" compares v3's About pages with
@@ -16,6 +17,10 @@ export interface DbMapEntry {
   /** The v1 API call (oRPC procedure) that reads or writes it, if any. */
   api?: string;
   note?: string;
+  /** Where v3 actually saves it today (onboarding fields). */
+  v3?: string;
+  /** The v3 API call (oRPC procedure) that saves it. */
+  v3Api?: string;
   /** A page compared with v1's page, not a database field. */
   page?: boolean;
 }
@@ -197,7 +202,7 @@ const ACTIONS: Record<string, DbMapEntry> = {
 
 /** What a `data-db` key maps to, or undefined when the key is unknown. */
 export function lookupDbKey(key: string): DbMapEntry | undefined {
-  const action = ACTIONS[key] ?? PAGE_SECTIONS[key];
+  const action = ACTIONS[key] ?? PAGE_SECTIONS[key] ?? ONBOARDING[key];
   if (action) return action;
   const dot = key.indexOf(".");
   const table = key.slice(0, dot);

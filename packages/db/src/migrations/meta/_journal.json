@@ -8,6 +8,48 @@
       "when": 1795636694210,
       "tag": "0000_bright_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795639679599,
+      "tag": "0001_smooth_scarecrow",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795639909165,
+      "tag": "0002_zippy_sunset_bain",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1795640335263,
+      "tag": "0003_material_white_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1795640794750,
+      "tag": "0004_glossy_stellaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1795647551873,
+      "tag": "0005_same_mysterio",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795652584865,
+      "tag": "0006_short_reaper",
+      "breakpoints": true
     }
   ]
 }

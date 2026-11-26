@@ -1,0 +1,1 @@
+ALTER TABLE `jobseeker_profile` ADD `bio` text;

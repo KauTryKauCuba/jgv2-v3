@@ -63,6 +63,8 @@ export interface Company {
   leaders: { name: string; title: string; photoUrl: string | null }[];
   addresses: CompanyAddress[];
   email: string | null;
+  /** None in the sample data; shown in Get in touch when set. */
+  phone?: string | null;
   websiteUrl: string | null;
   /** Social pages, as in v1's organization (linkedinUrl, facebookUrl, instagramUrl). */
   linkedinUrl: string | null;

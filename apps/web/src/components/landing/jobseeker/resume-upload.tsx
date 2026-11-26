@@ -1,12 +1,18 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { showComingSoon } from "@/lib/coming-soon";
 import { gradientFrameClass } from "@/lib/landing/form-styles";
+import { AuthModal } from "../auth-modal";
 import { FileIcon, UploadIcon, XIcon } from "../icons";
 
 const ACCEPT = ".pdf,.doc,.docx";
 const ACCEPTED_EXTENSIONS = ["pdf", "doc", "docx"];
 const MAX_BYTES = 10 * 1024 * 1024;
+
+// From the redesign: the picked file is handed to the onboarding form through
+// sessionStorage (as a base64 data URL, which inflates size ~33% — so capped
+// well under browser storage quotas), then parsed there after sign-up.
+const HANDOFF_MAX_BYTES = 4 * 1024 * 1024;
+export const PENDING_RESUME_KEY = "jobgiga:pendingResume";
 
 function formatSize(bytes: number) {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -15,8 +21,10 @@ function formatSize(bytes: number) {
 
 /**
  * The jobseeker hero's resume upload: pick or drop a file, then Continue.
- * The file is checked here (type and size); sending it needs the backend.
- * TODO(api): on Continue, upload the resume and start sign-up.
+ * The file is checked here (type and size). Continue hands it to the
+ * onboarding form (see PENDING_RESUME_KEY) and opens "Get started"; after
+ * sign-up the visitor lands on onboarding, where it's parsed — the
+ * redesign's flow.
  */
 export function ResumeUpload() {
   const { t } = useTranslation("common");
@@ -24,6 +32,7 @@ export function ResumeUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   function handleFiles(files: FileList | null) {
     const picked = files?.[0];
@@ -44,6 +53,28 @@ export function ResumeUpload() {
 
     setError(null);
     setFile(picked);
+  }
+
+  function handleContinue() {
+    if (!file) return;
+    if (file.size > HANDOFF_MAX_BYTES) {
+      setShowSignup(true);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        sessionStorage.setItem(
+          PENDING_RESUME_KEY,
+          JSON.stringify({ name: file.name, type: file.type, dataUrl: reader.result }),
+        );
+      } catch {
+        // Storage full/unavailable — the onboarding page just starts blank.
+      }
+      setShowSignup(true);
+    };
+    reader.onerror = () => setShowSignup(true);
+    reader.readAsDataURL(file);
   }
 
   function clear() {
@@ -119,11 +150,20 @@ export function ResumeUpload() {
           type="button"
           data-db="action.signUp"
           disabled={!file}
-          onClick={showComingSoon}
+          onClick={handleContinue}
           className="mt-[16px] flex h-[38px] w-full items-center justify-center rounded-full bg-brand-gold text-sm text-[#141B2E] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {t("landing.jobseeker.upload.continue")}
         </button>
+
+        {showSignup && (
+          <AuthModal
+            mode="get-started"
+            role="jobseeker"
+            onClose={() => setShowSignup(false)}
+            onAuthenticated={() => setShowSignup(false)}
+          />
+        )}
       </div>
     </div>
   );

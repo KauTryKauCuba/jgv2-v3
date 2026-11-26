@@ -26,11 +26,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
 	head: () => ({
 		meta: [
-			{ title: "JobGiga - Find Your Next Opportunity" },
+			{ title: "JobGiga — Hiring in Malaysia, without the forms" },
 			{
 				name: "description",
 				content:
-					"Discover thousands of job openings or hire exceptional talent for your team. JobGiga connects job seekers with top employers.",
+					"Talk to an AI assistant that builds your job post or profile, finds the right matches, and keeps everyone in the loop.",
 			},
 		],
 	}),

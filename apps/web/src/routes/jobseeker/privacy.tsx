@@ -5,7 +5,7 @@ export const Route = createFileRoute("/jobseeker/privacy")({
   component: JobseekerPrivacyPage,
   head: () => ({
     meta: [
-      { title: "Privacy · JobGiga for jobseekers" },
+      { title: "Privacy Policy · JobGiga for jobseekers" },
       { name: "description", content: "What JobGiga collects, why, and what you can do about it." },
     ],
   }),

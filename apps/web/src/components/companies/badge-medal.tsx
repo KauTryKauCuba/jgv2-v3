@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { BadgeDefinition, BadgeKey } from "@/lib/companies/badges";
+import { LockIcon } from "@/components/landing/icons";
 
 const CX = 50;
 const CY = 46;
@@ -81,13 +82,16 @@ function pale(hex: string, amount = 0.35): string {
  * One earned badge as a glossy medal, from the redesign: each badge has its
  * own silhouette and colour, with its short name on the ribbon.
  */
-export function BadgeMedal({ badge }: { badge: BadgeDefinition }) {
+// `earned: false` draws the redesign's grey, locked version (onboarding's
+// badges card shows every badge, earned or not). Defaults to earned, so the
+// company page's existing calls are unchanged.
+export function BadgeMedal({ badge, earned = true }: { badge: BadgeDefinition; earned?: boolean }) {
   const { t } = useTranslation("common");
   const id = `medal-${badge.key}`;
-  const from = pale(badge.colorFrom);
-  const to = pale(badge.colorTo);
-  const ribbon = pale(badge.ribbon);
-  const ribbonTail = pale(badge.ribbon, 0.15);
+  const from = earned ? pale(badge.colorFrom) : "#E4E7EC";
+  const to = earned ? pale(badge.colorTo) : "#B4BAC6";
+  const ribbon = earned ? pale(badge.ribbon) : "#A9B0BC";
+  const ribbonTail = earned ? pale(badge.ribbon, 0.15) : "#8E96A3";
   const frame = FRAMES[badge.key];
   const Icon = badge.icon;
 
@@ -163,17 +167,19 @@ export function BadgeMedal({ badge }: { badge: BadgeDefinition }) {
           </g>
         ))}
 
-        <g clipPath={`url(#${id}-clip)`}>
-          <rect
-            x={CX - 54}
-            y={CY - 54}
-            width="108"
-            height="108"
-            fill={`url(#${id}-shine)`}
-            className="badge-shine"
-            style={{ transformBox: "fill-box", transformOrigin: "center" }}
-          />
-        </g>
+        {earned && (
+          <g clipPath={`url(#${id}-clip)`}>
+            <rect
+              x={CX - 54}
+              y={CY - 54}
+              width="108"
+              height="108"
+              fill={`url(#${id}-shine)`}
+              className="badge-shine"
+              style={{ transformBox: "fill-box", transformOrigin: "center" }}
+            />
+          </g>
+        )}
 
         {/* Ribbon tails, then the arched banner across the lower disc */}
         <path d="M5 67 L20 67 L20 81 L5 81 L10 74 Z" fill={ribbonTail} />
@@ -193,7 +199,11 @@ export function BadgeMedal({ badge }: { badge: BadgeDefinition }) {
       </svg>
 
       <div className="absolute left-1/2 top-[40%] h-[22.4%] w-[22.4%] -translate-x-1/2 -translate-y-1/2">
-        <Icon className="h-full w-full text-white" strokeWidth={1.1} />
+        {earned ? (
+          <Icon className="h-full w-full text-white" strokeWidth={1.1} />
+        ) : (
+          <LockIcon className="h-full w-full text-white/90" />
+        )}
       </div>
     </div>
   );

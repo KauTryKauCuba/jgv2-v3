@@ -21,5 +21,8 @@
     "v2": "New, not on v1's page",
     "v1": "Only on v1's page",
     "skip": "Not needed"
-  }
+  },
+  "v1Only": "v1",
+  "v3": "v3 saves to",
+  "v3Api": "v3 API"
 }

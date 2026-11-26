@@ -70,7 +70,7 @@ export function LegalPageView({ role, doc }: { role: Role; doc: LegalDocId }) {
                     <ul className="mt-[8px] flex flex-col gap-[7px]">
                       {Array.from({ length: section.bullets }, (_, n) => (
                         <li key={`b${n}`} className="flex gap-[8px] text-sm leading-[21px] text-[#4B5468]">
-                          <span aria-hidden className={`mt-[8px] h-[4px] w-[4px] shrink-0 rounded-full ${bullet}`} />
+                          <span aria-hidden className={`mt-[7px] h-[4px] w-[4px] shrink-0 rounded-full ${bullet}`} />
                           {t(`${sk}.b${n + 1}`)}
                         </li>
                       ))}

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { sampleJobAdFill } from "@/data/landing/sample-job-ads";
 import { buildDisplayPostings, type JobPosting } from "@/data/landing/sample-job-postings";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { showComingSoon } from "@/lib/coming-soon";
 import { getRevealOffset, getRevealStyle } from "@/lib/landing/card-reveal";
 import { gradientFrameClass } from "@/lib/landing/form-styles";
 import { locationLabel } from "@/lib/landing/job-format";
@@ -326,9 +325,10 @@ export function JobPostingHighlights({
                 <p className="mt-[24px] text-xs text-[#9AA3B2]">{t(`${K}.sampleListing`)}</p>
               ) : (
                 <p className="mt-[24px] text-xs text-[#4B5468]">
-                  <button type="button" data-db="action.apply" onClick={showComingSoon} className="text-brand-gold-dark hover:underline">
+                  {/* Like the redesign: back up to the hero to sign in. */}
+                  <a href="#top" data-db="action.apply" className="text-brand-gold-dark hover:underline">
                     {t(`${K}.signInToApply`)}
-                  </button>{" "}
+                  </a>{" "}
                   {t(`${K}.toApply`)}
                 </p>
               )}

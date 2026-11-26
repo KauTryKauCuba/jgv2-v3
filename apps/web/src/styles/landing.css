@@ -435,23 +435,37 @@
   }
 }
 
-/* Badge medals (companies): a soft shine sweeps across earned medals. */
-@keyframes badge-shine {
-  0% {
-    transform: translateX(-120%) rotate(20deg);
-  }
-  55%,
-  100% {
-    transform: translateX(140%) rotate(20deg);
-  }
+/* Dropdown option lists: a thin scrollbar in the form's accent (teal for
+   employer, gold for jobseeker), from the redesign. */
+.scrollbar-thin-teal,
+.scrollbar-thin-gold {
+  scrollbar-width: thin;
 }
 
-.badge-shine {
-  animation: badge-shine 3.2s ease-in-out infinite;
+.scrollbar-thin-teal {
+  scrollbar-color: var(--color-brand-teal-dark) transparent;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .badge-shine {
-    animation: none;
-  }
+.scrollbar-thin-gold {
+  scrollbar-color: var(--color-brand-gold-dark) transparent;
+}
+
+.scrollbar-thin-teal::-webkit-scrollbar,
+.scrollbar-thin-gold::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin-teal::-webkit-scrollbar-track,
+.scrollbar-thin-gold::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin-teal::-webkit-scrollbar-thumb {
+  background-color: var(--color-brand-teal-dark);
+  border-radius: 999px;
+}
+
+.scrollbar-thin-gold::-webkit-scrollbar-thumb {
+  background-color: var(--color-brand-gold-dark);
+  border-radius: 999px;
 }

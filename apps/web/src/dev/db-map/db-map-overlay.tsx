@@ -147,9 +147,11 @@ function HoverCard({ dbKey, entry, x, y }: { dbKey: string; entry?: DbMapEntry; 
       <span className="text-[11.5px] font-semibold" style={{ color: colour }}>
         {entry ? t(entry.page ? `pageKinds.${entry.kind}` : `kinds.${entry.kind}`) : t("unknown")}
       </span>
-      <Line label={entry?.page ? t("v1Page") : t("v1")} value={entry?.v1 ?? dbKey} plain={entry?.page} />
+      <Line label={entry?.page ? t("v1Page") : entry?.v3 ? t("v1Only") : t("v1")} value={entry?.v1 ?? dbKey} plain={entry?.page} />
       <Line label={entry?.page ? t("v3Page") : t("v2")} value={entry?.v2 ?? "—"} plain={entry?.page} />
+      {entry?.v3 && <Line label={t("v3")} value={entry.v3} />}
       {entry?.api && <Line label={t("api")} value={entry.api} />}
+      {entry?.v3Api && <Line label={t("v3Api")} value={entry.v3Api} />}
       {entry?.note && <p className="text-[#4B5468]">{entry.note}</p>}
     </div>
   );

@@ -10,16 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies/$companyId'
 import { Route as EmployerIndexRouteImport } from './routes/employer/index'
 import { Route as EmployerAboutRouteImport } from './routes/employer/about'
+import { Route as EmployerDashboardRouteImport } from './routes/employer/dashboard'
+import { Route as EmployerOnboardingRouteImport } from './routes/employer/onboarding'
 import { Route as EmployerPrivacyRouteImport } from './routes/employer/privacy'
 import { Route as EmployerReleaseNotesRouteImport } from './routes/employer/release-notes'
 import { Route as EmployerSecurityRouteImport } from './routes/employer/security'
 import { Route as EmployerTermsRouteImport } from './routes/employer/terms'
 import { Route as JobseekerIndexRouteImport } from './routes/jobseeker/index'
 import { Route as JobseekerAboutRouteImport } from './routes/jobseeker/about'
+import { Route as JobseekerDashboardRouteImport } from './routes/jobseeker/dashboard'
+import { Route as JobseekerOnboardingRouteImport } from './routes/jobseeker/onboarding'
 import { Route as JobseekerPrivacyRouteImport } from './routes/jobseeker/privacy'
 import { Route as JobseekerReleaseNotesRouteImport } from './routes/jobseeker/release-notes'
 import { Route as JobseekerSecurityRouteImport } from './routes/jobseeker/security'
@@ -28,6 +37,31 @@ import { Route as JobseekerTermsRouteImport } from './routes/jobseeker/terms'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReleaseNotesRoute = ReleaseNotesRouteImport.update({
+  id: '/release-notes',
+  path: '/release-notes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
@@ -48,6 +82,16 @@ const EmployerIndexRoute = EmployerIndexRouteImport.update({
 const EmployerAboutRoute = EmployerAboutRouteImport.update({
   id: '/employer/about',
   path: '/employer/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerDashboardRoute = EmployerDashboardRouteImport.update({
+  id: '/employer/dashboard',
+  path: '/employer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerOnboardingRoute = EmployerOnboardingRouteImport.update({
+  id: '/employer/onboarding',
+  path: '/employer/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployerPrivacyRoute = EmployerPrivacyRouteImport.update({
@@ -80,6 +124,16 @@ const JobseekerAboutRoute = JobseekerAboutRouteImport.update({
   path: '/jobseeker/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JobseekerDashboardRoute = JobseekerDashboardRouteImport.update({
+  id: '/jobseeker/dashboard',
+  path: '/jobseeker/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobseekerOnboardingRoute = JobseekerOnboardingRouteImport.update({
+  id: '/jobseeker/onboarding',
+  path: '/jobseeker/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobseekerPrivacyRoute = JobseekerPrivacyRouteImport.update({
   id: '/jobseeker/privacy',
   path: '/jobseeker/privacy',
@@ -103,13 +157,22 @@ const JobseekerTermsRoute = JobseekerTermsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/privacy': typeof PrivacyRoute
+  '/release-notes': typeof ReleaseNotesRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
+  '/jobseeker/dashboard': typeof JobseekerDashboardRoute
+  '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
   '/jobseeker/privacy': typeof JobseekerPrivacyRoute
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
@@ -120,13 +183,22 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/privacy': typeof PrivacyRoute
+  '/release-notes': typeof ReleaseNotesRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
+  '/jobseeker/dashboard': typeof JobseekerDashboardRoute
+  '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
   '/jobseeker/privacy': typeof JobseekerPrivacyRoute
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
@@ -138,13 +210,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/privacy': typeof PrivacyRoute
+  '/release-notes': typeof ReleaseNotesRoute
+  '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
+  '/jobseeker/dashboard': typeof JobseekerDashboardRoute
+  '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
   '/jobseeker/privacy': typeof JobseekerPrivacyRoute
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
@@ -157,13 +238,22 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/privacy'
+    | '/release-notes'
+    | '/security'
+    | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/dashboard'
+    | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
     | '/jobseeker/about'
+    | '/jobseeker/dashboard'
+    | '/jobseeker/onboarding'
     | '/jobseeker/privacy'
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
@@ -174,13 +264,22 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/privacy'
+    | '/release-notes'
+    | '/security'
+    | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/dashboard'
+    | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
     | '/jobseeker/about'
+    | '/jobseeker/dashboard'
+    | '/jobseeker/onboarding'
     | '/jobseeker/privacy'
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
@@ -191,13 +290,22 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/privacy'
+    | '/release-notes'
+    | '/security'
+    | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/dashboard'
+    | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
     | '/jobseeker/about'
+    | '/jobseeker/dashboard'
+    | '/jobseeker/onboarding'
     | '/jobseeker/privacy'
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
@@ -209,13 +317,22 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ReleaseNotesRoute: typeof ReleaseNotesRoute
+  SecurityRoute: typeof SecurityRoute
+  TermsRoute: typeof TermsRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   EmployerAboutRoute: typeof EmployerAboutRoute
+  EmployerDashboardRoute: typeof EmployerDashboardRoute
+  EmployerOnboardingRoute: typeof EmployerOnboardingRoute
   EmployerPrivacyRoute: typeof EmployerPrivacyRoute
   EmployerReleaseNotesRoute: typeof EmployerReleaseNotesRoute
   EmployerSecurityRoute: typeof EmployerSecurityRoute
   EmployerTermsRoute: typeof EmployerTermsRoute
   JobseekerAboutRoute: typeof JobseekerAboutRoute
+  JobseekerDashboardRoute: typeof JobseekerDashboardRoute
+  JobseekerOnboardingRoute: typeof JobseekerOnboardingRoute
   JobseekerPrivacyRoute: typeof JobseekerPrivacyRoute
   JobseekerReleaseNotesRoute: typeof JobseekerReleaseNotesRoute
   JobseekerSecurityRoute: typeof JobseekerSecurityRoute
@@ -232,6 +349,41 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/release-notes': {
+      id: '/release-notes'
+      path: '/release-notes'
+      fullPath: '/release-notes'
+      preLoaderRoute: typeof ReleaseNotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies/': {
@@ -260,6 +412,20 @@ declare module '@tanstack/react-router' {
       path: '/employer/about'
       fullPath: '/employer/about'
       preLoaderRoute: typeof EmployerAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/dashboard': {
+      id: '/employer/dashboard'
+      path: '/employer/dashboard'
+      fullPath: '/employer/dashboard'
+      preLoaderRoute: typeof EmployerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/onboarding': {
+      id: '/employer/onboarding'
+      path: '/employer/onboarding'
+      fullPath: '/employer/onboarding'
+      preLoaderRoute: typeof EmployerOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employer/privacy': {
@@ -304,6 +470,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobseekerAboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/jobseeker/dashboard': {
+      id: '/jobseeker/dashboard'
+      path: '/jobseeker/dashboard'
+      fullPath: '/jobseeker/dashboard'
+      preLoaderRoute: typeof JobseekerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jobseeker/onboarding': {
+      id: '/jobseeker/onboarding'
+      path: '/jobseeker/onboarding'
+      fullPath: '/jobseeker/onboarding'
+      preLoaderRoute: typeof JobseekerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobseeker/privacy': {
       id: '/jobseeker/privacy'
       path: '/jobseeker/privacy'
@@ -337,13 +517,22 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  PrivacyRoute: PrivacyRoute,
+  ReleaseNotesRoute: ReleaseNotesRoute,
+  SecurityRoute: SecurityRoute,
+  TermsRoute: TermsRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   EmployerAboutRoute: EmployerAboutRoute,
+  EmployerDashboardRoute: EmployerDashboardRoute,
+  EmployerOnboardingRoute: EmployerOnboardingRoute,
   EmployerPrivacyRoute: EmployerPrivacyRoute,
   EmployerReleaseNotesRoute: EmployerReleaseNotesRoute,
   EmployerSecurityRoute: EmployerSecurityRoute,
   EmployerTermsRoute: EmployerTermsRoute,
   JobseekerAboutRoute: JobseekerAboutRoute,
+  JobseekerDashboardRoute: JobseekerDashboardRoute,
+  JobseekerOnboardingRoute: JobseekerOnboardingRoute,
   JobseekerPrivacyRoute: JobseekerPrivacyRoute,
   JobseekerReleaseNotesRoute: JobseekerReleaseNotesRoute,
   JobseekerSecurityRoute: JobseekerSecurityRoute,

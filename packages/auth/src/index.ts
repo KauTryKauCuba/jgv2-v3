@@ -1,20 +1,73 @@
-// Better-Auth setup goes here, as in v1's packages/auth.
+import { betterAuth, type BetterAuthOptions } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { admin, bearer, emailOTP } from "better-auth/plugins";
+import * as schema from "@jobgiga-app/db/schema/auth";
+
+export type CreateAuthOptions = {
+	// The drizzle instance the entrypoint built (D1 on Cloudflare, SQLite
+	// file on Bun/VPS) — same shared auth schema either way.
+	db: unknown;
+	corsOrigins: string[];
+	secret: string;
+	baseURL: string;
+};
+
+// Built as a factory instead of reading `cloudflare:workers` directly, so
+// both entrypoints (worker.ts, bun.ts) can each build their own instance
+// from the config/db they already picked.
 //
-// It needs the login tables (user, session, account, verification, plus
-// organization and member for the organization plugin) in packages/db first.
-// Once they exist, export the configured instance, for example:
-//
-//   import { betterAuth } from "better-auth";
-//   import { drizzleAdapter } from "better-auth/adapters/drizzle";
-//   import { admin, organization, bearer } from "better-auth/plugins";
-//   import { db } from "@jobgiga-app/db";
-//   import * as schema from "@jobgiga-app/db/schema/auth";
-//
-//   export const auth = betterAuth({
-//     database: drizzleAdapter(db, { provider: "sqlite", schema }),
-//     emailAndPassword: { enabled: true },
-//     plugins: [admin(), organization(), bearer()],
-//   });
-//
-// then mount it in apps/server at /api/auth/*.
-export {};
+// Auth flow matches the redesign's AuthModal, not v1's password-based
+// login: email + 6-digit code (no password field at all), with Google as
+// an alternative. That's Better-Auth's `emailOTP` plugin, not
+// `emailAndPassword`.
+// - Social providers (Google, LinkedIn, Apple) left out for this step —
+//   OTP only, to start.
+// - The `organization` plugin left out — it expects a `name` field on the
+//   organization table, but ours uses v1's `legalName`/`displayName`
+//   columns instead. Add it back (with a field mapping, or once v1's org
+//   creation flow is ported) alongside Phase 2/3's company features.
+export function createAuth({ db, corsOrigins, secret, baseURL }: CreateAuthOptions) {
+	return betterAuth<BetterAuthOptions>({
+		// biome-ignore lint: drizzleAdapter's db param type is driver-specific (D1 vs bun-sqlite);
+		// both satisfy the same shape at runtime, so this stays loosely typed here.
+		database: drizzleAdapter(db as any, {
+			provider: "sqlite",
+			schema,
+		}),
+		trustedOrigins: corsOrigins,
+		plugins: [
+			bearer(),
+			admin({
+				defaultRole: "user",
+				adminRoles: ["admin"],
+			}),
+			emailOTP({
+				otpLength: 6,
+				expiresIn: 5 * 60, // 5 minutes, same as the redesign's modal copy
+				// New accounts are created on first OTP verification — the
+				// redesign's "Send code" / "Get started" flows both end up here;
+				// the role (employer/jobseeker) is decided by the caller, not by
+				// this plugin, same as v1's separate sign-up step.
+				disableSignUp: false,
+				async sendVerificationOTP({ email, otp, type }) {
+					// TODO(api): send through Resend once a key is provided (Phase 1).
+					// Dev mode: print the code so sign-in is testable without one.
+					console.log(`[auth] OTP for ${email} (${type}): ${otp}`);
+				},
+			}),
+			// TODO(auth): add the `organization` plugin back once its field
+			// mapping/org-creation flow is sorted (see note above).
+		],
+		secret,
+		baseURL,
+		advanced: {
+			defaultCookieAttributes: {
+				sameSite: baseURL.startsWith("https") ? "none" : "lax",
+				secure: baseURL.startsWith("https"),
+				httpOnly: true,
+			},
+		},
+	});
+}
+
+export type Auth = ReturnType<typeof createAuth>;

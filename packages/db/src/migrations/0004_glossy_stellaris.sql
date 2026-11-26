@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `phone_verified` integer DEFAULT false NOT NULL;

@@ -7,7 +7,7 @@ import { Navbar } from "@/components/landing/navbar";
 import type { Company } from "@/data/companies/sample-companies";
 import { earnedBadges } from "@/lib/companies/badges";
 import { gradientFrameClass } from "@/lib/landing/form-styles";
-import { formatSalary } from "@/lib/landing/job-format";
+import { formatSalaryCompact } from "@/lib/landing/job-format";
 import { BadgeMedal } from "./badge-medal";
 import { CompanyBanner } from "./company-banner";
 import { CompanyLogo } from "./company-logo";
@@ -268,31 +268,35 @@ export function CompanyProfileView({ company }: { company: Company }) {
                   </p>
                 ) : (
                   <div className="mt-[12px] flex flex-col gap-[8px]">
-                    {company.jobs.map((job) => (
-                      // The job page needs sign-in, so everyone goes to the job seeker page first.
-                      <Link
-                        key={job.id}
-                        to="/jobseeker"
-                        hash="job-search"
-                        data-db="action.apply"
-                        className="group flex flex-col gap-[4px] rounded-[12px] border border-[#EAEDF2] bg-[#F8FAFB] p-[14px] transition-colors hover:border-black/[0.15] hover:bg-white sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate text-sm text-[#141B2E] group-hover:underline">{job.title}</p>
-                          <p className="mt-[2px] truncate text-xs text-[#9AA3B2]">
-                            {[
-                              job.location,
-                              t(`landing.jobs.employmentType.${job.employmentType}`),
-                              t(`landing.jobs.workArrangement.${job.workArrangement}`),
-                            ].join(" · ")}
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-[10px]">
-                          {job.showSalary && <span className="text-xs text-[#4B5468]">{formatSalary(job, t)}</span>}
-                          <span className={`text-xs ${accentText}`}>{t("companies.profile.signInToApply")}</span>
-                        </div>
-                      </Link>
-                    ))}
+                    {company.jobs.map((job) => {
+                      const salary = job.showSalary ? formatSalaryCompact(job, t) : null;
+                      return (
+                        // The job page needs sign-in, so everyone goes to the job seeker page first.
+                        <Link
+                          key={job.id}
+                          to="/jobseeker"
+                          data-db="action.apply"
+                          className="group flex flex-col gap-[4px] rounded-[12px] border border-[#EAEDF2] bg-[#F8FAFB] p-[14px] transition-colors hover:border-black/[0.15] hover:bg-white sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate text-sm text-[#141B2E] group-hover:underline">{job.title}</p>
+                            <p className="mt-[2px] truncate text-xs text-[#9AA3B2]">
+                              {[
+                                job.location,
+                                t(`companies.profile.employmentType.${job.employmentType}`),
+                                t(`companies.profile.workArrangement.${job.workArrangement}`),
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-[10px]">
+                            {salary && <span className="text-xs text-[#4B5468]">{salary}</span>}
+                            <span className={`text-xs ${accentText}`}>{t("companies.profile.signInToApply")}</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -301,16 +305,31 @@ export function CompanyProfileView({ company }: { company: Company }) {
 
           {/* 300px side column; stacks below the main column on smaller screens. */}
           <div className="flex w-full max-w-[300px] flex-col gap-[20px] lg:sticky lg:top-[24px]">
-            {(company.email || links.length > 0) && (
+            {(company.email || company.phone || links.length > 0) && (
               <div className={gradientFrameClass("teal")}>
                 <div className="flex flex-col gap-[8px] rounded-[19px] bg-white p-[16px] sm:p-[22px]">
                   <p className={sectionTitle}>{t("companies.profile.getInTouch")}</p>
-                  {company.email && (
-                    <div className="min-w-0 border-b border-black/[0.06] pb-[10px]" data-db="organization.email">
-                      <p className="text-xs text-[#9AA3B2]">{t("companies.profile.email")}</p>
-                      <a href={`mailto:${company.email}`} className={`block truncate text-sm hover:underline ${accentText}`}>
-                        {company.email}
-                      </a>
+                  {(company.email || company.phone) && (
+                    <div className="flex flex-col gap-[8px] border-b border-black/[0.06] pb-[10px]">
+                      {company.email && (
+                        <div className="min-w-0" data-db="organization.email">
+                          <p className="text-xs text-[#9AA3B2]">{t("companies.profile.email")}</p>
+                          <a href={`mailto:${company.email}`} className={`block truncate text-sm hover:underline ${accentText}`}>
+                            {company.email}
+                          </a>
+                        </div>
+                      )}
+                      {company.phone && (
+                        <div className="min-w-0" data-db="organization.phone">
+                          <p className="text-xs text-[#9AA3B2]">{t("companies.profile.phone")}</p>
+                          <a
+                            href={`tel:${company.phone.replace(/[^\d+]/g, "")}`}
+                            className={`block truncate text-sm hover:underline ${accentText}`}
+                          >
+                            {company.phone}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
                   {links.map((link) => (

@@ -8,6 +8,8 @@ import { toast } from "sonner";
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
 		onError: (error, query) => {
+			if (query.meta?.suppressErrorToast) return;
+
 			if (error instanceof ORPCError && error.code === "NOT_FOUND") return;
 			toast.error(`Error: ${error.message}`, {
 				action: {
