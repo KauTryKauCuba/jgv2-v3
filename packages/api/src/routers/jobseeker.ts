@@ -18,8 +18,9 @@ import { logAiUsage } from "../lib/ai/usage";
 import { listMalaysianTowns } from "../lib/geo/postcodes";
 import { isSupportedResumeFileName, parseResumeBytes, RESUME_MAX_BYTES } from "../lib/resume/parser";
 import { sanitizeDescriptionHtml } from "../lib/sanitize-html";
-import { fileUrl, resolveUpload } from "../lib/uploads";
-import { birthYearFromAge, MAX_AGE, MIN_AGE, parseAge } from "../shared/age";
+import { plainTextToHtml } from "../shared/rich-text";
+import { fileUrl, resolveUpload, saveBufferUpload } from "../lib/uploads";
+import { ageFromDate, birthYearFromAge, MAX_AGE, MIN_AGE, parseAge } from "../shared/age";
 import { DEFAULT_COUNTRY, isCountry } from "../shared/countries";
 import { INDUSTRIES } from "../shared/industries";
 import { normalizeSpokenLanguages } from "../shared/languages";
@@ -649,6 +650,197 @@ export const jobseekerRouter = {
 		logAttempts(context.db, context.session.user.id, "resume_parse", result.attempts, Date.now() - result.durationMs);
 
 		return { profile: result.profile, usage: result.usage, durationMs: result.durationMs, photoUrl: result.photoUrl };
+	}),
+
+	// The dashboard sidebar's resume card: the saved resume's name and size.
+	myResume: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const [row] = await db
+			.select({ fileName: jobseekerProfile.resumeFileName, fileSize: jobseekerProfile.resumeFileSize })
+			.from(jobseekerProfile)
+			.where(eq(jobseekerProfile.userId, context.session.user.id))
+			.limit(1);
+		return row?.fileName ? { fileName: row.fileName as string, fileSize: (row.fileSize as number | null) ?? null } : null;
+	}),
+
+	// The redesign's POST /api/jobseeker/resume (the sidebar resume card):
+	// saves the resume and fills in only what the profile doesn't have yet —
+	// never overwrites something the jobseeker already filled in. Lists
+	// (skills, experience, education, …) get the resume's entries added.
+	uploadResume: protectedProcedure.input(z.object({ resume: z.instanceof(File) })).handler(async ({ input, context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const [profile] = await db.select().from(jobseekerProfile).where(eq(jobseekerProfile.userId, userId)).limit(1);
+		if (!profile) throw new ORPCError("NOT_FOUND", { message: "Finish onboarding first." });
+
+		const file = input.resume;
+		if (file.size === 0) bad("Attach a resume file.");
+		if (file.size > RESUME_MAX_BYTES) bad("File is too large — max 10 MB.");
+		if (!isSupportedResumeFileName(file.name)) bad("Only PDF or DOCX resumes are supported.");
+		if (!context.storage) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "File storage isn't set up." });
+
+		const bytes = new Uint8Array(await file.arrayBuffer());
+		const result = await parseResumeBytes(bytes, file.name, {
+			deepseekKey: context.ai.deepseekKey,
+			mimoKey: context.ai.mimoKey,
+		});
+		if (!result.ok) throw new ORPCError(result.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: result.error });
+		logAttempts(context.db, userId, "resume_parse", result.attempts, Date.now() - result.durationMs);
+
+		const parsed = result.profile;
+		let filledCount = 0;
+		const isEmpty = (v: unknown) => v === null || v === undefined || (typeof v === "string" && v.trim() === "");
+		function fill<T>(current: T, value: T | null): T | null {
+			if (isEmpty(current) && value !== null && value !== undefined) {
+				filledCount++;
+				return value;
+			}
+			return current;
+		}
+		const parsedAge = ageFromDate(parsed.dateOfBirth);
+		const values = {
+			fullName: fill(profile.fullName, parsed.fullName),
+			birthYear: fill(profile.birthYear, parsedAge !== null && parseAge(parsedAge) !== null ? birthYearFromAge(parsedAge) : null),
+			gender: fill(profile.gender, parsed.gender),
+			maritalStatus: fill(profile.maritalStatus, parsed.maritalStatus),
+			nationality: fill(profile.nationality, parsed.nationality),
+			mobileNumber: fill(profile.mobileNumber, parsed.phone),
+			drivingLicense: fill(profile.drivingLicense, parsed.drivingLicense),
+			location: fill(profile.location, parsed.location),
+			jobTitle: fill(profile.jobTitle, parsed.targetRole),
+			yearsExperience: fill(profile.yearsExperience, parsed.yearsExperience),
+			desiredJobType: fill(profile.desiredJobType, parsed.employmentType),
+			expectedSalaryFrom: fill(profile.expectedSalaryFrom, parsed.expectedSalaryMin),
+			expectedSalaryTo: fill(profile.expectedSalaryTo, parsed.expectedSalaryMax),
+			bio: fill(profile.bio, parsed.bio ? sanitizeDescriptionHtml(parsed.bio) : null),
+			linkedinUrl: fill(profile.linkedinUrl, parsed.linkedinUrl),
+			portfolioUrl: fill(profile.portfolioUrl, parsed.portfolioUrl),
+			githubUrl: fill(profile.githubUrl, parsed.githubUrl),
+			professionalSkills: [...new Set([...(profile.professionalSkills ?? []), ...parsed.professionalSkills])],
+			softSkills: [...new Set([...(profile.softSkills ?? []), ...parsed.softSkills])],
+		};
+		for (const list of [
+			parsed.professionalSkills,
+			parsed.softSkills,
+			parsed.workExperiences,
+			parsed.education,
+			parsed.certifications,
+			parsed.languages,
+			parsed.references,
+		]) {
+			if (list.length > 0) filledCount++;
+		}
+
+		const resumeKey = await saveBufferUpload(context.storage, bytes, file.type || "application/octet-stream", "resumes");
+		const profileId = profile.id as string;
+		// New entries go after the ones already there.
+		const countRows = async (table: AnyDb) =>
+			((await db.select({ id: table.id }).from(table).where(eq(table.jobseekerProfileId, profileId))) as unknown[]).length;
+		const [workCount, eduCount, certCount, refCount] = await Promise.all([
+			countRows(jobseekerWorkingExperience),
+			countRows(jobseekerEducation),
+			countRows(jobseekerCertification),
+			countRows(jobseekerReference),
+		]);
+		// A resume's dialects join a language already listed rather than starting a second one.
+		const existingLanguages = (await db
+			.select()
+			.from(jobseekerProfileLanguage)
+			.where(eq(jobseekerProfileLanguage.jobseekerProfileId, profileId))
+			.orderBy(jobseekerProfileLanguage.sortOrder)) as AnyDb[];
+		const languages = normalizeSpokenLanguages([
+			...existingLanguages.map((l) => ({
+				language: l.language as string,
+				dialects: (l.dialects as string[] | null) ?? [],
+				spokenLevel: l.spokenLevel as string,
+				writtenLevel: l.writtenLevel as string,
+			})),
+			...parsed.languages,
+		]);
+
+		await db.batch([
+			db
+				.update(jobseekerProfile)
+				.set({ ...values, resumeUrl: resumeKey, resumeFileName: file.name, resumeFileSize: file.size })
+				.where(eq(jobseekerProfile.id, profileId)),
+			...parsed.workExperiences.map((e, i) =>
+				db.insert(jobseekerWorkingExperience).values({
+					id: crypto.randomUUID(),
+					jobseekerProfileId: profileId,
+					company: e.company,
+					jobTitle: e.title,
+					periodStart: e.startDate,
+					periodEnd: e.endDate,
+					isCurrent: e.isCurrent,
+					// The AI's achievements are plain text; stored as safe HTML like the form's.
+					jobDescription: e.achievements ? sanitizeDescriptionHtml(plainTextToHtml(e.achievements)) : null,
+					sortOrder: workCount + i,
+				}),
+			),
+			...parsed.education.map((e, i) =>
+				db.insert(jobseekerEducation).values({
+					id: crypto.randomUUID(),
+					jobseekerProfileId: profileId,
+					schoolName: e.institution,
+					fieldOfStudy: e.fieldOfStudy,
+					educationLevel: e.qualificationTier,
+					cgpa: e.cgpa,
+					graduationYear: e.graduationYear,
+					sortOrder: eduCount + i,
+				}),
+			),
+			...parsed.certifications.map((e, i) =>
+				db.insert(jobseekerCertification).values({
+					id: crypto.randomUUID(),
+					jobseekerProfileId: profileId,
+					name: e.name,
+					issuer: e.issuer,
+					year: e.year,
+					sortOrder: certCount + i,
+				}),
+			),
+			...parsed.references.map((e, i) =>
+				db.insert(jobseekerReference).values({
+					id: crypto.randomUUID(),
+					jobseekerProfileId: profileId,
+					fullName: e.fullName,
+					jobTitle: e.jobTitle,
+					company: e.company,
+					phone: e.phone,
+					email: e.email,
+					sortOrder: refCount + i,
+				}),
+			),
+			...(parsed.languages.length > 0
+				? [
+						db.delete(jobseekerProfileLanguage).where(eq(jobseekerProfileLanguage.jobseekerProfileId, profileId)),
+						...languages.map((l, i) =>
+							db.insert(jobseekerProfileLanguage).values({
+								id: crypto.randomUUID(),
+								jobseekerProfileId: profileId,
+								language: l.language,
+								dialects: l.dialects,
+								spokenLevel: l.spokenLevel,
+								writtenLevel: l.writtenLevel,
+								sortOrder: i,
+							}),
+						),
+					]
+				: []),
+		]);
+
+		return { fileName: file.name, fileSize: file.size, filledCount };
+	}),
+
+	// The redesign's DELETE /api/jobseeker/resume: forgets the saved resume
+	// (what it filled into the profile stays).
+	removeResume: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		await db
+			.update(jobseekerProfile)
+			.set({ resumeUrl: null, resumeFileName: null, resumeFileSize: null })
+			.where(eq(jobseekerProfile.userId, context.session.user.id));
+		return { ok: true as const };
 	}),
 
 	suggestSkills: protectedProcedure.input(z.object({ targetRole: z.string() })).handler(async ({ input, context }) => {

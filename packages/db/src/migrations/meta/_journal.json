@@ -50,6 +50,13 @@
       "when": 1795652584865,
       "tag": "0006_short_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1795704020385,
+      "tag": "0007_exotic_gargoyle",
+      "breakpoints": true
     }
   ]
 }

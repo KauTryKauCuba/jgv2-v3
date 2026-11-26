@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./styles/landing.css";
+@import "./styles/dashboard.css";
 
 /* Brand colours. v1's brand-01/brand-02 names are kept for shared UI; the
    brand-teal-* / brand-gold-* names come from the redesign's design system
@@ -15,6 +16,8 @@
   --color-brand-teal-dark: #008990;
   --color-brand-teal-soft: #e6f9fa;
   --color-brand-teal-page: #f2faf5;
+  /* The employer dashboard's notice bars (a lighter teal than teal-dark). */
+  --color-brand-teal-bar: #009ba3;
   --color-brand-gold: #ffe9a6;
   --color-brand-gold-dark: #a67c00;
   --color-brand-gold-soft: #fff3d6;

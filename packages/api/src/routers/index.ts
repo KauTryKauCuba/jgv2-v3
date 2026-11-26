@@ -1,9 +1,11 @@
 import type { RouterClient } from "@orpc/server";
 import { publicProcedure } from "../index";
 import { aiRouter } from "./ai";
+import { applicationRouter } from "./application";
 import { authRouter } from "./auth";
 import { employerRouter } from "./employer";
 import { geoRouter } from "./geo";
+import { jobRouter } from "./job";
 import { jobseekerRouter } from "./jobseeker";
 import { onboardingRouter } from "./onboarding";
 import { phoneRouter } from "./phone";
@@ -19,6 +21,8 @@ export const appRouter = {
 	geo: geoRouter,
 	jobseeker: jobseekerRouter,
 	employer: employerRouter,
+	job: jobRouter,
+	application: applicationRouter,
 };
 
 export type AppRouter = typeof appRouter;

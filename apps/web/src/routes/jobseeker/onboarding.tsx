@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/landing/hero";
 import { Navbar } from "@/components/landing/navbar";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/jobseeker/onboarding")({
 });
 
 function JobseekerOnboardingPage() {
+	const { t } = useTranslation("common");
 	const { session } = Route.useRouteContext();
 	const draftQuery = useQuery({ ...orpc.jobseeker.getDraft.queryOptions(), staleTime: 0 });
 	const draft = draftQuery.data?.draft ?? null;
@@ -57,16 +59,13 @@ function JobseekerOnboardingPage() {
 						headingGradient="var(--brand-gradient-jobseeker)"
 						heading={
 							<>
-								Build your profile,
+								{t("jobseekerOnboarding.heading1")}
 								<br />
-								in seconds.
+								{t("jobseekerOnboarding.heading2")}
 							</>
 						}
 						subheading={
-							<>
-								Upload your resume and let AI fill in the details — skills, experience, and more. Don&rsquo;t love
-								what it finds? Reset and try again, or fill it in yourself.
-							</>
+							t("jobseekerOnboarding.subheading")
 						}
 					/>
 				</div>

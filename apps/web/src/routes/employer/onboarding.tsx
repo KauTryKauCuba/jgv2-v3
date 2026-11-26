@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/landing/hero";
 import { Navbar } from "@/components/landing/navbar";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/employer/onboarding")({
 });
 
 function EmployerOnboardingPage() {
+	const { t } = useTranslation("common");
 	const { session } = Route.useRouteContext();
 	const draftQuery = useQuery({ ...orpc.employer.getDraft.queryOptions(), staleTime: 0 });
 	const draft = draftQuery.data?.draft ?? null;
@@ -56,17 +58,14 @@ function EmployerOnboardingPage() {
 						headingGradient="var(--brand-gradient-employer)"
 						heading={
 							<>
-								Set up your company,
+								{t("employerOnboarding.heading1")}
 								<br />
-								in seconds.
+								{t("employerOnboarding.heading2")}
 							</>
 						}
 						subheadingClassName="mb-[64px]"
 						subheading={
-							<>
-								Type your company name and let AI fill in the details from public sources. Don&rsquo;t love what it
-								finds? Hit reset and regenerate anytime — you&rsquo;re always in control.
-							</>
+							t("employerOnboarding.subheading")
 						}
 					/>
 				</div>

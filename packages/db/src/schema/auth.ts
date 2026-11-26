@@ -215,6 +215,11 @@ export const organization = sqliteTable("organization", {
 	ssmRejectionReason: text("ssm_rejection_reason"),
 	// The account that registered the company (the redesign's employer_profiles.userId).
 	createdByUserId: text("created_by_user_id").references(() => user.id, { onDelete: "set null" }),
+	// The redesign's Smart Match settings (Top Matches card): on/off, and which
+	// criteria count. Criteria is a JSON object of flags; missing keys mean
+	// "on" (see packages/api/src/shared/matching.ts).
+	smartMatchEnabled: integer("smart_match_enabled", { mode: "boolean" }).notNull().default(true),
+	smartMatchCriteria: text("smart_match_criteria", { mode: "json" }).$type<Record<string, boolean>>(),
 	updatedAt: text("updated_at"),
 	createdAt: text("created_at")
 		.default(sql`(datetime('now'))`)

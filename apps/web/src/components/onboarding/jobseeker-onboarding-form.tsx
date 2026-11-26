@@ -22,6 +22,7 @@ import { formatPlace, MAX_WORK_PLACES, type Place } from "@jobgiga-app/api/share
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChecklistDoneBadge } from "@/components/form/checklist-done-badge";
 import { MonthYearPicker, parseMonthYearValue } from "@/components/form/month-year-picker";
 import { PhoneInput } from "@/components/form/phone-input";
@@ -164,6 +165,7 @@ function SalaryRangeSlider({
   onMinChange: (value: number) => void;
   onMaxChange: (value: number) => void;
 }) {
+  const { t } = useTranslation("common");
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<"min" | "max" | null>(null);
   // Sticky — only ever grows, never auto-shrinks back down. Recalculating
@@ -251,7 +253,7 @@ function SalaryRangeSlider({
         />
         <div
           role="slider"
-          aria-label="Minimum salary"
+          aria-label={t("jobseekerOnboarding.minimumSalary")}
           aria-valuemin={0}
           aria-valuemax={scaleMax}
           aria-valuenow={min}
@@ -287,7 +289,7 @@ function SalaryRangeSlider({
         </div>
         <div
           role="slider"
-          aria-label="Maximum salary"
+          aria-label={t("jobseekerOnboarding.maximumSalary")}
           aria-valuemin={0}
           aria-valuemax={scaleMax}
           aria-valuenow={max}
@@ -323,7 +325,7 @@ function SalaryRangeSlider({
         </div>
       </div>
       <div className="mt-[6px] flex items-center justify-between text-xs text-[#9AA3B2]">
-        <span>RM0</span>
+        <span>{t("jobseekerOnboarding.rm0")}</span>
         <span>RM{scaleMax.toLocaleString()}</span>
       </div>
     </div>
@@ -737,11 +739,12 @@ function SectionHeader({
 }
 
 function EntryRemoveButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation("common");
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label="Remove entry"
+      aria-label={t("jobseekerOnboarding.removeEntry")}
       className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.08] hover:text-[#141B2E]"
     >
       <XIcon className="h-[10px] w-[10px]" />
@@ -769,6 +772,10 @@ export function JobseekerOnboardingForm({
   /** Rendered at the top of the main column, so it shares the form's width. */
   topSlot?: React.ReactNode;
 } = {}) {
+  const { t } = useTranslation("common");
+  // The option lists keep their English labels; they're shown in the reader's language by value.
+  const tOptions = <T extends { value: string; label: string }>(list: readonly T[], group: string) =>
+    list.map((o) => ({ ...o, label: t(`jobseekerOnboarding.options.${group}.${o.value}`) }));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const saveDraftMutation = useMutation(orpc.jobseeker.saveDraft.mutationOptions());
@@ -778,7 +785,7 @@ export function JobseekerOnboardingForm({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
-  const saveLabel = mode === "edit" ? "Save changes" : "Finish";
+  const saveLabel = mode === "edit" ? t("jobseekerOnboarding.saveChanges") : t("jobseekerOnboarding.finish");
   // Edit mode is always editable — same as the employer's My Profile/Company
   // Profile. Unsaved work is detected by dirtiness (isProfileDirty below),
   // not by an "Edit" unlock toggle.
@@ -1363,7 +1370,7 @@ export function JobseekerOnboardingForm({
   async function handleCertificationFile(id: string, file: File | null) {
     if (!file) return;
     if (file.size > CERTIFICATE_MAX_BYTES) {
-      setCertificationFileErrors((prev) => ({ ...prev, [id]: "File is too large — max 5 MB." }));
+      setCertificationFileErrors((prev) => ({ ...prev, [id]: t("jobseekerOnboarding.fileTooLargeMax5Mb") }));
       return;
     }
     setCertificationFileErrors((prev) => {
@@ -1376,7 +1383,7 @@ export function JobseekerOnboardingForm({
       const dataUrl = await fileToDataUrl(file);
       updateCertification(id, { fileUrl: dataUrl, fileName: file.name, fileSize: file.size });
     } catch {
-      setCertificationFileErrors((prev) => ({ ...prev, [id]: "Couldn't read that file." }));
+      setCertificationFileErrors((prev) => ({ ...prev, [id]: t("jobseekerOnboarding.couldntReadThatFile") }));
     }
   }
   function clearCertificationFile(id: string) {
@@ -1467,7 +1474,7 @@ export function JobseekerOnboardingForm({
 
   async function suggestSkills() {
     if (!targetRole.trim()) {
-      setSuggestSkillsError("Enter your target role first.");
+      setSuggestSkillsError(t("jobseekerOnboarding.enterYourTargetRoleFirst"));
       return;
     }
     setSuggestingSkills(true);
@@ -1488,9 +1495,9 @@ export function JobseekerOnboardingForm({
       });
       setSuggestSkillsTokens(typeof data.usage?.total_tokens === "number" ? data.usage.total_tokens : null);
       setSuggestSkillsDurationMs(typeof data.durationMs === "number" ? data.durationMs : null);
-      setSuggestSkillsStatus("Suggested — review before adding.");
+      setSuggestSkillsStatus(t("jobseekerOnboarding.suggestedReviewBeforeAdding"));
     } catch (err) {
-      setSuggestSkillsError(err instanceof Error ? err.message : "Couldn't suggest skills.");
+      setSuggestSkillsError(err instanceof Error ? err.message : t("jobseekerOnboarding.couldntSuggestSkills"));
     } finally {
       setSuggestingSkills(false);
     }
@@ -1612,7 +1619,7 @@ export function JobseekerOnboardingForm({
         })),
       );
 
-      setResumeStatus("Replaced with details from your resume — check everything before finishing.");
+      setResumeStatus(t("jobseekerOnboarding.replacedWithDetailsFromYourResume"));
       return;
     }
 
@@ -1827,8 +1834,8 @@ export function JobseekerOnboardingForm({
 
     setResumeStatus(
       filled > 0
-        ? "Filled in from your resume — check everything before finishing."
-        : "Couldn't find much in that resume — fill in the fields manually.",
+        ? t("jobseekerOnboarding.filledFromResume")
+        : t("jobseekerOnboarding.resumeTooThin"),
     );
   }
 
@@ -1837,11 +1844,11 @@ export function JobseekerOnboardingForm({
     if (!picked) return;
 
     if (!picked.type.startsWith("image/")) {
-      setAvatarError("Choose an image file.");
+      setAvatarError(t("jobseekerOnboarding.chooseAnImageFile"));
       return;
     }
     if (picked.size > AVATAR_MAX_BYTES) {
-      setAvatarError("Image is too large — max 3 MB.");
+      setAvatarError(t("jobseekerOnboarding.imageIsTooLargeMax3"));
       return;
     }
 
@@ -1851,7 +1858,7 @@ export function JobseekerOnboardingForm({
     setAvatarLoadFailed(false);
     const reader = new FileReader();
     reader.onload = () => setAvatarUrl(typeof reader.result === "string" ? reader.result : null);
-    reader.onerror = () => setAvatarError("Couldn't read that image.");
+    reader.onerror = () => setAvatarError(t("jobseekerOnboarding.couldntReadThatImage"));
     reader.readAsDataURL(picked);
   }
 
@@ -1886,7 +1893,7 @@ export function JobseekerOnboardingForm({
   // clicks "Parse resume", never automatically on attach.
   function attachResumeFile(picked: File) {
     if (picked.size > RESUME_MAX_BYTES) {
-      setResumeError("File is too large — max 10 MB.");
+      setResumeError(t("jobseekerOnboarding.fileIsTooLargeMax10"));
       setResumeFile(null);
       return;
     }
@@ -1922,7 +1929,7 @@ export function JobseekerOnboardingForm({
       applyParsedProfile(data.profile as ParsedProfile, overwrite);
     } catch (err) {
       if (requestId !== resumeParseId.current) return;
-      setResumeError(err instanceof Error ? err.message : "Couldn't read that resume.");
+      setResumeError(err instanceof Error ? err.message : t("jobseekerOnboarding.couldntReadThatResume"));
     } finally {
       if (requestId === resumeParseId.current) setParsing(false);
     }
@@ -2070,22 +2077,22 @@ export function JobseekerOnboardingForm({
   // Finish button — otherwise it just sits unclickable with no explanation.
   const salaryFilled = isNonNegativeInt(expectedSalaryMin) && isNonNegativeInt(expectedSalaryMax);
   const requiredFieldChecklist = [
-    { label: "Full name", done: fullName.trim().length > 0, fieldId: "fullName" },
-    { label: "Age", done: parseAge(age) !== null, fieldId: "age" },
-    { label: "Phone number", done: isValidMalaysianPhone(phone), fieldId: "phone" },
-    { label: "Driving license", done: drivingLicense !== "", fieldId: "drivingLicense" },
-    { label: "Preferred work location", done: workPlacesDone, fieldId: `workplace-${workPlaceRows[0]?.id ?? ""}` },
-    { label: "Location", done: city.trim().length > 0 && (!inMalaysia || state.length > 0), fieldId: "city" },
-    { label: "Target role", done: targetRole.trim().length > 0, fieldId: "targetRole" },
-    { label: "Years of experience", done: isNonNegativeInt(yearsExperience), fieldId: "yearsExperience" },
-    { label: "Professional skills", done: professionalSkills.length > 0, fieldId: "professionalSkillInput" },
+    { label: t("jobseekerOnboarding.fullName"), done: fullName.trim().length > 0, fieldId: "fullName" },
+    { label: t("jobseekerOnboarding.age"), done: parseAge(age) !== null, fieldId: "age" },
+    { label: t("jobseekerOnboarding.phoneNumber"), done: isValidMalaysianPhone(phone), fieldId: "phone" },
+    { label: t("jobseekerOnboarding.drivingLicense"), done: drivingLicense !== "", fieldId: "drivingLicense" },
+    { label: t("jobseekerOnboarding.preferredWorkLocation"), done: workPlacesDone, fieldId: `workplace-${workPlaceRows[0]?.id ?? ""}` },
+    { label: t("jobseekerOnboarding.location"), done: city.trim().length > 0 && (!inMalaysia || state.length > 0), fieldId: "city" },
+    { label: t("jobseekerOnboarding.targetRole"), done: targetRole.trim().length > 0, fieldId: "targetRole" },
+    { label: t("jobseekerOnboarding.yearsOfExperience"), done: isNonNegativeInt(yearsExperience), fieldId: "yearsExperience" },
+    { label: t("jobseekerOnboarding.professionalSkills"), done: professionalSkills.length > 0, fieldId: "professionalSkillInput" },
     {
-      label: "Expected salary",
+      label: t("jobseekerOnboarding.expectedSalary"),
       done: salaryFilled && Number(expectedSalaryMin) <= Number(expectedSalaryMax),
       fieldId: "expectedSalaryMin",
     },
-    { label: "Preferred industry", done: preferredIndustry.length > 0, fieldId: "preferredIndustry" },
-    { label: "Work authorization", done: workAuthorization !== "", fieldId: "workAuthorization" },
+    { label: t("jobseekerOnboarding.preferredIndustry"), done: preferredIndustry.length > 0, fieldId: "preferredIndustry" },
+    { label: t("jobseekerOnboarding.workAuthorization"), done: workAuthorization !== "", fieldId: "workAuthorization" },
   ];
 
   function goToField(fieldId: string) {
@@ -2101,7 +2108,7 @@ export function JobseekerOnboardingForm({
   const hasResume = Boolean(resumeFile || restoredResume);
   const boostChecklist = [
     {
-      label: "Profile photo",
+      label: t("jobseekerOnboarding.profilePhoto"),
       done: Boolean(avatarUrl),
       fieldId: "avatarUploadButton",
     },
@@ -2112,38 +2119,38 @@ export function JobseekerOnboardingForm({
       ? []
       : [
           {
-            label: "Resume",
+            label: t("jobseekerOnboarding.resume"),
             done: hasResume,
             fieldId: "resumeUploadCard",
           },
         ]),
     {
-      label: "Soft skills",
+      label: t("jobseekerOnboarding.softSkills"),
       done: softSkills.length > 0,
       fieldId: "softSkillInput",
     },
     {
-      label: "Short bio",
+      label: t("jobseekerOnboarding.shortBio"),
       done: bio.trim().length > 0,
       fieldId: "bio",
     },
     {
-      label: "LinkedIn",
+      label: t("jobseekerOnboarding.linkedin"),
       done: linkedinUrl.trim().length > 0,
       fieldId: "linkedinUrl",
     },
     {
-      label: "Portfolio",
+      label: t("jobseekerOnboarding.portfolio"),
       done: portfolioUrl.trim().length > 0,
       fieldId: "portfolioUrl",
     },
     {
-      label: "GitHub",
+      label: t("jobseekerOnboarding.github"),
       done: githubUrl.trim().length > 0,
       fieldId: "githubUrl",
     },
     {
-      label: "Reference",
+      label: t("jobseekerOnboarding.reference"),
       done: references.length > 0,
       fieldId: "referencesSection",
     },
@@ -2265,7 +2272,7 @@ export function JobseekerOnboardingForm({
       }
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't save your profile.");
+      setError(err instanceof Error ? err.message : t("jobseekerOnboarding.couldntSaveYourProfile"));
       return false;
     } finally {
       setSubmitting(false);
@@ -2291,9 +2298,9 @@ export function JobseekerOnboardingForm({
       {mode !== "edit" && (
       <div className={`min-w-0 ${gradientFrameClass("gold")} xl:sticky xl:top-[22px] xl:flex-[1]`}>
         <div id="resumeUploadCard" className="min-w-0 rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h2 className="text-lg font-semibold text-[#141B2E]">Upload your resume</h2>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.uploadYourResume")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            Optional — we&apos;ll autofill the form on the right from it.
+            {t("jobseekerOnboarding.optionalWellAutofillTheFormOn")}
           </p>
 
           <input
@@ -2315,9 +2322,9 @@ export function JobseekerOnboardingForm({
                 </p>
                 <p className="text-xs text-[#9AA3B2]">
                   {parsing
-                    ? `Reading your resume… ${(parseElapsedMs / 1000).toFixed(1)}s`
+                    ? t("jobseekerOnboarding.readingResume", { seconds: (parseElapsedMs / 1000).toFixed(1) })
                     : parseUsage
-                      ? `${formatSize(resumeFile.size)} · ${parseUsage.total_tokens ?? "?"} tokens · ${(
+                      ? `${formatSize(resumeFile.size)} · ${t("jobseekerOnboarding.tokens", { tokens: parseUsage.total_tokens ?? "?" })} · ${(
                           (parseDurationMs ?? 0) / 1000
                         ).toFixed(1)}s`
                       : formatSize(resumeFile.size)}
@@ -2326,7 +2333,7 @@ export function JobseekerOnboardingForm({
               <button
                 type="button"
                 onClick={() => setShowRemoveResumeConfirm(true)}
-                aria-label="Remove resume"
+                aria-label={t("jobseekerOnboarding.removeResume")}
                 disabled={parsing}
                 className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.05] hover:text-[#141B2E] disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -2343,17 +2350,17 @@ export function JobseekerOnboardingForm({
                 <p className="text-xs text-[#9AA3B2]">
                   {[
                     restoredResume.size > 0 ? formatSize(restoredResume.size) : null,
-                    restoredResume.tokens ? `${restoredResume.tokens} tokens` : null,
+                    restoredResume.tokens ? t("jobseekerOnboarding.tokens", { tokens: restoredResume.tokens }) : null,
                     restoredResume.durationMs ? `${(restoredResume.durationMs / 1000).toFixed(1)}s` : null,
                   ]
                     .filter(Boolean)
-                    .join(" · ") || "Uploaded earlier"}
+                    .join(" · ") || t("jobseekerOnboarding.uploadedEarlier")}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowRemoveResumeConfirm(true)}
-                aria-label="Remove resume"
+                aria-label={t("jobseekerOnboarding.removeResume")}
                 className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.05] hover:text-[#141B2E]"
               >
                 <XIcon className="h-[12px] w-[12px]" />
@@ -2381,9 +2388,9 @@ export function JobseekerOnboardingForm({
             >
               <UploadIcon className="h-[18px] w-[18px] text-brand-gold-dark" />
               <span className="text-xs text-[#141B2E]">
-                Click to upload or drag and drop
+                {t("jobseekerOnboarding.clickToUploadOrDragAnd")}
               </span>
-              <span className="text-xs text-[#9AA3B2]">PDF or DOCX · up to 10 MB</span>
+              <span className="text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.pdfOrDocxUpTo10")}</span>
             </button>
           )}
 
@@ -2399,8 +2406,8 @@ export function JobseekerOnboardingForm({
             >
               <SiriOrb className="h-[14px] w-[14px]" active={parsing} />
               {parsing
-                ? `Reading your resume… ${(parseElapsedMs / 1000).toFixed(1)}s`
-                : "Parse resume — autofill this form"}
+                ? t("jobseekerOnboarding.readingResume", { seconds: (parseElapsedMs / 1000).toFixed(1) })
+                : t("jobseekerOnboarding.parseResume")}
             </button>
           )}
 
@@ -2416,7 +2423,7 @@ export function JobseekerOnboardingForm({
               className="mt-[8px] flex h-[38px] w-full items-center justify-center gap-[6px] whitespace-nowrap rounded-[12px] bg-[linear-gradient(45deg,var(--color-brand-teal-dark),var(--color-brand-gold))] px-[14px] text-sm text-white transition-opacity hover:opacity-90"
             >
               <SiriOrb className="h-[14px] w-[14px]" active={false} />
-              Re-upload to parse this resume
+              {t("jobseekerOnboarding.reUploadToParseThisResume")}
             </button>
           )}
 
@@ -2425,10 +2432,10 @@ export function JobseekerOnboardingForm({
               type="button"
               onClick={() => setShowResetResumeConfirm(true)}
               disabled={parsing}
-              aria-label="Reset your profile"
+              aria-label={t("jobseekerOnboarding.resetYourProfile")}
               className="mt-[8px] h-[38px] w-full whitespace-nowrap rounded-[12px] bg-[#F1F4F8] px-[14px] text-sm text-[#4B5468] hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Reset
+              {t("jobseekerOnboarding.reset")}
             </button>
           )}
 
@@ -2444,19 +2451,19 @@ export function JobseekerOnboardingForm({
       {topSlot}
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${gradientFrameClass("gold")}`}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Set up your profile</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("jobseekerOnboarding.setUpYourProfile")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Tell us a bit about yourself so we can match you with the right roles.
+            {t("jobseekerOnboarding.tellUsABitAboutYourself")}
           </p>
           {autosaveError && (
             <p className="mt-[6px] text-xs text-red-500">
-              Couldn&apos;t save your progress — check your connection.
+              {t("jobseekerOnboarding.couldntSaveYourProgressCheckYour")}
             </p>
           )}
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
           <fieldset className="contents">
-          <CategoryHeading label="Basic info" first />
+          <CategoryHeading label={t("jobseekerOnboarding.basicInfo")} first />
           <div className="col-span-full flex items-center gap-[14px]">
             <input
               ref={avatarInputRef}
@@ -2472,7 +2479,7 @@ export function JobseekerOnboardingForm({
                 data-db="onboarding.jobseeker.avatar"
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
-                aria-label={avatarUrl ? "Change profile photo" : "Upload profile photo"}
+                aria-label={avatarUrl ? t("jobseekerOnboarding.changeProfilePhoto") : t("jobseekerOnboarding.uploadProfilePhoto")}
                 className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.1] bg-[#F1F4F8] text-[#9AA3B2] hover:border-brand-gold-dark"
               >
                 {avatarUrl && !avatarLoadFailed ? (
@@ -2480,7 +2487,7 @@ export function JobseekerOnboardingForm({
                   <img
                     src={avatarUrl}
                     referrerPolicy="no-referrer"
-                    alt="Profile"
+                    alt={t("jobseekerOnboarding.profile")}
                     className="h-full w-full object-cover"
                     onError={() => setAvatarLoadFailed(true)}
                   />
@@ -2497,7 +2504,7 @@ export function JobseekerOnboardingForm({
                   onClick={() => avatarInputRef.current?.click()}
                   className="rounded-full bg-[#F1F4F8] px-[12px] py-[6px] text-sm text-[#141B2E] hover:bg-black/[0.08]"
                 >
-                  {avatarUrl ? "Change photo" : "Upload photo"}
+                  {avatarUrl ? t("jobseekerOnboarding.changePhoto") : t("jobseekerOnboarding.uploadPhoto")}
                 </button>
                 {avatarUrl && (
                   <button
@@ -2505,12 +2512,12 @@ export function JobseekerOnboardingForm({
                     onClick={clearAvatar}
                     className="text-sm text-[#9AA3B2] hover:text-[#141B2E]"
                   >
-                    Remove
+                    {t("jobseekerOnboarding.remove")}
                   </button>
                 )}
               </div>
               <p className={`text-xs ${avatarError ? "text-red-500" : "text-[#9AA3B2]"}`}>
-                {avatarError ?? "JPG or PNG · up to 3 MB"}
+                {avatarError ?? t("jobseekerOnboarding.photoHint")}
               </p>
             </div>
           </div>
@@ -2523,24 +2530,24 @@ export function JobseekerOnboardingForm({
               <img
                 src={suggestedAvatarUrl}
                 referrerPolicy="no-referrer"
-                alt="Photo found in resume"
+                alt={t("jobseekerOnboarding.photoFoundInResume")}
                 className="h-[44px] w-[44px] shrink-0 rounded-full object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-[#141B2E]">Found a photo in your resume</p>
-                <p className="text-xs text-[#9AA3B2]">Use it as your profile photo?</p>
+                <p className="text-xs text-[#141B2E]">{t("jobseekerOnboarding.foundAPhotoInYourResume")}</p>
+                <p className="text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.useItAsYourProfilePhoto")}</p>
               </div>
               <button
                 type="button"
                 onClick={acceptSuggestedAvatar}
                 className="shrink-0 rounded-full bg-brand-gold px-[12px] py-[6px] text-sm text-[#141B2E] hover:opacity-90"
               >
-                Use photo
+                {t("jobseekerOnboarding.usePhoto")}
               </button>
               <button
                 type="button"
                 onClick={dismissSuggestedAvatar}
-                aria-label="Dismiss suggested photo"
+                aria-label={t("jobseekerOnboarding.dismissSuggestedPhoto")}
                 className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.05] hover:text-[#141B2E]"
               >
                 <XIcon className="h-[12px] w-[12px]" />
@@ -2548,17 +2555,17 @@ export function JobseekerOnboardingForm({
             </div>
           )}
 
-          <Field db="onboarding.jobseeker.fullName" required label="Full name" htmlFor="fullName">
+          <Field db="onboarding.jobseeker.fullName" required label={t("jobseekerOnboarding.fullName")} htmlFor="fullName">
             <input
               id="fullName"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Nur Aisyah"
+              placeholder={t("jobseekerOnboarding.eGNurAisyah")}
               className={inputClass}
             />
           </Field>
-          <Field db="onboarding.jobseeker.age" required label="Age" htmlFor="age">
+          <Field db="onboarding.jobseeker.age" required label={t("jobseekerOnboarding.age")} htmlFor="age">
             <input
               id="age"
               type="text"
@@ -2566,62 +2573,62 @@ export function JobseekerOnboardingForm({
               maxLength={2}
               value={age}
               onChange={(e) => setAge(e.target.value.replace(/\D/g, "").slice(0, 2))}
-              placeholder="e.g. 27"
+              placeholder={t("jobseekerOnboarding.example", { value: "27" })}
               aria-invalid={age.trim() !== "" && parseAge(age) === null}
               className={`${inputClass} ${age.trim() !== "" && parseAge(age) === null ? "border-red-400" : ""}`}
             />
             {age.trim() !== "" && parseAge(age) === null && (
               <p className="text-xs text-red-500">
-                Enter an age from {MIN_AGE} to {MAX_AGE}.
+                {t("jobseekerOnboarding.ageRange", { min: MIN_AGE, max: MAX_AGE })}
               </p>
             )}
           </Field>
-          <Field db="onboarding.jobseeker.gender" label="Gender (optional)" htmlFor="gender">
+          <Field db="onboarding.jobseeker.gender" label={t("jobseekerOnboarding.genderOptional")} htmlFor="gender">
             <Dropdown
               id="gender"
-              label="Gender"
+              label={t("jobseekerOnboarding.gender")}
               value={gender}
-              options={[{ value: "", label: "Select" }, ...GENDERS]}
+              options={[{ value: "", label: t("jobseekerOnboarding.select") }, ...tOptions(GENDERS, "gender")]}
               onChange={setGender}
               accent="gold"
             />
           </Field>
-          <Field db="onboarding.jobseeker.maritalStatus" label="Marital status (optional)" htmlFor="maritalStatus">
+          <Field db="onboarding.jobseeker.maritalStatus" label={t("jobseekerOnboarding.maritalStatusOptional")} htmlFor="maritalStatus">
             <Dropdown
               id="maritalStatus"
-              label="Marital status"
+              label={t("jobseekerOnboarding.maritalStatus")}
               value={maritalStatus}
-              options={[{ value: "", label: "Select" }, ...MARITAL_STATUSES]}
+              options={[{ value: "", label: t("jobseekerOnboarding.select") }, ...tOptions(MARITAL_STATUSES, "maritalStatus")]}
               onChange={setMaritalStatus}
               accent="gold"
             />
           </Field>
-          <Field db="onboarding.jobseeker.nationality" label="Nationality (optional)" htmlFor="nationality">
+          <Field db="onboarding.jobseeker.nationality" label={t("jobseekerOnboarding.nationalityOptional")} htmlFor="nationality">
             <Dropdown
               id="nationality"
-              label="Nationality"
+              label={t("jobseekerOnboarding.nationality")}
               value={nationality}
-              options={[{ value: "", label: "Select" }, ...NATIONALITIES.map((n) => ({ value: n, label: n }))]}
+              options={[{ value: "", label: t("jobseekerOnboarding.select") }, ...NATIONALITIES.map((n) => ({ value: n, label: n }))]}
               onChange={setNationality}
               accent="gold"
               searchable
-              searchPlaceholder="Search nationalities..."
+              searchPlaceholder={t("jobseekerOnboarding.searchNationalities")}
             />
           </Field>
           {/* Required: jobs that need a licence check it, and a blank one
               reads as "no licence" — silently ruling them out. "None" is an option. */}
-          <Field db="onboarding.jobseeker.drivingLicense" required label="Driving license" htmlFor="drivingLicense">
+          <Field db="onboarding.jobseeker.drivingLicense" required label={t("jobseekerOnboarding.drivingLicense")} htmlFor="drivingLicense">
             <Dropdown
               id="drivingLicense"
-              label="Driving license"
+              label={t("jobseekerOnboarding.drivingLicense")}
               value={drivingLicense}
-              options={[{ value: "", label: "Select" }, ...DRIVING_LICENSES]}
+              options={[{ value: "", label: t("jobseekerOnboarding.select") }, ...tOptions(DRIVING_LICENSES, "drivingLicense")]}
               onChange={setDrivingLicense}
               accent="gold"
             />
           </Field>
           {/* Email and phone run full width, like the employer's About you. */}
-          <Field db="onboarding.jobseeker.email" label="Email" htmlFor="accountEmail" className="col-span-full">
+          <Field db="onboarding.jobseeker.email" label={t("jobseekerOnboarding.email")} htmlFor="accountEmail" className="col-span-full">
             <input
               id="accountEmail"
               type="email"
@@ -2639,7 +2646,7 @@ export function JobseekerOnboardingForm({
                 required
                 id="phone"
                 db="onboarding.jobseeker.phone"
-                label="Phone number"
+                label={t("jobseekerOnboarding.phoneNumber")}
                 accent="gold"
                 value={phone}
                 onChange={setPhone}
@@ -2654,10 +2661,10 @@ export function JobseekerOnboardingForm({
               after it). In Malaysia, one search box for towns and areas
               ("Kota Damansara") — picking one fills the town, state, area and
               map coordinates together. Elsewhere the city is typed. */}
-          <Field db="onboarding.jobseeker.location" required label="Country" htmlFor="country" className="col-span-full">
+          <Field db="onboarding.jobseeker.location" required label={t("jobseekerOnboarding.country")} htmlFor="country" className="col-span-full">
             <Dropdown
               id="country"
-              label="Country"
+              label={t("jobseekerOnboarding.country")}
               value={country}
               options={COUNTRIES.map((c) => ({ value: c as string, label: c as string }))}
               onChange={(value) => {
@@ -2668,52 +2675,52 @@ export function JobseekerOnboardingForm({
               }}
               accent="gold"
               searchable
-              searchPlaceholder="Search countries..."
+              searchPlaceholder={t("jobseekerOnboarding.searchCountries")}
             />
           </Field>
           {inMalaysia ? (
-            <Field db="onboarding.jobseeker.location" required label="Town or area" htmlFor="city" className="col-span-full">
-              <PlaceSearch id="city" label="Town or area" value={homePlace} onChange={setHomePlace} accent="gold" />
-              <p className="text-xs text-[#9AA3B2]">Type your area or town, e.g. Kota Damansara or Petaling Jaya.</p>
+            <Field db="onboarding.jobseeker.location" required label={t("jobseekerOnboarding.townOrArea")} htmlFor="city" className="col-span-full">
+              <PlaceSearch id="city" label={t("jobseekerOnboarding.townOrArea")} value={homePlace} onChange={setHomePlace} accent="gold" />
+              <p className="text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.typeYourAreaOrTownE")}</p>
             </Field>
           ) : (
-            <Field db="onboarding.jobseeker.location" required label="City" htmlFor="city" className="col-span-full">
+            <Field db="onboarding.jobseeker.location" required label={t("jobseekerOnboarding.city")} htmlFor="city" className="col-span-full">
               <input
                 id="city"
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. Singapore"
+                placeholder={t("jobseekerOnboarding.eGSingapore")}
                 className={inputClass}
               />
             </Field>
           )}
-          <Field db="onboarding.jobseeker.targetRole" required label="Target role" htmlFor="targetRole">
+          <Field db="onboarding.jobseeker.targetRole" required label={t("jobseekerOnboarding.targetRole")} htmlFor="targetRole">
             <input
               id="targetRole"
               type="text"
               value={targetRole}
               onChange={(e) => setTargetRole(e.target.value)}
-              placeholder="e.g. Graphic Designer"
+              placeholder={t("jobseekerOnboarding.eGGraphicDesigner")}
               className={inputClass}
             />
           </Field>
-          <Field db="onboarding.jobseeker.preferredIndustry" required label="Preferred industry" htmlFor="preferredIndustry">
+          <Field db="onboarding.jobseeker.preferredIndustry" required label={t("jobseekerOnboarding.preferredIndustry")} htmlFor="preferredIndustry">
             <Dropdown
               id="preferredIndustry"
-              label="Preferred industry"
+              label={t("jobseekerOnboarding.preferredIndustry")}
               value={preferredIndustry}
               options={[
-                { value: "" as const, label: "Select" },
+                { value: "" as const, label: t("jobseekerOnboarding.select") },
                 ...INDUSTRIES.map((i) => ({ value: i, label: i })),
               ]}
               onChange={setPreferredIndustry}
               accent="gold"
               searchable
-              searchPlaceholder="Search industries..."
+              searchPlaceholder={t("jobseekerOnboarding.searchIndustries")}
             />
           </Field>
-          <Field db="onboarding.jobseeker.yearsExperience" required label="Years of experience" htmlFor="yearsExperience">
+          <Field db="onboarding.jobseeker.yearsExperience" required label={t("jobseekerOnboarding.yearsOfExperience")} htmlFor="yearsExperience">
             <input
               id="yearsExperience"
               type="number"
@@ -2724,11 +2731,11 @@ export function JobseekerOnboardingForm({
                 setYearsExperienceAuto(false);
                 setYearsExperience(e.target.value);
               }}
-              placeholder="e.g. 3"
+              placeholder={t("jobseekerOnboarding.example", { value: "3" })}
               className={inputClass}
             />
             {yearsExperienceAuto && workExperiences.length > 0 ? (
-              <p className="text-xs text-[#9AA3B2]">Auto-calculated from Experience &amp; background below.</p>
+              <p className="text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.autoCalculatedFromExperienceBackgroundBelow")}</p>
             ) : (
               !yearsExperienceAuto &&
               computeYearsFromWorkExperiences(workExperiences) !== null && (
@@ -2741,7 +2748,7 @@ export function JobseekerOnboardingForm({
                   }}
                   className="text-left text-xs text-brand-gold-dark hover:opacity-70"
                 >
-                  Recalculate from Experience &amp; background
+                  {t("jobseekerOnboarding.recalculateYears")}
                 </button>
               )
             )}
@@ -2749,7 +2756,7 @@ export function JobseekerOnboardingForm({
           <div className={`col-span-full ${gradientFrameClass("gold")}`}>
             <div className="flex flex-col gap-[12px] rounded-[19px] bg-white p-[16px] sm:p-[22px]">
             <div className="flex items-center justify-between">
-              <p className="text-lg font-semibold text-[#141B2E]">Skills</p>
+              <p className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.skills")}</p>
               <button
                 type="button"
                 onClick={suggestSkills}
@@ -2761,8 +2768,8 @@ export function JobseekerOnboardingForm({
               >
                 <SiriOrb className="h-[14px] w-[14px]" active={suggestingSkills} />
                 {suggestingSkills
-                  ? `Suggesting… ${(suggestSkillsElapsedMs / 1000).toFixed(1)}s`
-                  : "Suggest skills for this role"}
+                  ? t("jobseekerOnboarding.suggesting", { seconds: (suggestSkillsElapsedMs / 1000).toFixed(1) })
+                  : t("jobseekerOnboarding.suggestSkills")}
               </button>
             </div>
             {(suggestSkillsStatus || suggestSkillsError) && (
@@ -2771,7 +2778,7 @@ export function JobseekerOnboardingForm({
                   `${suggestSkillsStatus}${
                     suggestSkillsTokens || suggestSkillsDurationMs
                       ? ` (${[
-                          suggestSkillsTokens ? `${suggestSkillsTokens} tokens` : null,
+                          suggestSkillsTokens ? t("jobseekerOnboarding.tokens", { tokens: suggestSkillsTokens }) : null,
                           suggestSkillsDurationMs ? `${(suggestSkillsDurationMs / 1000).toFixed(1)}s` : null,
                         ]
                           .filter(Boolean)
@@ -2781,7 +2788,7 @@ export function JobseekerOnboardingForm({
               </p>
             )}
 
-            <Field db="onboarding.jobseeker.skills" required label="Professional Skills / Tools & Technologies" htmlFor="professionalSkillInput">
+            <Field db="onboarding.jobseeker.skills" required label={t("jobseekerOnboarding.professionalSkillsToolsTechnologies")} htmlFor="professionalSkillInput">
               <input
                 id="professionalSkillInput"
                 type="text"
@@ -2789,7 +2796,7 @@ export function JobseekerOnboardingForm({
                 onChange={(e) => setProfessionalSkillInput(e.target.value)}
                 onKeyDown={handleProfessionalSkillKeyDown}
                 onBlur={addProfessionalSkill}
-                placeholder="e.g. Photoshop, Figma, SQL — press Enter"
+                placeholder={t("jobseekerOnboarding.eGPhotoshopFigmaSqlPress")}
                 className={inputClass}
               />
               {professionalSkills.length > 0 && (
@@ -2803,7 +2810,7 @@ export function JobseekerOnboardingForm({
                       <button
                         type="button"
                         onClick={() => removeProfessionalSkill(skill)}
-                        aria-label={`Remove ${skill}`}
+                        aria-label={t("jobseekerOnboarding.removeItem", { item: skill })}
                         className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-[#141B2E]/60 hover:bg-black/[0.08] hover:text-[#141B2E]"
                       >
                         <XIcon className="h-[9px] w-[9px]" />
@@ -2829,7 +2836,7 @@ export function JobseekerOnboardingForm({
               )}
             </Field>
 
-            <Field db="onboarding.jobseeker.skills" label="Soft Skills / Work Style" htmlFor="softSkillInput">
+            <Field db="onboarding.jobseeker.skills" label={t("jobseekerOnboarding.softSkillsWorkStyle")} htmlFor="softSkillInput">
               <input
                 id="softSkillInput"
                 type="text"
@@ -2837,7 +2844,7 @@ export function JobseekerOnboardingForm({
                 onChange={(e) => setSoftSkillInput(e.target.value)}
                 onKeyDown={handleSoftSkillKeyDown}
                 onBlur={addSoftSkill}
-                placeholder="e.g. Teamwork, Communication — press Enter"
+                placeholder={t("jobseekerOnboarding.eGTeamworkCommunicationPressEnter")}
                 className={inputClass}
               />
               {softSkills.length > 0 && (
@@ -2851,7 +2858,7 @@ export function JobseekerOnboardingForm({
                       <button
                         type="button"
                         onClick={() => removeSoftSkill(skill)}
-                        aria-label={`Remove ${skill}`}
+                        aria-label={t("jobseekerOnboarding.removeItem", { item: skill })}
                         className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-[#141B2E]/60 hover:bg-black/[0.08] hover:text-[#141B2E]"
                       >
                         <XIcon className="h-[9px] w-[9px]" />
@@ -2877,7 +2884,7 @@ export function JobseekerOnboardingForm({
               )}
             </Field>
 
-            <Field db="onboarding.jobseeker.skills" label="Other Skills (optional)" htmlFor="otherSkillInput">
+            <Field db="onboarding.jobseeker.skills" label={t("jobseekerOnboarding.otherSkillsOptional")} htmlFor="otherSkillInput">
               <input
                 id="otherSkillInput"
                 type="text"
@@ -2885,7 +2892,7 @@ export function JobseekerOnboardingForm({
                 onChange={(e) => setOtherSkillInput(e.target.value)}
                 onKeyDown={handleOtherSkillKeyDown}
                 onBlur={addOtherSkill}
-                placeholder="Anything else relevant, not core to your target role — press Enter"
+                placeholder={t("jobseekerOnboarding.anythingElseRelevantNotCoreTo")}
                 className={inputClass}
               />
               {otherSkills.length > 0 && (
@@ -2899,7 +2906,7 @@ export function JobseekerOnboardingForm({
                       <button
                         type="button"
                         onClick={() => removeOtherSkill(skill)}
-                        aria-label={`Remove ${skill}`}
+                        aria-label={t("jobseekerOnboarding.removeItem", { item: skill })}
                         className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-[#141B2E]/60 hover:bg-black/[0.08] hover:text-[#141B2E]"
                       >
                         <XIcon className="h-[9px] w-[9px]" />
@@ -2918,34 +2925,34 @@ export function JobseekerOnboardingForm({
 
       <div className={gradientFrameClass("gold")}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Work preferences</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("jobseekerOnboarding.workPreferences")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Salary, availability, and how you like to work.
+            {t("jobseekerOnboarding.salaryAvailabilityAndHowYouLike")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
           <fieldset className="contents">
-          <Field db="onboarding.jobseeker.employmentType" required label="Employment type" htmlFor="employmentType">
+          <Field db="onboarding.jobseeker.employmentType" required label={t("jobseekerOnboarding.employmentType")} htmlFor="employmentType">
             <Dropdown
               id="employmentType"
-              label="Employment type"
+              label={t("jobseekerOnboarding.employmentType")}
               value={employmentType}
-              options={EMPLOYMENT_TYPES.map(({ value, label }) => ({ value, label }))}
+              options={tOptions(EMPLOYMENT_TYPES, "employmentType")}
               onChange={setEmploymentType}
               accent="gold"
             />
           </Field>
-          <Field db="onboarding.jobseeker.workArrangement" required label="Work arrangement" htmlFor="workArrangement">
+          <Field db="onboarding.jobseeker.workArrangement" required label={t("jobseekerOnboarding.workArrangement")} htmlFor="workArrangement">
             <Dropdown
               id="workArrangement"
-              label="Work arrangement"
+              label={t("jobseekerOnboarding.workArrangement")}
               value={workArrangement}
-              options={WORK_ARRANGEMENTS.map(({ value, label }) => ({ value, label }))}
+              options={tOptions(WORK_ARRANGEMENTS, "workArrangement")}
               onChange={setWorkArrangement}
               accent="gold"
             />
           </Field>
-          <Field db="onboarding.jobseeker.salary" required label="Min salary (RM)" htmlFor="expectedSalaryMin">
+          <Field db="onboarding.jobseeker.salary" required label={t("jobseekerOnboarding.minSalaryRm")} htmlFor="expectedSalaryMin">
             <input
               id="expectedSalaryMin"
               type="number"
@@ -2953,11 +2960,11 @@ export function JobseekerOnboardingForm({
               step={1}
               value={expectedSalaryMin}
               onChange={(e) => setExpectedSalaryMin(e.target.value)}
-              placeholder="e.g. 3000"
+              placeholder={t("jobseekerOnboarding.example", { value: "3000" })}
               className={inputClass}
             />
           </Field>
-          <Field db="onboarding.jobseeker.salary" required label="Max salary (RM)" htmlFor="expectedSalaryMax">
+          <Field db="onboarding.jobseeker.salary" required label={t("jobseekerOnboarding.maxSalaryRm")} htmlFor="expectedSalaryMax">
             <input
               id="expectedSalaryMax"
               type="number"
@@ -2965,7 +2972,7 @@ export function JobseekerOnboardingForm({
               step={1}
               value={expectedSalaryMax}
               onChange={(e) => setExpectedSalaryMax(e.target.value)}
-              placeholder="e.g. 4500"
+              placeholder={t("jobseekerOnboarding.example", { value: "4500" })}
               className={inputClass}
             />
           </Field>
@@ -2981,22 +2988,22 @@ export function JobseekerOnboardingForm({
             />
           )}
 
-          <Field db="onboarding.jobseeker.workAuthorization" required label="Work authorization" htmlFor="workAuthorization">
+          <Field db="onboarding.jobseeker.workAuthorization" required label={t("jobseekerOnboarding.workAuthorization")} htmlFor="workAuthorization">
             <Dropdown
               id="workAuthorization"
-              label="Work authorization"
+              label={t("jobseekerOnboarding.workAuthorization")}
               value={workAuthorization}
-              options={[{ value: "" as const, label: "Select" }, ...WORK_AUTHORIZATIONS.map(({ value, label }) => ({ value, label }))]}
+              options={[{ value: "" as const, label: t("jobseekerOnboarding.select") }, ...tOptions(WORK_AUTHORIZATIONS, "workAuthorization")]}
               onChange={setWorkAuthorization}
               accent="gold"
             />
           </Field>
-          <Field db="onboarding.jobseeker.noticePeriod" required label="Notice period" htmlFor="noticePeriod">
+          <Field db="onboarding.jobseeker.noticePeriod" required label={t("jobseekerOnboarding.noticePeriod")} htmlFor="noticePeriod">
             <Dropdown
               id="noticePeriod"
-              label="Notice period"
+              label={t("jobseekerOnboarding.noticePeriod")}
               value={noticePeriod}
-              options={NOTICE_PERIODS.map(({ value, label }) => ({ value, label }))}
+              options={tOptions(NOTICE_PERIODS, "noticePeriod")}
               onChange={setNoticePeriod}
               accent="gold"
             />
@@ -3008,10 +3015,10 @@ export function JobseekerOnboardingForm({
             {workPlaceRows.length < MAX_WORK_PLACES ? (
               <SectionHeader
                 required
-                label="Preferred work locations"
+                label={t("jobseekerOnboarding.preferredWorkLocations")}
               db="onboarding.jobseeker.preferredWorkPlaces"
                 onAdd={() => setWorkPlaceRows((rows) => [...rows, { id: newId(), place: null }])}
-                addLabel="Add"
+                addLabel={t("jobseekerOnboarding.add")}
               />
             ) : (
               <p className="text-xs text-[#4B5468]">
@@ -3024,7 +3031,7 @@ export function JobseekerOnboardingForm({
                 <div key={row.id} className={`grid items-start gap-[8px] ${workPlaceRows.length > 1 ? "grid-cols-[1fr_auto]" : "grid-cols-1"}`}>
                   <PlaceSearch
                     id={`workplace-${row.id}`}
-                    label="Preferred work location"
+                    label={t("jobseekerOnboarding.preferredWorkLocation")}
                     value={row.place}
                     onChange={(place) => setWorkPlaceRows((rows) => rows.map((r) => (r.id === row.id ? { ...r, place } : r)))}
                     accent="gold"
@@ -3037,7 +3044,7 @@ export function JobseekerOnboardingForm({
                     <button
                       type="button"
                       onClick={() => setWorkPlaceRows((rows) => rows.filter((r) => r.id !== row.id))}
-                      aria-label={`Remove ${row.place ? formatPlace(row.place) : "this location"}`}
+                      aria-label={t("jobseekerOnboarding.removeItem", { item: row.place ? formatPlace(row.place) : t("jobseekerOnboarding.thisLocation") })}
                       className="flex h-[38px] w-[30px] items-center justify-center rounded-full text-[#9AA3B2] hover:text-red-500"
                     >
                       <XIcon className="h-[11px] w-[11px]" />
@@ -3054,25 +3061,25 @@ export function JobseekerOnboardingForm({
 
       <div className={gradientFrameClass("gold")}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Experience & background</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("jobseekerOnboarding.experienceBackground")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Add your work history, education, and languages.
+            {t("jobseekerOnboarding.addYourWorkHistoryEducationAnd")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
           <fieldset className="contents">
-          <CategoryHeading label="About you" first />
-          <Field db="onboarding.jobseeker.bio" label="Professional summary (optional)" htmlFor="bio" className="col-span-full">
+          <CategoryHeading label={t("jobseekerOnboarding.aboutYou")} first />
+          <Field db="onboarding.jobseeker.bio" label={t("jobseekerOnboarding.professionalSummaryOptional")} htmlFor="bio" className="col-span-full">
             <RichTextEditor
               id="bio"
               value={bio}
               onChange={setBio}
-              placeholder="A couple sentences about your experience and what you're looking for"
+              placeholder={t("jobseekerOnboarding.aCoupleSentencesAboutYourExperience")}
               accent="gold"
             />
           </Field>
 
-          <Field db="onboarding.jobseeker.links" label="LinkedIn (optional)" htmlFor="linkedinUrl">
+          <Field db="onboarding.jobseeker.links" label={t("jobseekerOnboarding.linkedinOptional")} htmlFor="linkedinUrl">
             <input
               id="linkedinUrl"
               type="url"
@@ -3082,7 +3089,7 @@ export function JobseekerOnboardingForm({
               className={inputClass}
             />
           </Field>
-          <Field db="onboarding.jobseeker.links" label="Portfolio link (optional)" htmlFor="portfolioUrl">
+          <Field db="onboarding.jobseeker.links" label={t("jobseekerOnboarding.portfolioLinkOptional")} htmlFor="portfolioUrl">
             <input
               id="portfolioUrl"
               type="url"
@@ -3092,7 +3099,7 @@ export function JobseekerOnboardingForm({
               className={inputClass}
             />
           </Field>
-          <Field db="onboarding.jobseeker.links" label="GitHub (optional)" htmlFor="githubUrl">
+          <Field db="onboarding.jobseeker.links" label={t("jobseekerOnboarding.githubOptional")} htmlFor="githubUrl">
             <input
               id="githubUrl"
               type="url"
@@ -3105,10 +3112,10 @@ export function JobseekerOnboardingForm({
 
           <div className="col-span-full mt-[6px] flex flex-col gap-[10px] border-t border-black/[0.06] pt-[14px]">
             <SectionHeader
-              label="Work experience (optional)"
+              label={t("jobseekerOnboarding.workExperienceOptional")}
               db="onboarding.jobseeker.workExperiences"
               onAdd={() => setWorkExperiences((prev) => [...prev, newWorkExperience()])}
-              addLabel="Add"
+              addLabel={t("jobseekerOnboarding.add")}
             />
             {workExperiences.map((entry) => (
               <div key={entry.id} className={entryCardClass}>
@@ -3118,14 +3125,14 @@ export function JobseekerOnboardingForm({
                       type="text"
                       value={entry.title}
                       onChange={(e) => updateWorkExperience(entry.id, { title: e.target.value })}
-                      placeholder="Job title"
+                      placeholder={t("jobseekerOnboarding.jobTitle")}
                       className={inputClass}
                     />
                     <input
                       type="text"
                       value={entry.company}
                       onChange={(e) => updateWorkExperience(entry.id, { company: e.target.value })}
-                      placeholder="Company"
+                      placeholder={t("jobseekerOnboarding.company")}
                       className={inputClass}
                     />
                   </div>
@@ -3151,12 +3158,12 @@ export function JobseekerOnboardingForm({
                     onChange={(e) => updateWorkExperience(entry.id, { isCurrent: e.target.checked })}
                     className="h-[14px] w-[14px] accent-brand-gold-dark"
                   />
-                  I currently work here
+                  {t("jobseekerOnboarding.iCurrentlyWorkHere")}
                 </label>
                 <RichTextEditor
                   value={entry.achievements}
                   onChange={(html) => updateWorkExperience(entry.id, { achievements: html })}
-                  placeholder="Key achievements (optional)"
+                  placeholder={t("jobseekerOnboarding.keyAchievementsOptional")}
                   accent="gold"
                 />
               </div>
@@ -3165,10 +3172,10 @@ export function JobseekerOnboardingForm({
 
           <div className="col-span-full mt-[6px] flex flex-col gap-[10px] border-t border-black/[0.06] pt-[14px]">
             <SectionHeader
-              label="Education (optional)"
+              label={t("jobseekerOnboarding.educationOptional")}
               db="onboarding.jobseeker.education"
               onAdd={() => setEducation((prev) => [...prev, newEducation()])}
-              addLabel="Add"
+              addLabel={t("jobseekerOnboarding.add")}
             />
             {education.map((entry) => (
               <div key={entry.id} className={entryCardClass}>
@@ -3177,7 +3184,7 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.institution}
                     onChange={(e) => updateEducation(entry.id, { institution: e.target.value })}
-                    placeholder="Institution"
+                    placeholder={t("jobseekerOnboarding.institution")}
                     className={inputClass}
                   />
                   <EntryRemoveButton onClick={() => removeEducation(entry.id)} />
@@ -3186,14 +3193,14 @@ export function JobseekerOnboardingForm({
                   type="text"
                   value={entry.fieldOfStudy}
                   onChange={(e) => updateEducation(entry.id, { fieldOfStudy: e.target.value })}
-                  placeholder="Field of study (optional)"
+                  placeholder={t("jobseekerOnboarding.fieldOfStudyOptional")}
                   className={inputClass}
                 />
                 <div className="grid grid-cols-2 gap-[8px]">
                   <Dropdown
-                    label="Qualification"
+                    label={t("jobseekerOnboarding.qualification")}
                     value={entry.qualificationTier}
-                    options={QUALIFICATION_TIERS.map(({ value, label }) => ({ value, label }))}
+                    options={tOptions(QUALIFICATION_TIERS, "qualification")}
                     onChange={(value) => updateEducation(entry.id, { qualificationTier: value })}
                     accent="gold"
                   />
@@ -3201,7 +3208,7 @@ export function JobseekerOnboardingForm({
                     type="number"
                     value={entry.graduationYear}
                     onChange={(e) => updateEducation(entry.id, { graduationYear: e.target.value })}
-                    placeholder="Grad. year"
+                    placeholder={t("jobseekerOnboarding.gradYear")}
                     className={inputClass}
                   />
                 </div>
@@ -3209,7 +3216,7 @@ export function JobseekerOnboardingForm({
                   type="text"
                   value={entry.cgpa}
                   onChange={(e) => updateEducation(entry.id, { cgpa: e.target.value })}
-                  placeholder="CGPA (optional, e.g. 3.75/4.00)"
+                  placeholder={t("jobseekerOnboarding.cgpaOptionalEG375")}
                   className={inputClass}
                 />
               </div>
@@ -3218,10 +3225,10 @@ export function JobseekerOnboardingForm({
 
           <div className="col-span-full mt-[6px] flex flex-col gap-[10px] border-t border-black/[0.06] pt-[14px]">
             <SectionHeader
-              label="Certifications & licenses (optional)"
+              label={t("jobseekerOnboarding.certificationsLicensesOptional")}
               db="onboarding.jobseeker.certifications"
               onAdd={() => setCertifications((prev) => [...prev, newCertification()])}
-              addLabel="Add"
+              addLabel={t("jobseekerOnboarding.add")}
             />
             {certifications.map((entry) => (
               <div key={entry.id} className={entryCardClass}>
@@ -3230,7 +3237,7 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.name}
                     onChange={(e) => updateCertification(entry.id, { name: e.target.value })}
-                    placeholder="Certification name"
+                    placeholder={t("jobseekerOnboarding.certificationName")}
                     className={inputClass}
                   />
                   <EntryRemoveButton onClick={() => removeCertification(entry.id)} />
@@ -3240,14 +3247,14 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.issuer}
                     onChange={(e) => updateCertification(entry.id, { issuer: e.target.value })}
-                    placeholder="Issuer (optional)"
+                    placeholder={t("jobseekerOnboarding.issuerOptional")}
                     className={inputClass}
                   />
                   <input
                     type="number"
                     value={entry.year}
                     onChange={(e) => updateCertification(entry.id, { year: e.target.value })}
-                    placeholder="Year"
+                    placeholder={t("jobseekerOnboarding.year")}
                     className={inputClass}
                   />
                 </div>
@@ -3257,13 +3264,13 @@ export function JobseekerOnboardingForm({
                       <FileIcon className="h-[15px] w-[15px]" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs text-[#141B2E]">{entry.fileName ?? "Certificate file"}</p>
+                      <p className="truncate text-xs text-[#141B2E]">{entry.fileName ?? t("jobseekerOnboarding.certificateFile")}</p>
                       {entry.fileSize != null && <p className="text-xs text-[#9AA3B2]">{formatSize(entry.fileSize)}</p>}
                     </div>
                     <button
                       type="button"
                       onClick={() => clearCertificationFile(entry.id)}
-                      aria-label="Remove certificate file"
+                      aria-label={t("jobseekerOnboarding.removeCertificateFile")}
                       className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.05] hover:text-[#141B2E]"
                     >
                       <XIcon className="h-[11px] w-[11px]" />
@@ -3286,7 +3293,7 @@ export function JobseekerOnboardingForm({
                       className="flex h-[38px] w-full cursor-pointer items-center justify-center gap-[6px] rounded-[12px] border border-dashed border-[#D7DCE4] text-xs text-[#4B5468] transition-colors hover:border-brand-gold-dark hover:bg-[#F8FAFB]"
                     >
                       <UploadIcon className="h-[12px] w-[12px] text-brand-gold-dark" />
-                      Upload certificate (optional) · PDF or image, up to 5 MB
+                      {t("jobseekerOnboarding.uploadCertificateOptionalPdfOrImage")}
                     </label>
                   </>
                 )}
@@ -3299,10 +3306,10 @@ export function JobseekerOnboardingForm({
 
           <div className="col-span-full mt-[6px] flex flex-col gap-[10px] border-t border-black/[0.06] pt-[14px]">
             <SectionHeader
-              label="Languages (optional)"
+              label={t("jobseekerOnboarding.languagesOptional")}
               db="onboarding.jobseeker.languages"
               onAdd={() => setLanguages((prev) => [...prev, newLanguage()])}
-              addLabel="Add"
+              addLabel={t("jobseekerOnboarding.add")}
             />
             {languages.map((entry) => (
               <div key={entry.id} className={entryCardClass}>
@@ -3324,19 +3331,19 @@ export function JobseekerOnboardingForm({
                     return (
                       <div className="flex min-w-0 flex-1 flex-col gap-[8px]">
                         <Dropdown
-                          label="Language"
+                          label={t("jobseekerOnboarding.language")}
                           value={pick}
                           accent="gold"
                           searchable
-                          searchPlaceholder="Search languages..."
+                          searchPlaceholder={t("jobseekerOnboarding.searchLanguages")}
                           options={[
-                            { value: "", label: "Choose a language" },
+                            { value: "", label: t("jobseekerOnboarding.chooseALanguage") },
                             ...LANGUAGE_OPTIONS.filter(
                               (o) =>
                                 o.value === pick ||
                                 !languages.some((l) => l.id !== entry.id && sameLanguage(l.language, o.value)),
                             ),
-                            { value: OTHER_LANGUAGE, label: "Other (type it)" },
+                            { value: OTHER_LANGUAGE, label: t("jobseekerOnboarding.otherTypeIt") },
                           ]}
                           onChange={(value) => {
                             if (value === OTHER_LANGUAGE) {
@@ -3369,13 +3376,13 @@ export function JobseekerOnboardingForm({
                               });
                               updateLanguage(entry.id, { language: value, dialects: value === "Chinese" ? ["Mandarin"] : [] });
                             }}
-                            placeholder="Type the language"
+                            placeholder={t("jobseekerOnboarding.typeTheLanguage")}
                             className={inputClass}
                           />
                         )}
                         {dialects.length > 0 && (
                           <div>
-                            <p className="text-xs text-[#4B5468]">Dialects you speak (optional)</p>
+                            <p className="text-xs text-[#4B5468]">{t("jobseekerOnboarding.dialectsYouSpeakOptional")}</p>
                             <div className="mt-[6px] flex flex-wrap gap-[6px]" role="group" aria-label={`${entry.language} dialects`}>
                               {dialects.map((dialect) => {
                                 const on = entry.dialects.includes(dialect);
@@ -3410,21 +3417,21 @@ export function JobseekerOnboardingForm({
                 </div>
                 <div className="grid grid-cols-2 gap-[8px]">
                   <div>
-                    <p className="mb-[5px] text-xs text-[#9AA3B2]">Spoken</p>
+                    <p className="mb-[5px] text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.spoken")}</p>
                     <Dropdown
-                      label="Spoken level"
+                      label={t("jobseekerOnboarding.spokenLevel")}
                       value={entry.spokenLevel}
-                      options={LANGUAGE_LEVELS.map(({ value, label }) => ({ value, label }))}
+                      options={tOptions(LANGUAGE_LEVELS, "languageLevel")}
                       onChange={(value) => updateLanguage(entry.id, { spokenLevel: value })}
                       accent="gold"
                     />
                   </div>
                   <div>
-                    <p className="mb-[5px] text-xs text-[#9AA3B2]">Written</p>
+                    <p className="mb-[5px] text-xs text-[#9AA3B2]">{t("jobseekerOnboarding.written")}</p>
                     <Dropdown
-                      label="Written level"
+                      label={t("jobseekerOnboarding.writtenLevel")}
                       value={entry.writtenLevel}
-                      options={LANGUAGE_LEVELS.map(({ value, label }) => ({ value, label }))}
+                      options={tOptions(LANGUAGE_LEVELS, "languageLevel")}
                       onChange={(value) => updateLanguage(entry.id, { writtenLevel: value })}
                       accent="gold"
                     />
@@ -3439,10 +3446,10 @@ export function JobseekerOnboardingForm({
             className="col-span-full mt-[6px] flex flex-col gap-[10px] border-t border-black/[0.06] pt-[14px]"
           >
             <SectionHeader
-              label="References (optional)"
+              label={t("jobseekerOnboarding.referencesOptional")}
               db="onboarding.jobseeker.references"
               onAdd={() => setReferences((prev) => [...prev, newReference()])}
-              addLabel="Add"
+              addLabel={t("jobseekerOnboarding.add")}
             />
             {references.map((entry) => (
               <div key={entry.id} className={entryCardClass}>
@@ -3451,7 +3458,7 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.fullName}
                     onChange={(e) => updateReference(entry.id, { fullName: e.target.value })}
-                    placeholder="Full name"
+                    placeholder={t("jobseekerOnboarding.fullName")}
                     className={inputClass}
                   />
                   <EntryRemoveButton onClick={() => removeReference(entry.id)} />
@@ -3461,14 +3468,14 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.jobTitle}
                     onChange={(e) => updateReference(entry.id, { jobTitle: e.target.value })}
-                    placeholder="Role (e.g. Former Manager)"
+                    placeholder={t("jobseekerOnboarding.roleEGFormerManager")}
                     className={inputClass}
                   />
                   <input
                     type="text"
                     value={entry.company}
                     onChange={(e) => updateReference(entry.id, { company: e.target.value })}
-                    placeholder="Company (optional)"
+                    placeholder={t("jobseekerOnboarding.companyOptional")}
                     className={inputClass}
                   />
                 </div>
@@ -3477,14 +3484,14 @@ export function JobseekerOnboardingForm({
                     type="text"
                     value={entry.phone}
                     onChange={(e) => updateReference(entry.id, { phone: e.target.value })}
-                    placeholder="Phone (optional)"
+                    placeholder={t("jobseekerOnboarding.phoneOptional")}
                     className={inputClass}
                   />
                   <input
                     type="email"
                     value={entry.email}
                     onChange={(e) => updateReference(entry.id, { email: e.target.value })}
-                    placeholder="Email (optional)"
+                    placeholder={t("jobseekerOnboarding.emailOptional")}
                     className={inputClass}
                   />
                 </div>
@@ -3530,9 +3537,9 @@ export function JobseekerOnboardingForm({
             data-db="onboarding.jobseeker.finish"
             className="flex h-[38px] w-full items-center justify-center rounded-full bg-brand-gold text-sm text-[#141B2E] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {submitting ? "Saving…" : saveLabel}
+            {submitting ? t("jobseekerOnboarding.saving") : saveLabel}
           </button>
-          {savedAt && !error && <p className="mt-[8px] text-xs text-brand-gold-dark">Saved.</p>}
+          {savedAt && !error && <p className="mt-[8px] text-xs text-brand-gold-dark">{t("jobseekerOnboarding.saved")}</p>}
         </div>
       </div>
       </div>
@@ -3555,7 +3562,7 @@ export function JobseekerOnboardingForm({
         >
           <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px]">
             <p className="flex items-center gap-[8px] text-left text-lg font-semibold text-[#141B2E]">
-              Required
+              {t("jobseekerOnboarding.required")}
               {formValid && <ChecklistDoneBadge />}
             </p>
             <ul className="mt-[16px] flex flex-col gap-[4px]">
@@ -3587,7 +3594,7 @@ export function JobseekerOnboardingForm({
           <div className={gradientFrameClass("gold")}>
           <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px]">
             <p className="flex items-center gap-[8px] text-left text-lg font-semibold text-[#141B2E]">
-              Optional
+              {t("jobseekerOnboarding.optional")}
               {boostChecklistRemaining === 0 && <ChecklistDoneBadge />}
             </p>
             <ul className="mt-[16px] flex flex-col gap-[4px]">
@@ -3622,11 +3629,9 @@ export function JobseekerOnboardingForm({
       {showParseConfirm && (
         <Modal onClose={() => setShowParseConfirm(false)}>
           <>
-            <h2 className="text-lg font-semibold text-[#141B2E]">You&rsquo;ve already filled some of this in</h2>
+            <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.youVeAlreadyFilledSomeOf")}</h2>
             <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-              Parsing this resume will replace the details you&rsquo;ve already entered — fields, skills,
-              work experience, education, certifications, and languages — with whatever&rsquo;s on this
-              resume. Anything this resume doesn&rsquo;t mention will be cleared. Continue?
+              {t("jobseekerOnboarding.parsingThisResumeWillReplaceThe")}
             </p>
             <div className="mt-[20px] flex flex-col gap-[8px]">
               <button
@@ -3637,14 +3642,14 @@ export function JobseekerOnboardingForm({
                 }}
                 className="flex h-[38px] items-center justify-center rounded-full bg-[linear-gradient(45deg,var(--color-brand-teal-dark),var(--color-brand-gold))] text-sm text-white transition-opacity hover:opacity-90"
               >
-                Overwrite with this resume
+                {t("jobseekerOnboarding.overwriteWithThisResume")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowParseConfirm(false)}
                 className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-[#141B2E] hover:bg-black/[0.03]"
               >
-                Cancel
+                {t("jobseekerOnboarding.cancel")}
               </button>
             </div>
           </>
@@ -3652,11 +3657,10 @@ export function JobseekerOnboardingForm({
       )}
 
       {showRemoveResumeConfirm && (
-        <Modal ariaLabel="Remove this resume?" onClose={() => setShowRemoveResumeConfirm(false)}>
-          <h2 className="text-lg font-semibold text-[#141B2E]">Remove this resume?</h2>
+        <Modal ariaLabel={t("jobseekerOnboarding.removeThisResume")} onClose={() => setShowRemoveResumeConfirm(false)}>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.removeThisResume")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            You&rsquo;ll need to upload it again (or fill things in yourself) if you change your mind
-            later — anything it already autofilled will stay put, though.
+            {t("jobseekerOnboarding.youllNeedToUploadItAgain")}
           </p>
           <div className="mt-[18px] flex flex-col gap-[8px]">
             <button
@@ -3667,25 +3671,24 @@ export function JobseekerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center rounded-full border border-red-200 text-sm text-red-500 hover:bg-red-50"
             >
-              Yes, remove it
+              {t("jobseekerOnboarding.yesRemoveIt")}
             </button>
             <button
               type="button"
               onClick={() => setShowRemoveResumeConfirm(false)}
               className="flex h-[38px] items-center justify-center text-sm text-[#9AA3B2] hover:text-[#141B2E]"
             >
-              Keep it
+              {t("jobseekerOnboarding.keepIt")}
             </button>
           </div>
         </Modal>
       )}
 
       {showResetResumeConfirm && (
-        <Modal ariaLabel="Reset your profile?" onClose={() => setShowResetResumeConfirm(false)}>
-          <h2 className="text-lg font-semibold text-[#141B2E]">Reset your profile?</h2>
+        <Modal ariaLabel={t("jobseekerOnboarding.resetYourProfile2")} onClose={() => setShowResetResumeConfirm(false)}>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.resetYourProfile2")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            This clears your resume and every detail on this form, including anything you typed yourself, so you can
-            start over. It can&rsquo;t be undone.
+            {t("jobseekerOnboarding.thisClearsYourResumeAndEvery")}
           </p>
           <div className="mt-[18px] flex flex-col gap-[8px]">
             <button
@@ -3696,14 +3699,14 @@ export function JobseekerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-red-500 hover:bg-red-50"
             >
-              Reset everything
+              {t("jobseekerOnboarding.resetEverything")}
             </button>
             <button
               type="button"
               onClick={() => setShowResetResumeConfirm(false)}
               className="flex h-[38px] items-center justify-center text-sm text-[#9AA3B2] hover:text-[#141B2E]"
             >
-              Keep my details
+              {t("jobseekerOnboarding.keepMyDetails")}
             </button>
           </div>
         </Modal>
@@ -3711,16 +3714,15 @@ export function JobseekerOnboardingForm({
 
       {showFinishSuccess && (
         <Modal
-          ariaLabel="Profile complete!"
+          ariaLabel={t("jobseekerOnboarding.profileComplete")}
           onClose={() => {
             setShowFinishSuccess(false);
             navigate({ to: "/jobseeker/dashboard" });
           }}
         >
-          <h2 className="text-lg font-semibold text-[#141B2E]">You&rsquo;re all set! 🎉</h2>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.youReAllSet")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            Thank you so much for taking the time to fill in all your details — your profile is
-            looking great! Let&rsquo;s get you to your dashboard so you can start exploring jobs.
+            {t("jobseekerOnboarding.thankYouSoMuchForTaking")}
           </p>
           <div className="mt-[20px] flex flex-col gap-[8px]">
             <button
@@ -3731,7 +3733,7 @@ export function JobseekerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center rounded-full bg-brand-gold text-sm text-[#141B2E] transition-opacity hover:opacity-90"
             >
-              Take me to my dashboard
+              {t("jobseekerOnboarding.takeMeToMyDashboard")}
             </button>
           </div>
         </Modal>
@@ -3740,12 +3742,9 @@ export function JobseekerOnboardingForm({
       {showResumeWarning && (
         <Modal onClose={() => setShowResumeWarning(false)}>
           <>
-            <h2 className="text-lg font-semibold text-[#141B2E]">One more thing — your resume!</h2>
+            <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.oneMoreThingYourResume")}</h2>
             <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-              Employers really do judge a profile faster when there&rsquo;s a resume attached — it&rsquo;s
-              often the first thing they look for. You can still finish without one, but adding yours
-              (or letting JobGiga put one together for you) gives you a much better shot at getting
-              noticed.
+              {t("jobseekerOnboarding.employersReallyDoJudgeAProfile")}
             </p>
             <div className="mt-[20px] flex flex-col gap-[8px]">
               <button
@@ -3756,7 +3755,7 @@ export function JobseekerOnboardingForm({
                 }}
                 className="flex h-[38px] items-center justify-center rounded-full bg-brand-gold text-sm text-[#141B2E] transition-opacity hover:opacity-90"
               >
-                Generate my resume via JobGiga
+                {t("jobseekerOnboarding.generateMyResumeViaJobgiga")}
               </button>
               <button
                 type="button"
@@ -3766,7 +3765,7 @@ export function JobseekerOnboardingForm({
                 }}
                 className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-[#141B2E] hover:bg-black/[0.03]"
               >
-                Skip for now
+                {t("jobseekerOnboarding.skipForNow")}
               </button>
             </div>
           </>
@@ -3775,16 +3774,15 @@ export function JobseekerOnboardingForm({
 
       {showLeaveConfirm && (
         <Modal
-          ariaLabel="Leave without saving?"
+          ariaLabel={t("jobseekerOnboarding.leaveWithoutSaving")}
           onClose={() => {
             setShowLeaveConfirm(false);
             setPendingProceed(null);
           }}
         >
-          <h2 className="text-lg font-semibold text-[#141B2E]">Leave without saving?</h2>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("jobseekerOnboarding.leaveWithoutSaving")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            You&rsquo;ve made changes to your profile that haven&rsquo;t been saved yet. Save them before
-            you go, or discard and leave.
+            {t("jobseekerOnboarding.youveMadeChangesToYourProfile")}
           </p>
           <div className="mt-[18px] flex flex-col gap-[8px]">
             <button
@@ -3793,14 +3791,14 @@ export function JobseekerOnboardingForm({
               onClick={saveAndLeave}
               className="flex h-[38px] items-center justify-center rounded-full bg-brand-gold text-sm text-[#141B2E] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Saving…" : "Save changes"}
+              {submitting ? t("jobseekerOnboarding.saving") : t("jobseekerOnboarding.saveChanges")}
             </button>
             <button
               type="button"
               onClick={discardAndLeave}
               className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-red-500 hover:bg-red-50"
             >
-              Discard changes
+              {t("jobseekerOnboarding.discardChanges")}
             </button>
             <button
               type="button"
@@ -3810,7 +3808,7 @@ export function JobseekerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center text-sm text-[#9AA3B2] hover:text-[#141B2E]"
             >
-              Keep editing
+              {t("jobseekerOnboarding.keepEditing")}
             </button>
           </div>
         </Modal>

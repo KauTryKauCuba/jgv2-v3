@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../index";
 import { lookupCompany } from "../lib/employer/company-lookup";
+import { buildDashboardData, computeMatchResults, loadEmployerAccess } from "../lib/employer/dashboard";
 import { sanitizeDescriptionHtml } from "../lib/sanitize-html";
 import type { Storage } from "../lib/storage/types";
 import {
@@ -27,6 +28,7 @@ import {
 	parseFacilities,
 } from "../shared/company-workplace";
 import { INDUSTRIES } from "../shared/industries";
+import { CRITERIA_KEYS, type CriteriaFlags } from "../shared/matching";
 import { MALAYSIA_STATES } from "../shared/malaysia";
 import { isValidMalaysianPhone } from "../shared/phone";
 
@@ -641,4 +643,52 @@ export const employerRouter = {
 			ssmVerificationStatus,
 		};
 	}),
+
+	// The redesign's employer dashboard (app/employer/dashboard/page.tsx +
+	// buildDashboardData): everything its cards show, from v1's job,
+	// application and interviews tables, plus the Smart Match settings.
+	dashboard: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const access = await loadEmployerAccess(db, context.session.user.id);
+		if (!access) throw new ORPCError("FORBIDDEN", { message: "Not signed in as an employer." });
+		return {
+			data: await buildDashboardData(db, context.origin, access.organizationId),
+			canManage: access.canManage,
+			smartMatchEnabled: access.smartMatchEnabled,
+			criteria: access.criteria,
+		};
+	}),
+
+	// The redesign's GET /api/employer/applicants/matches: every active
+	// applicant, scored (Top Matches, and the score badges on Recent applicants).
+	topMatches: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const access = await loadEmployerAccess(db, context.session.user.id);
+		if (!access) return { results: [] };
+		return { results: await computeMatchResults(db, context.origin, access.organizationId, access.criteria) };
+	}),
+
+	// The redesign's PATCH /api/employer/smart-match-settings: the on/off
+	// switch and which criteria count. Company-wide, so managers only.
+	updateSmartMatchSettings: protectedProcedure
+		.input(
+			z.object({
+				enabled: z.boolean().optional(),
+				criteria: z.object(Object.fromEntries(CRITERIA_KEYS.map((k) => [k, z.boolean()]))).partial().optional(),
+			}),
+		)
+		.handler(async ({ input, context }) => {
+			const db = context.db as AnyDb;
+			const access = await loadEmployerAccess(db, context.session.user.id);
+			if (!access?.canManage) {
+				throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can change match settings." });
+			}
+			const set: Record<string, unknown> = {};
+			if (input.enabled !== undefined) set.smartMatchEnabled = input.enabled;
+			if (input.criteria) set.smartMatchCriteria = { ...access.criteria, ...input.criteria } as CriteriaFlags;
+			if (Object.keys(set).length > 0) {
+				await db.update(organization).set(set).where(eq(organization.id, access.organizationId));
+			}
+			return { ok: true as const };
+		}),
 };

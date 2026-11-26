@@ -30,13 +30,20 @@ const navLinkClass = `${plainLinkClass} aria-[current=page]:font-semibold`;
  * the side you're on is the role. Not ported yet, since their pages don't
  * exist in v3: My Profile / Company Profile links, the notification bell,
  * the superadmin link, and the employer's company-logo avatar.
+ *
+ * `appShell`: inside the signed-in dashboards — the wider dashboard frame,
+ * and no Find companies / About / Employer · Jobseeker links (the dashboard
+ * sidebar has its own). The redesign's Tools menu (poster generator, refer
+ * a company) also goes here; it comes with those pages.
  */
 export function Navbar({
   pageRole,
   onboarding = false,
+  appShell = false,
 }: {
   pageRole: "employer" | "jobseeker";
   onboarding?: boolean;
+  appShell?: boolean;
 }) {
   const { t, i18n } = useTranslation("common");
   const navigate = useNavigate();
@@ -115,7 +122,7 @@ export function Navbar({
 
   return (
     <header className="relative z-20 h-[65px] shrink-0">
-      <nav className="shell flex h-full items-center justify-between">
+      <nav className={`${appShell ? "app-shell" : "shell"} flex h-full items-center justify-between`}>
         {/* Left: logo, then Find job / Find companies and About. */}
         <div className="flex items-center gap-[18px] text-sm text-[#141B2E] sm:gap-[28px]">
           <Link to={pageRole === "jobseeker" ? "/jobseeker" : "/employer"} className="flex items-center">
@@ -140,13 +147,13 @@ export function Navbar({
               {t("landing.nav.findJob")}
             </Link>
           )}
-          {pageRole === "employer" && (
+          {!appShell && pageRole === "employer" && (
             <Link to="/companies" data-db="action.findCompanies" className={navLinkClass}>
               {t("landing.nav.findCompanies")}
             </Link>
           )}
           {/* Each side has its own About page. */}
-          {!onboarding && (
+          {!appShell && !onboarding && (
             <Link to={aboutHref} data-db="about.page" activeOptions={{ exact: true }} className={navLinkClass}>
               {t("landing.nav.about")}
             </Link>
@@ -157,7 +164,7 @@ export function Navbar({
         <div className="flex items-center gap-[18px] text-sm text-[#141B2E]">
           {/* Exact match: "Employer" is current on /employer, not on /employer/about.
               TanStack Router sets aria-current="page" on the active link. */}
-          {!onboarding && (
+          {!appShell && !onboarding && (
             <>
               <Link to="/employer" activeOptions={{ exact: true }} className={navLinkClass}>
                 {t("landing.roles.employer")}
@@ -227,12 +234,12 @@ export function Navbar({
                           {t("landing.nav.findJob")}
                         </Link>
                       )}
-                      {pageRole !== "jobseeker" && (
+                      {!appShell && pageRole !== "jobseeker" && (
                         <Link to="/companies" onClick={() => setMenuOpen(false)} className={menuItemClass}>
                           {t("landing.nav.findCompanies")}
                         </Link>
                       )}
-                      {!onboarding && (
+                      {!appShell && !onboarding && (
                         <Link to={aboutHref} onClick={() => setMenuOpen(false)} className={menuItemClass}>
                           {t("landing.nav.about")}
                         </Link>

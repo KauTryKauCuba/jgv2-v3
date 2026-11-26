@@ -1,4 +1,4 @@
-import { jobseekerProfile, user } from "@jobgiga-app/db/schema/auth";
+import { jobseekerProfile, member, user } from "@jobgiga-app/db/schema/auth";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
@@ -44,8 +44,18 @@ export const authRouter = {
 			.from(jobseekerProfile)
 			.where(eq(jobseekerProfile.userId, userId))
 			.limit(1);
+		// An employer's name is on their company membership ("About you").
+		const [membership] = await db
+			.select({ name: member.name })
+			.from(member)
+			.where(eq(member.userId, userId))
+			.limit(1);
 		return {
-			name: (profile?.fullName as string | undefined) || (account?.name as string | undefined) || null,
+			name:
+				(profile?.fullName as string | undefined) ||
+				(account?.name as string | undefined) ||
+				(membership?.name as string | undefined) ||
+				null,
 			email: (account?.email as string | undefined) ?? context.session.user.email,
 			avatarUrl: fileUrl(context.origin, profile?.avatarKey) ?? (account?.image as string | null | undefined) ?? null,
 			phoneVerified: Boolean(account?.phoneVerified),

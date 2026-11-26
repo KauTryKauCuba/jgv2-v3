@@ -80,6 +80,8 @@ export const SALARY_PERIODS = [
   { value: "hour", label: "Hourly", unit: "hour" },
   { value: "day", label: "Daily", unit: "day" },
   { value: "project", label: "Per project", unit: "project" },
+  // v3: v1's salary_types has "Yearly" too.
+  { value: "year", label: "Yearly", unit: "year" },
 ] as const;
 
 export type SalaryPeriod = (typeof SALARY_PERIODS)[number]["value"];

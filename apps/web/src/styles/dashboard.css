@@ -1,0 +1,39 @@
+/* From the redesign's globals.css: the signed-in dashboards' page frame and
+   the animated icon colour on their stat tiles. */
+
+.app-shell {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+@media (max-width: 1024px) {
+  .app-shell {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding-inline: 16px;
+  }
+}
+
+/* White → silver → the tile's own accent (set --icon-accent inline). */
+@keyframes icon-gradient-color {
+  0%,
+  100% {
+    color: #ffffff;
+  }
+  33% {
+    color: #a8adb5;
+  }
+  66% {
+    color: var(--icon-accent, #6fe0d0);
+  }
+}
+
+.icon-gradient-color {
+  animation: icon-gradient-color 3.9s ease-in-out infinite;
+}

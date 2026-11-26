@@ -7,13 +7,19 @@ import {
 } from "@/lib/companies/responsiveness";
 
 /** "Usually replies within a day". Shows nothing until there's enough history to say. */
-export function ResponsivenessBadge({ responsiveness }: { responsiveness: EmployerResponsiveness | null }) {
+export function ResponsivenessBadge({
+	responsiveness,
+	className = "",
+}: {
+	responsiveness: EmployerResponsiveness | null;
+	className?: string;
+}) {
   const { t } = useTranslation("common");
   const badge = responsivenessBadge(responsiveness);
   if (!badge || !responsiveness) return null;
   return (
     <span
-      className={`inline-flex w-fit items-center gap-[5px] rounded-full px-[9px] py-[3px] text-xs ${RESPONSIVENESS_TONE_CLASS[badge.tone]}`}
+      className={`inline-flex w-fit items-center gap-[5px] rounded-full px-[9px] py-[3px] text-xs ${RESPONSIVENESS_TONE_CLASS[badge.tone]} ${className}`}
       title={t("companies.responsiveness.basedOn", { count: responsiveness.sampleSize })}
     >
       <ClockIcon className="h-[11px] w-[11px] shrink-0" />

@@ -36,6 +36,7 @@ import { CONTACT_ROLES, POSITIONS } from "@jobgiga-app/api/shared/positions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CompanyBadgesCard } from "@/components/companies/company-badges-card";
 import { CompanyBanner } from "@/components/companies/company-banner";
 import { AddressSearchInput } from "@/components/form/address-search-input";
@@ -173,12 +174,12 @@ const PHOTO_SIZES = {
 } as const;
 
 /** Uploads one profile photo straight away (see employer.uploadPhoto) and returns its URL. */
-async function uploadProfilePhoto(kind: "gallery" | "leader", file: File): Promise<string> {
+async function uploadProfilePhoto(kind: "gallery" | "leader", file: File, unreadableMessage: string): Promise<string> {
   let image: File;
   try {
     image = await resizeImageFile(file, PHOTO_SIZES[kind]);
   } catch {
-    throw new Error("We couldn't read that photo — try a JPG or PNG.");
+    throw new Error(unreadableMessage);
   }
   const { url } = await client.employer.uploadPhoto({ kind, image });
   return url;
@@ -271,6 +272,7 @@ export function EmployerOnboardingForm({
   // separately above this whole form.
   earnedBadges?: Record<BadgeKey, Date | undefined>;
 } = {}) {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const saveDraftMutation = useMutation(orpc.employer.saveDraft.mutationOptions());
@@ -397,7 +399,7 @@ export function EmployerOnboardingForm({
   const [addresses, setAddresses] = useState<AddressEntry[]>(
     initialAddresses?.length
       ? initialAddresses.map(addressFromSaved)
-      : (initialDraft?.addresses?.length ? initialDraft.addresses : [blankAddress("Headquarters", "address-initial")]),
+      : (initialDraft?.addresses?.length ? initialDraft.addresses : [blankAddress(t("employerOnboarding.headquarters"), "address-initial")]),
   );
 
   function addAddress() {
@@ -654,7 +656,7 @@ export function EmployerOnboardingForm({
     if (picked.length === 0) return;
     const room = MAX_GALLERY_PHOTOS - galleryPhotos.length - galleryUploading;
     if (room <= 0) {
-      setGalleryError(`You can add up to ${MAX_GALLERY_PHOTOS} photos — remove one to add another.`);
+      setGalleryError(t("employerOnboarding.galleryFull", { max: MAX_GALLERY_PHOTOS }));
       return;
     }
     const usable = picked.filter((f) => /^image\/(jpeg|png|webp)$/.test(f.type) && f.size <= 10 * 1024 * 1024);
@@ -663,18 +665,18 @@ export function EmployerOnboardingForm({
     setGalleryError(
       skipped > 0
         ? usable.length < picked.length
-          ? "Some files were skipped — use JPG, PNG or WebP photos up to 10 MB."
-          : `Only ${room} more photo${room === 1 ? "" : "s"} fit — up to ${MAX_GALLERY_PHOTOS} in total.`
+          ? t("employerOnboarding.someFilesSkipped")
+          : t("employerOnboarding.onlyMorePhotosFit", { count: room, max: MAX_GALLERY_PHOTOS })
         : null,
     );
     setGalleryUploading((n) => n + toUpload.length);
     await Promise.all(
       toUpload.map(async (file) => {
         try {
-          const url = await uploadProfilePhoto("gallery", file);
+          const url = await uploadProfilePhoto("gallery", file, t("employerOnboarding.weCouldntReadThatPhotoTry"));
           setGalleryPhotos((prev) => (prev.length < MAX_GALLERY_PHOTOS ? [...prev, url] : prev));
         } catch (err) {
-          setGalleryError(err instanceof Error ? err.message : "Couldn't upload that photo.");
+          setGalleryError(err instanceof Error ? err.message : t("employerOnboarding.couldntUploadThatPhoto"));
         } finally {
           setGalleryUploading((n) => n - 1);
         }
@@ -697,11 +699,11 @@ export function EmployerOnboardingForm({
       return false;
     }
     if (facilities.some((f) => f.toLowerCase() === value.toLowerCase())) {
-      setCustomFacilityError("You've already added that one.");
+      setCustomFacilityError(t("employerOnboarding.youveAlreadyAddedThatOne"));
       return false;
     }
     if (!isKnownFacility(value) && customFacilityCount >= MAX_CUSTOM_FACILITIES) {
-      setCustomFacilityError(`You can add up to ${MAX_CUSTOM_FACILITIES} of your own.`);
+      setCustomFacilityError(t("employerOnboarding.customFacilityLimit", { max: MAX_CUSTOM_FACILITIES }));
       return false;
     }
     setFacilities((prev) => [...prev, value]);
@@ -723,16 +725,16 @@ export function EmployerOnboardingForm({
     if (leaderPhotoInputRef.current) leaderPhotoInputRef.current.value = "";
     if (!file || index === null) return;
     if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 10 * 1024 * 1024) {
-      setLeaderError("Use a JPG, PNG or WebP photo up to 10 MB.");
+      setLeaderError(t("employerOnboarding.useAJpgPngOrWebp"));
       return;
     }
     setLeaderError(null);
     setLeaderUploading(index);
     try {
-      const url = await uploadProfilePhoto("leader", file);
+      const url = await uploadProfilePhoto("leader", file, t("employerOnboarding.weCouldntReadThatPhotoTry"));
       updateLeader(index, { photoUrl: url });
     } catch (err) {
-      setLeaderError(err instanceof Error ? err.message : "Couldn't upload that photo.");
+      setLeaderError(err instanceof Error ? err.message : t("employerOnboarding.couldntUploadThatPhoto"));
     } finally {
       setLeaderUploading(null);
     }
@@ -789,7 +791,7 @@ export function EmployerOnboardingForm({
   const showContact = !only || only === "contact";
   const showCompany = !only || only === "company";
   const bothShown = showContact && showCompany;
-  const saveLabel = mode === "edit" ? "Save changes" : "Finish";
+  const saveLabel = mode === "edit" ? t("employerOnboarding.saveChanges") : t("employerOnboarding.finish");
 
   useEffect(() => {
     if (!savedAt) return;
@@ -1017,22 +1019,22 @@ export function EmployerOnboardingForm({
   // Tells the employer which required field(s) are blocking the disabled
   // Finish button — otherwise it just sits unclickable with no explanation.
   const contactRequiredChecklist = [
-    { label: "Full name", done: contactName.trim().length > 0, fieldId: "contactName" },
-    { label: "Your role", done: contactRole.trim().length > 0, fieldId: "contactRole" },
-    { label: "Position", done: contactPosition.trim().length > 0, fieldId: "contactPosition" },
-    { label: "Phone number", done: contactPhone.trim().length > 0, fieldId: "contactPhone" },
+    { label: t("employerOnboarding.fullName"), done: contactName.trim().length > 0, fieldId: "contactName" },
+    { label: t("employerOnboarding.yourRole"), done: contactRole.trim().length > 0, fieldId: "contactRole" },
+    { label: t("employerOnboarding.position"), done: contactPosition.trim().length > 0, fieldId: "contactPosition" },
+    { label: t("employerOnboarding.phoneNumber"), done: contactPhone.trim().length > 0, fieldId: "contactPhone" },
   ];
   const companyRequiredChecklist = [
-    { label: "Company name", done: companyName.trim().length > 0, fieldId: "companyName" },
-    { label: "SSM registration number", done: ssmNumber.trim().length > 0, fieldId: "ssmNumber" },
-    { label: "Industry", done: industry.trim().length > 0, fieldId: "industry" },
-    { label: "Industry category", done: industryCategory.length > 0, fieldId: "industryCategory" },
+    { label: t("employerOnboarding.companyName"), done: companyName.trim().length > 0, fieldId: "companyName" },
+    { label: t("employerOnboarding.ssmRegistrationNumber"), done: ssmNumber.trim().length > 0, fieldId: "ssmNumber" },
+    { label: t("employerOnboarding.industry"), done: industry.trim().length > 0, fieldId: "industry" },
+    { label: t("employerOnboarding.industryCategory"), done: industryCategory.length > 0, fieldId: "industryCategory" },
     {
-      label: "Company address",
+      label: t("employerOnboarding.companyAddress"),
       done: addresses.length > 0 && addresses.every(isCompleteAddress),
       fieldId: addresses.find((a) => !isCompleteAddress(a))?.key ?? "addresses",
     },
-    { label: "Company size", done: companySize.length > 0, fieldId: "companySize" },
+    { label: t("employerOnboarding.companySize"), done: companySize.length > 0, fieldId: "companySize" },
   ];
   // Full onboarding shows one continuous list; the standalone My Profile /
   // Company Profile pages each only show the fields that live on that page.
@@ -1047,57 +1049,57 @@ export function EmployerOnboardingForm({
   // touches formValid.
   const boostChecklist = [
     {
-      label: "Company logo",
+      label: t("employerOnboarding.companyLogo"),
       done: Boolean(logoUrl),
       fieldId: "logoUploadButton",
     },
     {
-      label: "Company description",
+      label: t("employerOnboarding.companyDescription"),
       done: companyDescription.trim().length > 0,
       fieldId: "companyDescription",
     },
     {
-      label: "Website",
+      label: t("employerOnboarding.website"),
       done: websiteUrl.trim().length > 0,
       fieldId: "websiteUrl",
     },
     {
-      label: "Company email",
+      label: t("employerOnboarding.companyEmail"),
       done: companyEmail.trim().length > 0,
       fieldId: "companyEmail",
     },
     {
-      label: "Company phone",
+      label: t("employerOnboarding.companyPhone"),
       done: companyPhone.trim().length > 0,
       fieldId: "companyPhone",
     },
     {
-      label: "LinkedIn",
+      label: t("employerOnboarding.linkedin"),
       done: companyLinkedin.trim().length > 0,
       fieldId: "companyLinkedin",
     },
     {
-      label: "Founded year",
+      label: t("employerOnboarding.foundedYear"),
       done: foundedYear.trim().length > 0,
       fieldId: "foundedYear",
     },
     {
-      label: "Company type",
+      label: t("employerOnboarding.companyType"),
       done: companyType.trim().length > 0,
       fieldId: "companyType",
     },
     {
-      label: "Office photos",
+      label: t("employerOnboarding.officePhotos"),
       done: galleryPhotos.length > 0,
       fieldId: "galleryAddButton",
     },
     {
-      label: "Facilities",
+      label: t("employerOnboarding.facilities"),
       done: facilities.length > 0,
       fieldId: "facilities",
     },
     {
-      label: "Leadership",
+      label: t("employerOnboarding.leadership"),
       done: leaders.some((l) => l.name.trim() && l.title.trim()),
       fieldId: "leadership",
     },
@@ -1128,18 +1130,18 @@ export function EmployerOnboardingForm({
     if (!picked) return;
 
     if (!picked.type.startsWith("image/")) {
-      setAvatarError("Choose an image file.");
+      setAvatarError(t("employerOnboarding.chooseAnImageFile"));
       return;
     }
     if (picked.size > AVATAR_MAX_BYTES) {
-      setAvatarError("Image is too large — max 3 MB.");
+      setAvatarError(t("employerOnboarding.imageIsTooLargeMax3"));
       return;
     }
 
     setAvatarError(null);
     const reader = new FileReader();
     reader.onload = () => setAvatarUrl(typeof reader.result === "string" ? reader.result : null);
-    reader.onerror = () => setAvatarError("Couldn't read that image.");
+    reader.onerror = () => setAvatarError(t("employerOnboarding.couldntReadThatImage"));
     reader.readAsDataURL(picked);
   }
 
@@ -1154,18 +1156,18 @@ export function EmployerOnboardingForm({
     if (!picked) return;
 
     if (!picked.type.startsWith("image/")) {
-      setLogoError("Choose an image file.");
+      setLogoError(t("employerOnboarding.chooseAnImageFile"));
       return;
     }
     if (picked.size > LOGO_MAX_BYTES) {
-      setLogoError("Image is too large — max 3 MB.");
+      setLogoError(t("employerOnboarding.imageIsTooLargeMax3"));
       return;
     }
 
     setLogoError(null);
     const reader = new FileReader();
     reader.onload = () => setLogoUrl(typeof reader.result === "string" ? reader.result : null);
-    reader.onerror = () => setLogoError("Couldn't read that image.");
+    reader.onerror = () => setLogoError(t("employerOnboarding.couldntReadThatImage"));
     reader.readAsDataURL(picked);
   }
 
@@ -1174,18 +1176,18 @@ export function EmployerOnboardingForm({
     if (bannerInputRef.current) bannerInputRef.current.value = "";
     if (!picked) return;
     if (!/^image\/(jpeg|png|webp)$/.test(picked.type)) {
-      setBannerError("Choose a JPG, PNG or WebP image.");
+      setBannerError(t("employerOnboarding.chooseAJpgPngOrWebp"));
       return;
     }
     if (picked.size > BANNER_MAX_BYTES) {
-      setBannerError("Image is too large — max 8 MB.");
+      setBannerError(t("employerOnboarding.imageIsTooLargeMax8"));
       return;
     }
     setBannerError(null);
     // Cropped to the 1500x500 WebP the redesign's server made with sharp.
     resizeImageToDataUrl(picked, { width: 1500, height: 500, fit: "cover", quality: 0.8 })
       .then(setBannerUrl)
-      .catch(() => setBannerError("Couldn't read that image."));
+      .catch(() => setBannerError(t("employerOnboarding.couldntReadThatImage")));
   }
 
   function clearLogo() {
@@ -1200,17 +1202,17 @@ export function EmployerOnboardingForm({
     if (ssmDocumentInputRef.current) ssmDocumentInputRef.current.value = "";
     if (!picked) return;
     if (!/^(application\/pdf|image\/(jpeg|png|webp))$/.test(picked.type)) {
-      setSsmDocumentError("Choose a PDF, JPG, PNG or WebP file.");
+      setSsmDocumentError(t("employerOnboarding.chooseAPdfJpgPngOr"));
       return;
     }
     if (picked.size > SSM_DOCUMENT_MAX_BYTES) {
-      setSsmDocumentError("File is too large — max 10 MB.");
+      setSsmDocumentError(t("employerOnboarding.fileIsTooLargeMax10"));
       return;
     }
     setSsmDocumentError(null);
     const reader = new FileReader();
     reader.onload = () => setSsmDocumentUrl(typeof reader.result === "string" ? reader.result : null);
-    reader.onerror = () => setSsmDocumentError("Couldn't read that file.");
+    reader.onerror = () => setSsmDocumentError(t("employerOnboarding.couldntReadThatFile"));
     reader.readAsDataURL(picked);
   }
 
@@ -1466,8 +1468,8 @@ export function EmployerOnboardingForm({
       setAiLookupDurationMs(typeof data.durationMs === "number" ? data.durationMs : null);
       setAiLookupStatus(
         filled > 0
-          ? "Filled from public web sources — unverified, please check before continuing."
-          : "Couldn't find enough public info on this company — fill in the fields manually.",
+          ? t("employerOnboarding.aiFilled")
+          : t("employerOnboarding.aiFoundNothing"),
       );
       // Locks the name field again now that it has a confirmed lookup behind
       // it — including a "couldn't find enough info" result, since the name
@@ -1477,7 +1479,7 @@ export function EmployerOnboardingForm({
       preEditCompanyNameRef.current = null;
     } catch (err) {
       if (requestId !== aiLookupRequestId.current) return;
-      setAiLookupError(err instanceof Error ? err.message : "Couldn't look that company up.");
+      setAiLookupError(err instanceof Error ? err.message : t("employerOnboarding.couldntLookThatCompanyUp"));
     } finally {
       if (requestId === aiLookupRequestId.current) setAiLookupLoading(false);
     }
@@ -1562,7 +1564,7 @@ export function EmployerOnboardingForm({
     // A true start-over: back to one empty Headquarters address (the AI clear
     // above only empties the first one), and the address autofill forgets
     // what it filled in.
-    setAddresses([blankAddress("Headquarters")]);
+    setAddresses([blankAddress(t("employerOnboarding.headquarters"))]);
     autoFilledCity.current = {};
     autoFilledArea.current = {};
     setAiAddressSuggestion(null);
@@ -1605,23 +1607,23 @@ export function EmployerOnboardingForm({
       (item) => (item.title.trim() || item.url.trim()) && !(item.title.trim() && item.url.trim()),
     );
     if (incompleteNews) {
-      setError("Finish or remove the incomplete news entry (needs both a headline and a URL).");
+      setError(t("employerOnboarding.finishOrRemoveTheIncompleteNews"));
       return false;
     }
     if (awards.some((a) => a.year.trim() && !a.title.trim())) {
-      setError("Give each award a name, or remove the empty one.");
+      setError(t("employerOnboarding.giveEachAwardANameOr"));
       return false;
     }
     if (awards.some((a) => !isValidAwardYear(a.year))) {
-      setError(`Award years must be between 1900 and ${CURRENT_YEAR}.`);
+      setError(t("employerOnboarding.awardYearRange", { year: CURRENT_YEAR }));
       return false;
     }
     if (leaders.some((l) => (l.name.trim() || l.title.trim() || l.photoUrl) && !(l.name.trim() && l.title.trim()))) {
-      setError("Each person in Leadership needs both a name and a role — or remove them.");
+      setError(t("employerOnboarding.eachPersonInLeadershipNeedsBoth"));
       return false;
     }
     if (galleryUploading > 0 || leaderUploading !== null) {
-      setError("A photo is still uploading — give it a moment, then try again.");
+      setError(t("employerOnboarding.aPhotoIsStillUploadingGive"));
       return false;
     }
 
@@ -1703,7 +1705,7 @@ export function EmployerOnboardingForm({
       }
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't save your company profile.");
+      setError(err instanceof Error ? err.message : t("employerOnboarding.couldntSaveYourCompanyProfile"));
       return false;
     } finally {
       setSubmitting(false);
@@ -1751,9 +1753,9 @@ export function EmployerOnboardingForm({
         }`}
       >
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">About you</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.aboutYou")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Tell us who&rsquo;s registering this company.
+            {t("employerOnboarding.tellUsWhosRegisteringThisCompany")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
@@ -1771,11 +1773,11 @@ export function EmployerOnboardingForm({
                   type="button"
                   onClick={() => avatarInputRef.current?.click()}
                   data-db="onboarding.employer.avatar"
-                  aria-label={avatarUrl ? "Change profile photo" : "Upload profile photo"}
+                  aria-label={avatarUrl ? t("employerOnboarding.changeProfilePhoto") : t("employerOnboarding.uploadProfilePhoto")}
                   className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.1] bg-[#F1F4F8] text-[#9AA3B2] hover:border-brand-teal-dark"
                 >
                   {avatarUrl ? (
-                    <img src={avatarUrl} referrerPolicy="no-referrer" alt="Profile" className="h-full w-full object-cover" />
+                    <img src={avatarUrl} referrerPolicy="no-referrer" alt={t("employerOnboarding.profile")} className="h-full w-full object-cover" />
                   ) : (
                     <UserIcon className="h-[26px] w-[26px]" />
                   )}
@@ -1789,7 +1791,7 @@ export function EmployerOnboardingForm({
                     onClick={() => avatarInputRef.current?.click()}
                     className="rounded-full bg-[#F1F4F8] px-[12px] py-[6px] text-sm text-[#141B2E] hover:bg-black/[0.08]"
                   >
-                    {avatarUrl ? "Change photo" : "Upload photo"}
+                    {avatarUrl ? t("employerOnboarding.changePhoto") : t("employerOnboarding.uploadPhoto")}
                   </button>
                   {avatarUrl && (
                     <button
@@ -1797,60 +1799,60 @@ export function EmployerOnboardingForm({
                       onClick={clearAvatar}
                       className="text-sm text-[#9AA3B2] hover:text-[#141B2E]"
                     >
-                      Remove
+                      {t("employerOnboarding.remove")}
                     </button>
                   )}
                 </div>
                 <p className={`text-xs ${avatarError ? "text-red-500" : "text-[#9AA3B2]"}`}>
-                  {avatarError ?? "JPG or PNG · up to 3 MB"}
+                  {avatarError ?? t("employerOnboarding.photoHint")}
                 </p>
               </div>
             </div>
-            <Field db="onboarding.employer.contactName" required label="Full name" htmlFor="contactName" className="col-span-full">
+            <Field db="onboarding.employer.contactName" required label={t("employerOnboarding.fullName")} htmlFor="contactName" className="col-span-full">
               <input
                 id="contactName"
                 type="text"
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
-                placeholder="e.g. Ahmad Zaki"
+                placeholder={t("employerOnboarding.eGAhmadZaki")}
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.contactRole" required label="Your role" htmlFor="contactRole" className="col-span-full">
+            <Field db="onboarding.employer.contactRole" required label={t("employerOnboarding.yourRole")} htmlFor="contactRole" className="col-span-full">
               <Dropdown
                 id="contactRole"
-                label="Your role"
+                label={t("employerOnboarding.yourRole")}
                 value={contactRole}
                 options={[
-                  { value: "" as const, label: "Select your role" },
-                  ...CONTACT_ROLES.map((r) => ({ value: r, label: r })),
+                  { value: "" as const, label: t("employerOnboarding.selectYourRole") },
+                  ...CONTACT_ROLES.map((r) => ({ value: r, label: t(`employerOnboarding.contactRoles.${r}`) })),
                 ]}
                 onChange={(value) => setContactRole(value as (typeof CONTACT_ROLES)[number] | "")}
               />
             </Field>
-            <Field db="onboarding.employer.contactPosition" required label="Position" htmlFor="contactPosition" className="col-span-full">
+            <Field db="onboarding.employer.contactPosition" required label={t("employerOnboarding.position")} htmlFor="contactPosition" className="col-span-full">
               <Dropdown
                 id="contactPosition"
-                label="Position"
+                label={t("employerOnboarding.position")}
                 searchable
-                searchPlaceholder="Search positions..."
+                searchPlaceholder={t("employerOnboarding.searchPositions")}
                 value={contactPositionChoice}
                 options={[
-                  { value: "" as const, label: "Select your position" },
+                  { value: "" as const, label: t("employerOnboarding.selectYourPosition") },
                   ...POSITIONS.map((p) => ({ value: p as (typeof POSITIONS)[number] | "" | "__other__", label: p })),
-                  { value: OTHER_POSITION, label: "Other" },
+                  { value: OTHER_POSITION, label: t("employerOnboarding.other") },
                 ]}
                 onChange={(value) => setContactPositionChoice(value)}
               />
             </Field>
             {contactPositionChoice === OTHER_POSITION && (
-              <Field db="onboarding.employer.contactPosition" required label="Your position" htmlFor="contactPositionOther" className="col-span-full">
+              <Field db="onboarding.employer.contactPosition" required label={t("employerOnboarding.yourPosition")} htmlFor="contactPositionOther" className="col-span-full">
                 <input
                   id="contactPositionOther"
                   type="text"
                   value={contactPositionOther}
                   onChange={(e) => setContactPositionOther(e.target.value)}
-                  placeholder="e.g. Senior Graphic Designer"
+                  placeholder={t("employerOnboarding.eGSeniorGraphicDesigner")}
                   className={inputClass}
                 />
               </Field>
@@ -1863,7 +1865,7 @@ export function EmployerOnboardingForm({
                 required
                 id="contactPhone"
                 db="onboarding.employer.contactPhone"
-                label="Phone number"
+                label={t("employerOnboarding.phoneNumber")}
                 accent="teal"
                 value={contactPhone}
                 onChange={setContactPhone}
@@ -1873,7 +1875,7 @@ export function EmployerOnboardingForm({
               />
             </div>
             </div>
-            <Field db="onboarding.employer.contactEmail" label="Email address" htmlFor="contactEmail" className="col-span-full">
+            <Field db="onboarding.employer.contactEmail" label={t("employerOnboarding.emailAddress")} htmlFor="contactEmail" className="col-span-full">
               <input
                 id="contactEmail"
                 type="email"
@@ -1894,9 +1896,9 @@ export function EmployerOnboardingForm({
                   onClick={() => handleSubmit()}
                   className="flex h-[38px] w-full items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {submitting ? "Saving…" : saveLabel}
+                  {submitting ? t("employerOnboarding.saving") : saveLabel}
                 </button>
-                {savedAt && !error && <p className="text-xs text-brand-teal-dark">Saved.</p>}
+                {savedAt && !error && <p className="text-xs text-brand-teal-dark">{t("employerOnboarding.saved")}</p>}
               </div>
             )}
           </div>
@@ -1918,13 +1920,13 @@ export function EmployerOnboardingForm({
             className="pointer-events-none absolute right-[8px] top-1/2 hidden h-[200px] w-[200px] -translate-y-1/2 [&>svg]:h-full [&>svg]:w-full @[34rem]:block"
           />
 
-          <h1 className="relative text-xl font-semibold text-[#141B2E] @[34rem]:max-w-[calc(100%-220px)]">Company name</h1>
+          <h1 className="relative text-xl font-semibold text-[#141B2E] @[34rem]:max-w-[calc(100%-220px)]">{t("employerOnboarding.companyName")}</h1>
           <p className="relative mt-[6px] text-sm leading-[20px] text-[#4B5468] @[34rem]:max-w-[calc(100%-220px)]">
-            We&rsquo;ll use this to search public sources and help fill out the rest of your profile.
+            {t("employerOnboarding.wellUseThisToSearchPublic")}
           </p>
 
           <div className="relative mt-[16px] @[34rem]:max-w-[calc(100%-220px)]">
-            <Field db="onboarding.employer.companyName" required label="Company name" htmlFor="companyName">
+            <Field db="onboarding.employer.companyName" required label={t("employerOnboarding.companyName")} htmlFor="companyName">
               <div className="flex gap-[8px]">
                 <input
                   ref={companyNameInputRef}
@@ -1972,7 +1974,7 @@ export function EmployerOnboardingForm({
                     }
                   }}
                   disabled={companyNameLocked || aiLookupLoading}
-                  placeholder="e.g. Maju Jaya Sdn Bhd"
+                  placeholder={t("employerOnboarding.eGMajuJayaSdnBhd")}
                   className={`${inputClass} min-w-0 flex-1 disabled:bg-[#F8FAFB] disabled:text-[#4B5468]`}
                 />
                 {hasConfirmedCompanyName &&
@@ -1996,11 +1998,11 @@ export function EmployerOnboardingForm({
                         // this same render, so focusing it now would no-op.
                         requestAnimationFrame(() => companyNameInputRef.current?.focus());
                       }}
-                      aria-label="Edit company name"
+                      aria-label={t("employerOnboarding.editCompanyName")}
                       className="flex h-[38px] shrink-0 items-center gap-[6px] whitespace-nowrap rounded-[12px] bg-[#F1F4F8] px-[14px] text-sm text-[#4B5468] hover:bg-black/[0.08]"
                     >
                       <PencilIcon className="h-[13px] w-[13px]" />
-                      Edit
+                      {t("employerOnboarding.edit")}
                     </button>
                   ) : (
                     <button
@@ -2025,11 +2027,11 @@ export function EmployerOnboardingForm({
                         preEditCompanyNameRef.current = null;
                         setCompanyNameLocked(true);
                       }}
-                      aria-label="Save company name"
+                      aria-label={t("employerOnboarding.saveCompanyName")}
                       className="flex h-[38px] shrink-0 items-center gap-[6px] whitespace-nowrap rounded-[12px] bg-brand-teal-dark px-[14px] text-sm text-white hover:opacity-90"
                     >
                       <CheckIcon className="h-[13px] w-[13px]" />
-                      Save
+                      {t("employerOnboarding.save")}
                     </button>
                   ))}
               </div>
@@ -2065,17 +2067,17 @@ export function EmployerOnboardingForm({
                   }`}
                 >
                   <SiriOrb className="h-[14px] w-[14px]" active={aiLookupLoading} />
-                  {aiLookupLoading ? `Looking up… ${(aiLookupElapsedMs / 1000).toFixed(1)}s` : "Fill with AI"}
+                  {aiLookupLoading ? t("employerOnboarding.lookingUp", { seconds: (aiLookupElapsedMs / 1000).toFixed(1) }) : t("employerOnboarding.fillWithAi")}
                 </button>
                 <button
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => setShowResetConfirm(true)}
                   disabled={aiLookupLoading}
-                  aria-label="Clear AI-filled details"
+                  aria-label={t("employerOnboarding.clearAiFilledDetails")}
                   className="h-[38px] shrink-0 whitespace-nowrap rounded-[12px] bg-[#F1F4F8] px-[14px] text-sm text-[#4B5468] hover:bg-black/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Reset
+                  {t("employerOnboarding.reset")}
                 </button>
               </div>
               {(aiLookupStatus || aiLookupError) && (
@@ -2084,7 +2086,7 @@ export function EmployerOnboardingForm({
                     `${aiLookupStatus}${
                       aiLookupTokens || aiLookupDurationMs
                         ? ` (${[
-                            aiLookupTokens ? `${aiLookupTokens} tokens` : null,
+                            aiLookupTokens ? t("employerOnboarding.tokens", { tokens: aiLookupTokens }) : null,
                             aiLookupDurationMs ? `${(aiLookupDurationMs / 1000).toFixed(1)}s` : null,
                           ]
                             .filter(Boolean)
@@ -2100,41 +2102,41 @@ export function EmployerOnboardingForm({
 
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${cardClass}`} style={mode === "edit" ? { animationDelay: "240ms" } : undefined}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">About your company</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.aboutYourCompany")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Tell us a bit about your company so we can help you hire faster.
+            {t("employerOnboarding.tellUsABitAboutYour")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
             <fieldset className="contents">
-            <Field db="onboarding.employer.industry" required label="Industry" htmlFor="industry">
+            <Field db="onboarding.employer.industry" required label={t("employerOnboarding.industry")} htmlFor="industry">
               <input
                 id="industry"
                 type="text"
                 value={industry}
                 onChange={(e) => setIndustry(e.target.value)}
-                placeholder="e.g. F&B, Retail, Logistics"
+                placeholder={t("employerOnboarding.eGFBRetailLogistics")}
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.industryCategory" required label="Industry category" htmlFor="industryCategory">
+            <Field db="onboarding.employer.industryCategory" required label={t("employerOnboarding.industryCategory")} htmlFor="industryCategory">
               <Dropdown
                 id="industryCategory"
-                label="Industry category"
+                label={t("employerOnboarding.industryCategory")}
                 value={industryCategory}
                 options={[
-                  { value: "" as const, label: "Select industry" },
+                  { value: "" as const, label: t("employerOnboarding.selectIndustry") },
                   ...INDUSTRIES.map((i) => ({ value: i, label: i })),
                 ]}
                 onChange={(value) => setIndustryCategory(value as (typeof INDUSTRIES)[number] | "")}
                 searchable
-                searchPlaceholder="Search industries..."
+                searchPlaceholder={t("employerOnboarding.searchIndustries")}
               />
             </Field>
             <div className="col-span-full flex flex-col gap-[12px]">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-[#4B5468]">
-                  Company address{addresses.length > 1 ? "es" : ""}
+                  {t("employerOnboarding.companyAddresses", { count: addresses.length })}
                 </p>
                 <button
                   type="button"
@@ -2142,7 +2144,7 @@ export function EmployerOnboardingForm({
                   className="flex shrink-0 items-center gap-[4px] rounded-full bg-brand-teal-soft py-[6px] pl-[10px] pr-[12px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6]"
                 >
                   <PlusIcon className="h-[12px] w-[12px]" />
-                  Add another address
+                  {t("employerOnboarding.addAnotherAddress")}
                 </button>
               </div>
 
@@ -2156,7 +2158,7 @@ export function EmployerOnboardingForm({
                       type="text"
                       value={address.label}
                       onChange={(e) => updateAddress(address.key, { label: e.target.value })}
-                      placeholder="e.g. Headquarters, Branch office"
+                      placeholder={t("employerOnboarding.eGHeadquartersBranchOffice")}
                       className={`${inputClass} max-w-[260px]`}
                     />
                     {/* With more than one address, pick which one new job
@@ -2165,7 +2167,7 @@ export function EmployerOnboardingForm({
                       (address.key === jobDefaultKey ? (
                         <span className="ml-auto flex h-[28px] shrink-0 items-center gap-[5px] rounded-full bg-brand-teal-soft px-[10px] text-xs text-brand-teal-dark">
                           <CheckIcon className="h-[10px] w-[10px]" />
-                          Default for job posts
+                          {t("employerOnboarding.defaultForJobPosts")}
                         </span>
                       ) : (
                         <button
@@ -2173,7 +2175,7 @@ export function EmployerOnboardingForm({
                           onClick={() => setJobDefault(address.key)}
                           className="ml-auto flex h-[28px] shrink-0 items-center rounded-full border border-black/[0.1] px-[10px] text-xs text-[#4B5468] hover:bg-black/[0.03]"
                         >
-                          Set as default for job posts
+                          {t("employerOnboarding.setAsDefaultForJobPosts")}
                         </button>
                       ))}
                     {addresses.length > 1 && (
@@ -2181,7 +2183,7 @@ export function EmployerOnboardingForm({
                         type="button"
                         onClick={() => removeAddress(address.key)}
                         className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.06] hover:text-red-500"
-                        aria-label={`Remove ${address.label || "this address"}`}
+                        aria-label={t("employerOnboarding.removeItem", { item: address.label || t("employerOnboarding.thisAddress") })}
                       >
                         <XIcon className="h-[12px] w-[12px]" />
                       </button>
@@ -2189,46 +2191,46 @@ export function EmployerOnboardingForm({
                   </div>
 
                   <div className="grid grid-cols-1 gap-x-[14px] gap-y-[10px] sm:grid-cols-2">
-                    <Field db="onboarding.employer.addresses" required label="Street address" htmlFor={address.key} className="col-span-full">
+                    <Field db="onboarding.employer.addresses" required label={t("employerOnboarding.streetAddress")} htmlFor={address.key} className="col-span-full">
                       <AddressSearchInput
                         id={address.key}
                         value={address.addressLine1}
                         onChange={(addressLine1) => updateAddress(address.key, { addressLine1 })}
                         onPick={(suggestion, typed) => pickAddressSuggestion(address.key, suggestion, typed)}
                         onLeave={() => splitPastedAddress(address.key)}
-                        placeholder="Start typing your street or building, e.g. Jalan SS 2/24"
+                        placeholder={t("employerOnboarding.startTypingYourStreetOrBuilding")}
                         className={inputClass}
                       />
                     </Field>
-                    <Field db="onboarding.employer.addresses" label="Address line 2 (optional)" htmlFor={`${address.key}-line2`} className="col-span-full">
+                    <Field db="onboarding.employer.addresses" label={t("employerOnboarding.addressLine2Optional")} htmlFor={`${address.key}-line2`} className="col-span-full">
                       <input
                         id={`${address.key}-line2`}
                         type="text"
                         value={address.addressLine2}
                         onChange={(e) => updateAddress(address.key, { addressLine2: e.target.value })}
-                        placeholder="e.g. Unit 5-1, Level 5"
+                        placeholder={t("employerOnboarding.eGUnit51Level")}
                         className={inputClass}
                       />
                     </Field>
                     {/* Postcode first — it fills in the city and state. */}
-                    <Field db="onboarding.employer.addresses" required label="Postcode" htmlFor={`${address.key}-postcode`}>
+                    <Field db="onboarding.employer.addresses" required label={t("employerOnboarding.postcode")} htmlFor={`${address.key}-postcode`}>
                       <input
                         id={`${address.key}-postcode`}
                         type="text"
                         inputMode="numeric"
                         value={address.postcode}
                         onChange={(e) => handlePostcodeChange(address.key, e.target.value)}
-                        placeholder="e.g. 47300"
+                        placeholder={t("employerOnboarding.example", { value: "47300" })}
                         className={inputClass}
                       />
                     </Field>
-                    <Field db="onboarding.employer.addresses" required label="City" htmlFor={`${address.key}-city`}>
+                    <Field db="onboarding.employer.addresses" required label={t("employerOnboarding.city")} htmlFor={`${address.key}-city`}>
                       <input
                         id={`${address.key}-city`}
                         type="text"
                         value={address.city}
                         onChange={(e) => updateAddress(address.key, { city: e.target.value })}
-                        placeholder="e.g. Petaling Jaya"
+                        placeholder={t("employerOnboarding.eGPetalingJaya")}
                         className={inputClass}
                       />
                     </Field>
@@ -2238,8 +2240,7 @@ export function EmployerOnboardingForm({
                       if (lookup.matches.length === 0) {
                         return (
                           <p className="col-span-full -mt-[4px] text-xs text-[#9AA3B2]">
-                            We couldn&rsquo;t find postcode {lookup.postcode} — check it, or fill in the city and state
-                            yourself.
+                            {t("employerOnboarding.postcodeNotFound", { postcode: lookup.postcode })}
                           </p>
                         );
                       }
@@ -2250,7 +2251,7 @@ export function EmployerOnboardingForm({
                       return (
                         <div className="col-span-full -mt-[4px] flex flex-wrap items-center gap-[6px]">
                           <span className="text-xs text-[#9AA3B2]">
-                            {lookup.matches.length > 1 ? `Towns for ${lookup.postcode}:` : `Postcode ${lookup.postcode} is in`}
+                            {lookup.matches.length > 1 ? t("employerOnboarding.townsForPostcode", { postcode: lookup.postcode }) : t("employerOnboarding.postcodeIsIn", { postcode: lookup.postcode })}
                           </span>
                           {lookup.matches.map((m) =>
                             m.city === address.city ? (
@@ -2275,7 +2276,7 @@ export function EmployerOnboardingForm({
                         </div>
                       );
                     })()}
-                    <Field db="onboarding.employer.addresses" label="Area / neighbourhood (optional)" htmlFor={`${address.key}-area`}>
+                    <Field db="onboarding.employer.addresses" label={t("employerOnboarding.areaNeighbourhoodOptional")} htmlFor={`${address.key}-area`}>
                       <input
                         id={`${address.key}-area`}
                         type="text"
@@ -2284,21 +2285,21 @@ export function EmployerOnboardingForm({
                         onChange={(e) => updateAddress(address.key, { area: e.target.value })}
                         placeholder={
                           areaLookupKeys[address.key]
-                            ? "Finding the area…"
+                            ? t("employerOnboarding.findingArea")
                             : address.addressLine1.trim() && address.postcode.length === 5
-                              ? "e.g. Bangsar South"
-                              : "Filled in from the street address and postcode"
+                              ? t("employerOnboarding.areaPlaceholder")
+                              : t("employerOnboarding.areaFilled")
                         }
                         className={inputClass}
                       />
                     </Field>
-                    <Field db="onboarding.employer.addresses" required label="State" htmlFor={`${address.key}-state`}>
+                    <Field db="onboarding.employer.addresses" required label={t("employerOnboarding.state")} htmlFor={`${address.key}-state`}>
                       <Dropdown
                         id={`${address.key}-state`}
-                        label="State"
+                        label={t("employerOnboarding.state")}
                         value={address.state}
                         options={[
-                          { value: "" as const, label: "Select state" },
+                          { value: "" as const, label: t("employerOnboarding.selectState") },
                           ...MALAYSIA_STATES.map((s) => ({ value: s, label: s })),
                         ]}
                         onChange={(value) =>
@@ -2306,7 +2307,7 @@ export function EmployerOnboardingForm({
                         }
                       />
                     </Field>
-                    <Field db="onboarding.employer.addresses" label="Country" htmlFor={`${address.key}-country`}>
+                    <Field db="onboarding.employer.addresses" label={t("employerOnboarding.country")} htmlFor={`${address.key}-country`}>
                       <input
                         id={`${address.key}-country`}
                         type="text"
@@ -2319,7 +2320,7 @@ export function EmployerOnboardingForm({
                   </div>
                   {isCompleteAddress(address) && (
                     <iframe
-                      title={`Map for ${address.label || "this address"}`}
+                      title={t("employerOnboarding.mapFor", { item: address.label || t("employerOnboarding.thisAddress") })}
                       src={`https://www.google.com/maps?q=${encodeURIComponent(
                         `${address.addressLine1}, ${address.addressLine2 ? `${address.addressLine2}, ` : ""}${address.area?.trim() ? `${address.area.trim()}, ` : ""}${address.city}, ${address.state} ${address.postcode}, Malaysia`,
                       )}&output=embed`}
@@ -2332,7 +2333,7 @@ export function EmployerOnboardingForm({
                       <div className="min-w-0">
                         <p className="flex items-center gap-[6px] text-xs text-brand-teal-dark">
                           <SiriOrb className="h-[12px] w-[12px]" />
-                          &ldquo;Fill with AI&rdquo; found a different address
+                          {t("employerOnboarding.aiFoundDifferentAddress")}
                         </p>
                         <p className="mt-[2px] text-sm text-[#141B2E]">
                           {[
@@ -2350,32 +2351,32 @@ export function EmployerOnboardingForm({
                           onClick={() => applyAiAddress(address.key)}
                           className="h-[30px] rounded-full bg-brand-teal-dark px-[12px] text-xs text-white hover:opacity-90"
                         >
-                          Use this address
+                          {t("employerOnboarding.useThisAddress")}
                         </button>
                         <button
                           type="button"
                           onClick={() => setAiAddressSuggestion(null)}
                           className="h-[30px] rounded-full px-[10px] text-xs text-[#4B5468] hover:bg-black/[0.04]"
                         >
-                          Keep mine
+                          {t("employerOnboarding.keepMine")}
                         </button>
                       </div>
                     </div>
                   )}
                   {i === 0 && (
                     <p className="text-xs text-[#9AA3B2]">
-                      This is the address &ldquo;Fill with AI&rdquo; fills in for you, when it can find one.
+                      {t("employerOnboarding.thisIsTheAddressFillWith")}
                     </p>
                   )}
                 </div>
               ))}
             </div>
 
-            <Field db="onboarding.employer.companySize" required label="Company size" htmlFor="companySize" className="col-span-full">
+            <Field db="onboarding.employer.companySize" required label={t("employerOnboarding.companySize")} htmlFor="companySize" className="col-span-full">
               <div
                 id="companySize"
                 role="radiogroup"
-                aria-label="Company size"
+                aria-label={t("employerOnboarding.companySize")}
                 className="grid h-[38px] grid-cols-5 gap-[4px] rounded-full border border-black/[0.1] p-[3px]"
               >
                 {COMPANY_SIZES.map((size) => (
@@ -2393,7 +2394,7 @@ export function EmployerOnboardingForm({
               </div>
             </Field>
 
-            <Field db="onboarding.employer.benefits" label="Default benefits" htmlFor="benefitInput" className="col-span-full">
+            <Field db="onboarding.employer.benefits" label={t("employerOnboarding.defaultBenefits")} htmlFor="benefitInput" className="col-span-full">
               {/* Same layout as Facilities and Post a job: chips, then a text box with an Add button, then dashed "+" suggestions. */}
               {benefits.length > 0 && (
                 <div className="mb-[10px] flex flex-wrap gap-[6px]">
@@ -2406,7 +2407,7 @@ export function EmployerOnboardingForm({
                       <button
                         type="button"
                         onClick={() => removeBenefit(benefit)}
-                        aria-label={`Remove ${benefit}`}
+                        aria-label={t("employerOnboarding.removeItem", { item: benefit })}
                         className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-white/70 hover:bg-white/20 hover:text-white"
                       >
                         <XIcon className="h-[9px] w-[9px]" />
@@ -2423,7 +2424,7 @@ export function EmployerOnboardingForm({
                   onChange={(e) => setBenefitInput(e.target.value)}
                   onKeyDown={handleBenefitKeyDown}
                   onBlur={addBenefit}
-                  placeholder="Add another benefit"
+                  placeholder={t("employerOnboarding.addAnotherBenefit")}
                   className={`${inputClass} flex-1`}
                 />
                 <button
@@ -2436,7 +2437,7 @@ export function EmployerOnboardingForm({
                   disabled={!benefitInput.trim()}
                   className="h-[38px] shrink-0 whitespace-nowrap rounded-[12px] bg-brand-teal-soft px-[14px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Add
+                  {t("employerOnboarding.add")}
                 </button>
               </div>
               {SUGGESTED_BENEFITS.some((b) => !benefits.includes(b)) && (
@@ -2461,7 +2462,7 @@ export function EmployerOnboardingForm({
                       onClick={() => setShowAllBenefits(true)}
                       className="flex items-center rounded-full px-[10px] py-[6px] text-sm text-brand-teal-dark hover:underline"
                     >
-                      Show all ({SUGGESTED_BENEFITS.filter((b) => !benefits.includes(b)).length})
+                      {t("employerOnboarding.showAllCount", { count: SUGGESTED_BENEFITS.filter((b) => !benefits.includes(b)).length })}
                     </button>
                   )}
                 </div>
@@ -2474,26 +2475,26 @@ export function EmployerOnboardingForm({
 
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${cardClass}`} style={mode === "edit" ? { animationDelay: "180ms" } : undefined}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Business verification</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.businessVerification")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Upload your SSM certificate so we can verify your company — verified companies get a badge on their logo.
+            {t("employerOnboarding.uploadYourSsmCertificateSoWe")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
             <fieldset className="contents">
-            <Field db="onboarding.employer.ssmNumber" required label="SSM registration number" htmlFor="ssmNumber">
+            <Field db="onboarding.employer.ssmNumber" required label={t("employerOnboarding.ssmRegistrationNumber")} htmlFor="ssmNumber">
               <input
                 id="ssmNumber"
                 type="text"
                 value={ssmNumber}
                 onChange={(e) => setSsmNumber(e.target.value)}
-                placeholder="e.g. 202301012345"
+                placeholder={t("employerOnboarding.example", { value: "202301012345" })}
                 className={inputClass}
               />
             </Field>
 
             <div className="col-span-full flex flex-col gap-[6px]">
-              <p data-db="onboarding.employer.ssmDocument" className="text-xs text-[#4B5468]">SSM certificate / business registration document</p>
+              <p data-db="onboarding.employer.ssmDocument" className="text-xs text-[#4B5468]">{t("employerOnboarding.ssmCertificateBusinessRegistrationDocument")}</p>
               <input
                 ref={ssmDocumentInputRef}
                 type="file"
@@ -2509,9 +2510,9 @@ export function EmployerOnboardingForm({
                       a note instead of a link until then. */}
                   {ssmDocumentUrl.startsWith("data:") || mode !== "edit" ? (
                     <span className="truncate text-sm text-[#141B2E]">
-                      SSM document attached{" "}
+                      {t("employerOnboarding.ssmDocumentAttached")}{" "}
                       <span className="text-[#9AA3B2]">
-                        · {mode === "edit" ? "uploads when you save" : "sent for review when you finish"}
+                        · {mode === "edit" ? t("employerOnboarding.uploadsWhenYouSave") : t("employerOnboarding.sentForReviewWhenYouFinish")}
                       </span>
                     </span>
                   ) : (
@@ -2521,7 +2522,7 @@ export function EmployerOnboardingForm({
                       rel="noreferrer"
                       className="truncate text-sm text-brand-teal-dark hover:underline"
                     >
-                      {ssmDocumentUrl.endsWith(".pdf") ? "SSM document.pdf" : "SSM document"}
+                      {ssmDocumentUrl.endsWith(".pdf") ? t("employerOnboarding.ssmDocumentPdf") : t("employerOnboarding.ssmDocument")}
                     </a>
                   )}
                   <div className="flex shrink-0 items-center gap-[6px]">
@@ -2530,14 +2531,14 @@ export function EmployerOnboardingForm({
                       onClick={() => ssmDocumentInputRef.current?.click()}
                       className="rounded-full bg-white px-[12px] py-[6px] text-sm text-[#141B2E] shadow-[0_1px_3px_rgba(0,0,0,0.1)] hover:bg-black/[0.03]"
                     >
-                      Replace
+                      {t("employerOnboarding.replace")}
                     </button>
                     <button
                       type="button"
                       onClick={clearSsmDocument}
                       className="rounded-full px-[12px] py-[6px] text-sm text-[#9AA3B2] hover:text-[#141B2E]"
                     >
-                      Remove
+                      {t("employerOnboarding.remove")}
                     </button>
                   </div>
                 </div>
@@ -2547,26 +2548,26 @@ export function EmployerOnboardingForm({
                   onClick={() => ssmDocumentInputRef.current?.click()}
                   className="flex h-[44px] w-full items-center justify-center rounded-[12px] border border-dashed border-black/[0.15] text-sm text-[#4B5468] hover:border-brand-teal-dark hover:text-brand-teal-dark"
                 >
-                  Upload document
+                  {t("employerOnboarding.uploadDocument")}
                 </button>
               )}
               <p className={`text-xs ${ssmDocumentError ? "text-red-500" : "text-[#9AA3B2]"}`}>
-                {ssmDocumentError ?? "PDF, JPG, PNG or WebP · up to 10 MB"}
+                {ssmDocumentError ?? t("employerOnboarding.ssmDocumentHint")}
               </p>
 
               {ssmVerificationStatus === "verified" ? (
                 <span className="mt-[2px] inline-flex w-fit items-center gap-[6px] rounded-full bg-brand-teal-soft px-[10px] py-[4px] text-xs text-brand-teal-dark">
                   <VerifiedBadgeIcon className="h-[12px] w-[12px]" />
-                  Verified
+                  {t("employerOnboarding.verified")}
                 </span>
               ) : ssmVerificationStatus === "pending" ? (
                 <span className="mt-[2px] inline-flex w-fit items-center rounded-full bg-brand-gold-soft px-[10px] py-[4px] text-xs text-brand-gold-dark">
-                  Pending review
+                  {t("employerOnboarding.pendingReview")}
                 </span>
               ) : ssmVerificationStatus === "rejected" ? (
                 <div className="mt-[2px] flex flex-col gap-[4px]">
                   <span className="inline-flex w-fit items-center rounded-full bg-[#FDE8E8] px-[10px] py-[4px] text-xs text-[#C0362C]">
-                    Rejected — re-upload to try again
+                    {t("employerOnboarding.rejectedReUploadToTryAgain")}
                   </span>
                   {ssmRejectionReason && <p className="text-xs leading-[16px] text-[#4B5468]">{ssmRejectionReason}</p>}
                 </div>
@@ -2591,20 +2592,19 @@ export function EmployerOnboardingForm({
             >
               <span className="min-w-0">
                 <span className="block text-xl font-semibold text-[#141B2E]">
-                  Make your company stand out <span className="text-sm font-normal text-[#9AA3B2]">(optional)</span>
+                  {t("employerOnboarding.standOut")} <span className="text-sm font-normal text-[#9AA3B2]">{t("employerOnboarding.optional")}</span>
                 </span>
                 <span className="mt-[6px] block text-sm leading-[20px] text-[#4B5468]">
-                  Logo, description, photos, facilities, awards and leadership. Skip it for now if you like — you can add these any
-                  time on Company Profile.
+                  {t("employerOnboarding.logoDescriptionPhotosFacilitiesAwardsAnd")}
                 </span>
                 {boostChecklist.length - boostChecklistRemaining > 0 && (
                   <span className="mt-[6px] block text-xs text-brand-teal-dark">
-                    {boostChecklist.length - boostChecklistRemaining} of {boostChecklist.length} already filled — have a look before you finish.
+                    {t("employerOnboarding.alreadyFilled", { done: boostChecklist.length - boostChecklistRemaining, total: boostChecklist.length })}
                   </span>
                 )}
               </span>
               <span className="mt-[4px] flex shrink-0 items-center gap-[6px] text-sm text-brand-teal-dark">
-                {extrasOpen ? "Hide" : "Show"}
+                {extrasOpen ? t("employerOnboarding.hide") : t("employerOnboarding.show")}
                 <ChevronDownIcon className={`h-[9px] w-[9px] transition-transform ${extrasOpen ? "rotate-180" : ""}`} />
               </span>
             </button>
@@ -2615,9 +2615,9 @@ export function EmployerOnboardingForm({
       <>
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${cardClass}`} style={mode === "edit" ? { animationDelay: "120ms" } : undefined}>
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Company profile</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.companyProfile")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Your logo and a short description shown on your postings.
+            {t("employerOnboarding.yourLogoAndAShortDescription")}
           </p>
 
           <div className="mt-[16px] grid grid-cols-1 gap-x-[14px] gap-y-[12px] sm:grid-cols-2">
@@ -2626,7 +2626,7 @@ export function EmployerOnboardingForm({
                 card and the company page; the gradient is what visitors see
                 until one is uploaded. */}
             <div className="col-span-full flex flex-col gap-[6px]">
-              <p data-db="onboarding.employer.banner" className="text-xs text-[#4B5468]">Cover banner (optional)</p>
+              <p data-db="onboarding.employer.banner" className="text-xs text-[#4B5468]">{t("employerOnboarding.coverBannerOptional")}</p>
               <input
                 ref={bannerInputRef}
                 type="file"
@@ -2642,7 +2642,7 @@ export function EmployerOnboardingForm({
                     onClick={() => bannerInputRef.current?.click()}
                     className="rounded-full bg-white/95 px-[12px] py-[6px] text-sm text-[#141B2E] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-white"
                   >
-                    {bannerUrl ? "Change banner" : "Upload banner"}
+                    {bannerUrl ? t("employerOnboarding.changeBanner") : t("employerOnboarding.uploadBanner")}
                   </button>
                   {bannerUrl && (
                     <button
@@ -2653,14 +2653,13 @@ export function EmployerOnboardingForm({
                       }}
                       className="rounded-full bg-white/95 px-[12px] py-[6px] text-sm text-[#9AA3B2] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:text-[#141B2E]"
                     >
-                      Remove
+                      {t("employerOnboarding.remove")}
                     </button>
                   )}
                 </div>
               </div>
               <p className="text-xs text-[#9AA3B2]">
-                Wide image, at least 1500 × 500 px (3:1) — it&rsquo;s cropped from the centre, so keep text away from
-                the edges. JPG, PNG or WebP, up to 8 MB.
+                {t("employerOnboarding.wideImageAtLeast1500500")}
               </p>
               {bannerError && <p className="text-xs text-red-500">{bannerError}</p>}
             </div>
@@ -2678,11 +2677,11 @@ export function EmployerOnboardingForm({
                   data-db="onboarding.employer.logo"
                 type="button"
                 onClick={() => logoInputRef.current?.click()}
-                aria-label={logoUrl ? "Change company logo" : "Upload company logo"}
+                aria-label={logoUrl ? t("employerOnboarding.changeCompanyLogo") : t("employerOnboarding.uploadCompanyLogo")}
                 className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-[14px] border border-black/[0.1] bg-[#F1F4F8] text-[#9AA3B2] hover:border-brand-teal-dark"
               >
                 {logoUrl ? (
-                  <img src={logoUrl} alt="Company logo" className="h-full w-full object-cover" />
+                  <img src={logoUrl} alt={t("employerOnboarding.companyLogo")} className="h-full w-full object-cover" />
                 ) : (
                   <UserIcon className="h-[26px] w-[26px]" />
                 )}
@@ -2694,7 +2693,7 @@ export function EmployerOnboardingForm({
                     onClick={() => logoInputRef.current?.click()}
                     className="rounded-full bg-[#F1F4F8] px-[12px] py-[6px] text-sm text-[#141B2E] hover:bg-black/[0.08]"
                   >
-                    {logoUrl ? "Change logo" : "Upload logo"}
+                    {logoUrl ? t("employerOnboarding.changeLogo") : t("employerOnboarding.uploadLogo")}
                   </button>
                   {logoUrl && (
                     <button
@@ -2702,25 +2701,25 @@ export function EmployerOnboardingForm({
                       onClick={clearLogo}
                       className="text-sm text-[#9AA3B2] hover:text-[#141B2E]"
                     >
-                      Remove
+                      {t("employerOnboarding.remove")}
                     </button>
                   )}
                 </div>
                 <p className={`text-xs ${logoError ? "text-red-500" : "text-[#9AA3B2]"}`}>
-                  {logoError ?? "JPG or PNG · up to 3 MB"}
+                  {logoError ?? t("employerOnboarding.photoHint")}
                 </p>
               </div>
             </div>
-            <Field db="onboarding.employer.companyDescription" label="Company description (optional)" htmlFor="companyDescription" className="col-span-full">
+            <Field db="onboarding.employer.companyDescription" label={t("employerOnboarding.companyDescriptionOptional")} htmlFor="companyDescription" className="col-span-full">
               <RichTextEditor
                 id="companyDescription"
                 value={companyDescription}
                 onChange={setCompanyDescription}
-                placeholder="What your company does, and what it's like to work there"
+                placeholder={t("employerOnboarding.whatYourCompanyDoesAndWhat")}
               />
             </Field>
 
-            <Field db="onboarding.employer.websiteUrl" label="Website (optional)" htmlFor="websiteUrl">
+            <Field db="onboarding.employer.websiteUrl" label={t("employerOnboarding.websiteOptional")} htmlFor="websiteUrl">
               <input
                 id="websiteUrl"
                 type="url"
@@ -2730,33 +2729,33 @@ export function EmployerOnboardingForm({
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.companyEmail" label="Company email (optional)" htmlFor="companyEmail">
+            <Field db="onboarding.employer.companyEmail" label={t("employerOnboarding.companyEmailOptional")} htmlFor="companyEmail">
               <input
                 id="companyEmail"
                 type="email"
                 value={companyEmail}
                 onChange={(e) => setCompanyEmail(e.target.value)}
-                placeholder="e.g. info@company.com"
+                placeholder={t("employerOnboarding.eGInfoCompanyCom")}
                 className={inputClass}
               />
               {!isValidOptionalEmail(companyEmail) && (
-                <p className="mt-[4px] text-xs text-red-500">Enter a valid email address.</p>
+                <p className="mt-[4px] text-xs text-red-500">{t("employerOnboarding.enterAValidEmailAddress")}</p>
               )}
             </Field>
-            <Field db="onboarding.employer.companyPhone" label="Company phone (optional)" htmlFor="companyPhone">
+            <Field db="onboarding.employer.companyPhone" label={t("employerOnboarding.companyPhoneOptional")} htmlFor="companyPhone">
               <input
                 id="companyPhone"
                 type="tel"
                 value={companyPhone}
                 onChange={(e) => setCompanyPhone(e.target.value)}
-                placeholder="e.g. 03-1234 5678"
+                placeholder={t("employerOnboarding.example", { value: "03-1234 5678" })}
                 className={inputClass}
               />
               {!isValidOptionalPhone(companyPhone) && (
-                <p className="mt-[4px] text-xs text-red-500">Enter a valid Malaysian phone number, e.g. 03-1234 5678.</p>
+                <p className="mt-[4px] text-xs text-red-500">{t("employerOnboarding.enterAValidMalaysianPhoneNumber")}</p>
               )}
             </Field>
-            <Field db="onboarding.employer.companyLinkedin" label="LinkedIn (optional)" htmlFor="companyLinkedin">
+            <Field db="onboarding.employer.companyLinkedin" label={t("employerOnboarding.linkedinOptional")} htmlFor="companyLinkedin">
               <input
                 id="companyLinkedin"
                 type="url"
@@ -2766,7 +2765,7 @@ export function EmployerOnboardingForm({
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.companyFacebook" label="Facebook (optional)" htmlFor="companyFacebook">
+            <Field db="onboarding.employer.companyFacebook" label={t("employerOnboarding.facebookOptional")} htmlFor="companyFacebook">
               <input
                 id="companyFacebook"
                 type="url"
@@ -2776,7 +2775,7 @@ export function EmployerOnboardingForm({
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.companyInstagram" label="Instagram (optional)" htmlFor="companyInstagram">
+            <Field db="onboarding.employer.companyInstagram" label={t("employerOnboarding.instagramOptional")} htmlFor="companyInstagram">
               <input
                 id="companyInstagram"
                 type="url"
@@ -2786,7 +2785,7 @@ export function EmployerOnboardingForm({
                 className={inputClass}
               />
             </Field>
-            <Field db="onboarding.employer.foundedYear" label="Founded year (optional)" htmlFor="foundedYear">
+            <Field db="onboarding.employer.foundedYear" label={t("employerOnboarding.foundedYearOptional")} htmlFor="foundedYear">
               <input
                 id="foundedYear"
                 type="number"
@@ -2795,34 +2794,34 @@ export function EmployerOnboardingForm({
                 step={1}
                 value={foundedYear}
                 onChange={(e) => setFoundedYear(e.target.value)}
-                placeholder="e.g. 2018"
+                placeholder={t("employerOnboarding.example", { value: "2018" })}
                 className={inputClass}
               />
               {!isValidFoundedYear(foundedYear) && (
                 <p className="mt-[4px] text-xs text-red-500">
-                  Enter a whole year between 1800 and {CURRENT_YEAR}.
+                  {t("employerOnboarding.foundedYearRange", { year: CURRENT_YEAR })}
                 </p>
               )}
             </Field>
-            <Field db="onboarding.employer.companyType" label="Company type (optional)" htmlFor="companyType" className="col-span-full">
+            <Field db="onboarding.employer.companyType" label={t("employerOnboarding.companyTypeOptional")} htmlFor="companyType" className="col-span-full">
               <Dropdown
                 id="companyType"
-                label="Company type"
+                label={t("employerOnboarding.companyType")}
                 value={companyType}
-                options={[{ value: "" as const, label: "Not set" }, ...COMPANY_TYPES.map((t) => ({ value: t, label: t }))]}
+                options={[{ value: "" as const, label: t("employerOnboarding.notSet") }, ...COMPANY_TYPES.map((type) => ({ value: type, label: t(`employerOnboarding.companyTypes.${type}`) }))]}
                 onChange={(value) => setCompanyType(value as (typeof COMPANY_TYPES)[number] | "")}
               />
             </Field>
 
             {officePhotoUrl && (
               <div className="col-span-full flex flex-col gap-[6px]">
-                <p data-db="onboarding.employer.officePhoto" className="text-xs text-[#4B5468]">Office photo (from AI lookup)</p>
+                <p data-db="onboarding.employer.officePhoto" className="text-xs text-[#4B5468]">{t("employerOnboarding.officePhotoFromAiLookup")}</p>
                 <div className="relative w-full max-w-[320px] overflow-hidden rounded-[14px] border border-[#EAEDF2]">
-                  <img src={officePhotoUrl} alt="Office" className="h-[160px] w-full object-cover" />
+                  <img src={officePhotoUrl} alt={t("employerOnboarding.office")} className="h-[160px] w-full object-cover" />
                   <button
                     type="button"
                     onClick={() => setOfficePhotoUrl(null)}
-                    aria-label="Remove office photo"
+                    aria-label={t("employerOnboarding.removeOfficePhoto")}
                     className="absolute right-[8px] top-[8px] flex h-[24px] w-[24px] items-center justify-center rounded-full bg-white/90 text-[#9AA3B2] hover:text-[#141B2E]"
                   >
                     <XIcon className="h-[11px] w-[11px]" />
@@ -2834,10 +2833,9 @@ export function EmployerOnboardingForm({
             <div className="col-span-full flex flex-col gap-[10px]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p data-db="onboarding.employer.recentNews" className="text-xs text-[#4B5468]">Recent news (optional)</p>
+                  <p data-db="onboarding.employer.recentNews" className="text-xs text-[#4B5468]">{t("employerOnboarding.recentNewsOptional")}</p>
                   <p className="text-xs text-[#9AA3B2]">
-                    Filled by &ldquo;Fill with AI&rdquo; when available — unverified, please check before
-                    continuing — or add your own.
+                    {t("employerOnboarding.filledByFillWithAiWhen")}
                   </p>
                 </div>
                 <button
@@ -2846,7 +2844,7 @@ export function EmployerOnboardingForm({
                   className="flex shrink-0 items-center gap-[4px] rounded-full bg-brand-teal-soft py-[6px] pl-[10px] pr-[12px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6]"
                 >
                   <PlusIcon className="h-[10px] w-[10px]" />
-                  Add
+                  {t("employerOnboarding.add")}
                 </button>
               </div>
               {recentNews.map((item, index) => (
@@ -2859,13 +2857,13 @@ export function EmployerOnboardingForm({
                       type="text"
                       value={item.title}
                       onChange={(e) => updateNewsItem(index, { title: e.target.value })}
-                      placeholder="Headline"
+                      placeholder={t("employerOnboarding.headline")}
                       className={inputClass}
                     />
                     <button
                       type="button"
                       onClick={() => setRecentNews((prev) => prev.filter((_, i) => i !== index))}
-                      aria-label="Remove entry"
+                      aria-label={t("employerOnboarding.removeEntry")}
                       className="flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.08] hover:text-[#141B2E]"
                     >
                       <XIcon className="h-[10px] w-[10px]" />
@@ -2875,7 +2873,7 @@ export function EmployerOnboardingForm({
                     type="url"
                     value={item.url}
                     onChange={(e) => updateNewsItem(index, { url: e.target.value })}
-                    placeholder="Source URL (https://...)"
+                    placeholder={t("employerOnboarding.sourceUrlHttps")}
                     className={inputClass}
                   />
                 </div>
@@ -2889,17 +2887,16 @@ export function EmployerOnboardingForm({
       {/* Your workplace — what it's like to work here. */}
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${cardClass}`} style={mode === "edit" ? { animationDelay: "150ms" } : undefined}>
         <div className="rounded-[19px] bg-white p-[16px] text-left sm:p-[22px]">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Your workplace</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.yourWorkplace")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Help candidates picture working here. &ldquo;Fill with AI&rdquo; ticks the facilities and dress code it can
-            find — add your own photos.
+            {t("employerOnboarding.helpCandidatesPictureWorkingHereFill")}
           </p>
 
           <div className="mt-[16px] flex flex-col gap-[18px]">
             {/* Office & team photos */}
             <div>
               <div className="flex items-baseline justify-between gap-[8px]">
-                <p data-db="onboarding.employer.galleryPhotos" className="text-xs text-[#4B5468]">Office &amp; team photos (optional)</p>
+                <p data-db="onboarding.employer.galleryPhotos" className="text-xs text-[#4B5468]">{t("employerOnboarding.officeTeamPhotosOptional")}</p>
                 <p className="text-xs text-[#9AA3B2]">
                   {galleryPhotos.length}/{MAX_GALLERY_PHOTOS}
                 </p>
@@ -2922,11 +2919,11 @@ export function EmployerOnboardingForm({
               >
                 {galleryPhotos.map((url, i) => (
                   <div key={url} className="group relative aspect-square overflow-hidden rounded-[14px] border border-[#EAEDF2] bg-[#F1F4F8]">
-                    <img src={url} alt={`Workplace photo ${i + 1}`} className="h-full w-full object-cover" />
+                    <img src={url} alt={t("employerOnboarding.workplacePhotoN", { n: i + 1 })} className="h-full w-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setGalleryPhotos((prev) => prev.filter((p) => p !== url))}
-                      aria-label={`Remove photo ${i + 1}`}
+                      aria-label={t("employerOnboarding.removePhotoN", { n: i + 1 })}
                       className="absolute right-[6px] top-[6px] flex h-[24px] w-[24px] items-center justify-center rounded-full bg-white/90 text-[#4B5468] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:text-red-500"
                     >
                       <XIcon className="h-[9px] w-[9px]" />
@@ -2934,7 +2931,7 @@ export function EmployerOnboardingForm({
                   </div>
                 ))}
                 {Array.from({ length: galleryUploading }, (_, i) => (
-                  <div key={`uploading-${i}`} className="ai-fill-shimmer aspect-square rounded-[14px]" aria-label="Uploading photo" />
+                  <div key={`uploading-${i}`} className="ai-fill-shimmer aspect-square rounded-[14px]" aria-label={t("employerOnboarding.uploadingPhoto")} />
                 ))}
                 {galleryPhotos.length + galleryUploading < MAX_GALLERY_PHOTOS && (
                   <button
@@ -2945,22 +2942,22 @@ export function EmployerOnboardingForm({
                     className="flex aspect-square flex-col items-center justify-center gap-[6px] rounded-[14px] border border-dashed border-black/[0.15] text-[#4B5468] hover:border-brand-teal-dark hover:text-brand-teal-dark"
                   >
                     <PlusIcon className="h-[14px] w-[14px]" />
-                    <span className="px-[6px] text-center text-xs">Add photos</span>
+                    <span className="px-[6px] text-center text-xs">{t("employerOnboarding.addPhotos")}</span>
                   </button>
                 )}
               </div>
               <p className={`mt-[6px] text-xs ${galleryError ? "text-red-500" : "text-[#9AA3B2]"}`}>
                 {galleryError ??
-                  `Your office, your team, events — up to ${MAX_GALLERY_PHOTOS}. Pick several at once or drag them in. JPG, PNG or WebP, up to 10 MB each.`}
+                  t("employerOnboarding.galleryHint", { max: MAX_GALLERY_PHOTOS })}
               </p>
             </div>
 
             {/* Facilities */}
             <div id="facilities" tabIndex={-1} className="outline-none">
-              <p data-db="onboarding.employer.facilities" className="text-xs text-[#4B5468]">Facilities (optional)</p>
+              <p data-db="onboarding.employer.facilities" className="text-xs text-[#4B5468]">{t("employerOnboarding.facilitiesOptional")}</p>
               {/* Same as Post a job's Benefits: the chosen ones as removable teal chips, a text box with an Add button, then dashed "+" suggestions. */}
               {facilities.length > 0 && (
-                <div className="mt-[8px] flex flex-wrap gap-[6px]" role="group" aria-label="Facilities">
+                <div className="mt-[8px] flex flex-wrap gap-[6px]" role="group" aria-label={t("employerOnboarding.facilities")}>
                   {facilities.map((facility) => (
                     <span
                       key={facility}
@@ -2970,7 +2967,7 @@ export function EmployerOnboardingForm({
                       <button
                         type="button"
                         onClick={() => toggleFacility(facility)}
-                        aria-label={`Remove ${facility}`}
+                        aria-label={t("employerOnboarding.removeItem", { item: facility })}
                         className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-white/70 hover:bg-white/20 hover:text-white"
                       >
                         <XIcon className="h-[9px] w-[9px]" />
@@ -2996,8 +2993,8 @@ export function EmployerOnboardingForm({
                       addCustomFacility();
                     }
                   }}
-                  placeholder="Add another facility"
-                  aria-label="Add your own facility"
+                  placeholder={t("employerOnboarding.addAnotherFacility")}
+                  aria-label={t("employerOnboarding.addYourOwnFacility")}
                   className={`${inputClass} flex-1`}
                 />
                 <button
@@ -3006,19 +3003,18 @@ export function EmployerOnboardingForm({
                   disabled={!customFacility.trim() || customFacilityCount >= MAX_CUSTOM_FACILITIES}
                   className="h-[38px] shrink-0 whitespace-nowrap rounded-[12px] bg-brand-teal-soft px-[14px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Add
+                  {t("employerOnboarding.add")}
                 </button>
               </div>
               {customFacilityError ? (
                 <p className="mt-[6px] text-xs text-red-500">{customFacilityError}</p>
               ) : customFacilityCount > 0 ? (
                 <p className="mt-[6px] text-xs text-[#9AA3B2]">
-                  Your own: {customFacilityCount}/{MAX_CUSTOM_FACILITIES}
-                  {customFacilityCount >= MAX_CUSTOM_FACILITIES ? " — remove one to add another." : ""}
+                  {t(customFacilityCount >= MAX_CUSTOM_FACILITIES ? "employerOnboarding.customFacilitiesFull" : "employerOnboarding.customFacilitiesCount", { count: customFacilityCount, max: MAX_CUSTOM_FACILITIES })}
                 </p>
               ) : null}
               {FACILITIES.some((f) => !facilities.includes(f)) && (
-                <div className="mt-[10px] flex flex-wrap gap-[6px]" role="group" aria-label="Add a facility">
+                <div className="mt-[10px] flex flex-wrap gap-[6px]" role="group" aria-label={t("employerOnboarding.addAFacility")}>
                   {FACILITIES.filter((f) => !facilities.includes(f)).map((facility) => (
                     <button
                       key={facility}
@@ -3036,15 +3032,15 @@ export function EmployerOnboardingForm({
 
             {/* Dress code — one choice: the chosen one as a removable chip, the others as dashed suggestions. */}
             <div>
-              <p data-db="onboarding.employer.dressCode" className="text-xs text-[#4B5468]">Dress code (optional)</p>
+              <p data-db="onboarding.employer.dressCode" className="text-xs text-[#4B5468]">{t("employerOnboarding.dressCodeOptional")}</p>
               {dressCode && (
                 <div className="mt-[8px] flex flex-wrap gap-[6px]">
                   <span className="flex items-center gap-[6px] rounded-full bg-brand-teal-dark py-[6px] pl-[12px] pr-[8px] text-xs text-white">
-                    {dressCode}
+                    {t(`employerOnboarding.dressCodes.${dressCode}`)}
                     <button
                       type="button"
                       onClick={() => setDressCode("")}
-                      aria-label={`Remove ${dressCode}`}
+                      aria-label={t("employerOnboarding.removeItem", { item: t(`employerOnboarding.dressCodes.${dressCode}`) })}
                       className="flex h-[16px] w-[16px] items-center justify-center rounded-full text-white/70 hover:bg-white/20 hover:text-white"
                     >
                       <XIcon className="h-[9px] w-[9px]" />
@@ -3052,7 +3048,7 @@ export function EmployerOnboardingForm({
                   </span>
                 </div>
               )}
-              <div className="mt-[10px] flex flex-wrap gap-[6px]" role="group" aria-label="Dress code">
+              <div className="mt-[10px] flex flex-wrap gap-[6px]" role="group" aria-label={t("employerOnboarding.dressCode")}>
                 {DRESS_CODES.filter((code) => code !== dressCode).map((code) => (
                   <button
                     key={code}
@@ -3061,7 +3057,7 @@ export function EmployerOnboardingForm({
                     className="flex items-center gap-[4px] rounded-full border border-dashed border-black/[0.15] py-[6px] pl-[12px] pr-[10px] text-sm text-[#4B5468] hover:border-brand-teal-dark hover:text-brand-teal-dark"
                   >
                     <PlusIcon className="h-[8px] w-[8px]" />
-                    {code}
+                    {t(`employerOnboarding.dressCodes.${code}`)}
                   </button>
                 ))}
               </div>
@@ -3073,17 +3069,16 @@ export function EmployerOnboardingForm({
       {/* Awards & leadership — trust signals. */}
       <div className={`${mode === "edit" ? "animate-fade-in-up" : ""} ${cardClass}`} style={mode === "edit" ? { animationDelay: "165ms" } : undefined}>
         <div className="rounded-[19px] bg-white p-[16px] text-left sm:p-[22px]">
-          <h1 className="text-xl font-semibold text-[#141B2E]">Awards &amp; leadership</h1>
+          <h1 className="text-xl font-semibold text-[#141B2E]">{t("employerOnboarding.awardsLeadership")}</h1>
           <p className="mt-[6px] text-sm leading-[20px] text-[#4B5468]">
-            Recognition and the people behind the company build trust. &ldquo;Fill with AI&rdquo; adds the ones that are
-            public — check them before you finish.
+            {t("employerOnboarding.recognitionAndThePeopleBehindThe")}
           </p>
 
           <div className="mt-[16px] flex flex-col gap-[18px]">
             {/* Awards & certifications */}
             <div>
               <div className="flex items-center justify-between gap-[8px]">
-                <p data-db="onboarding.employer.awards" className="text-xs text-[#4B5468]">Awards &amp; certifications (optional)</p>
+                <p data-db="onboarding.employer.awards" className="text-xs text-[#4B5468]">{t("employerOnboarding.awardsCertificationsOptional")}</p>
                 {awards.length < MAX_AWARDS && (
                   <button
                     type="button"
@@ -3091,13 +3086,13 @@ export function EmployerOnboardingForm({
                     className="flex shrink-0 items-center gap-[4px] rounded-full bg-brand-teal-soft py-[6px] pl-[10px] pr-[12px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6]"
                   >
                     <PlusIcon className="h-[10px] w-[10px]" />
-                    Add award
+                    {t("employerOnboarding.addAward")}
                   </button>
                 )}
               </div>
               {awards.length === 0 ? (
                 <p className="mt-[6px] text-xs text-[#9AA3B2]">
-                  e.g. Great Place to Work Certified, ISO 9001:2015, SME100 Award.
+                  {t("employerOnboarding.eGGreatPlaceToWork")}
                 </p>
               ) : (
                 <div className="mt-[8px] flex flex-col gap-[8px]">
@@ -3110,7 +3105,7 @@ export function EmployerOnboardingForm({
                           value={award.title}
                           maxLength={AWARD_TITLE_MAX}
                           onChange={(e) => updateAward(index, { title: e.target.value })}
-                          placeholder="Award or certification"
+                          placeholder={t("employerOnboarding.awardOrCertification")}
                           aria-label={`Award ${index + 1}`}
                           className={inputClass}
                         />
@@ -3121,15 +3116,15 @@ export function EmployerOnboardingForm({
                           inputMode="numeric"
                           value={award.year}
                           onChange={(e) => updateAward(index, { year: e.target.value.replace(/\D/g, "").slice(0, 4) })}
-                          placeholder="Year"
-                          aria-label={`Year for award ${index + 1}`}
+                          placeholder={t("employerOnboarding.year")}
+                          aria-label={t("employerOnboarding.awardYearN", { n: index + 1 })}
                           className={`${inputClass} ${isValidAwardYear(award.year) ? "" : "border-red-400"}`}
                         />
                       </div>
                       <button
                         type="button"
                         onClick={() => setAwards((prev) => prev.filter((_, i) => i !== index))}
-                        aria-label={`Remove award ${index + 1}`}
+                        aria-label={t("employerOnboarding.removeAwardN", { n: index + 1 })}
                         className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.06] hover:text-red-500"
                       >
                         <XIcon className="h-[11px] w-[11px]" />
@@ -3143,7 +3138,7 @@ export function EmployerOnboardingForm({
             {/* Leadership */}
             <div id="leadership" tabIndex={-1} className="outline-none">
               <div className="flex items-center justify-between gap-[8px]">
-                <p data-db="onboarding.employer.leaders" className="text-xs text-[#4B5468]">Leadership (optional)</p>
+                <p data-db="onboarding.employer.leaders" className="text-xs text-[#4B5468]">{t("employerOnboarding.leadershipOptional")}</p>
                 {leaders.length < MAX_LEADERS && (
                   <button
                     type="button"
@@ -3151,7 +3146,7 @@ export function EmployerOnboardingForm({
                     className="flex shrink-0 items-center gap-[4px] rounded-full bg-brand-teal-soft py-[6px] pl-[10px] pr-[12px] text-sm text-brand-teal-dark hover:bg-[#CFF4F6]"
                   >
                     <PlusIcon className="h-[10px] w-[10px]" />
-                    Add person
+                    {t("employerOnboarding.addPerson")}
                   </button>
                 )}
               </div>
@@ -3174,7 +3169,7 @@ export function EmployerOnboardingForm({
                           leaderPhotoTarget.current = index;
                           leaderPhotoInputRef.current?.click();
                         }}
-                        aria-label={leader.photoUrl ? `Change photo for ${leader.name || "this person"}` : `Add photo for ${leader.name || "this person"}`}
+                        aria-label={t(leader.photoUrl ? "employerOnboarding.changePhotoFor" : "employerOnboarding.addPhotoFor", { item: leader.name || t("employerOnboarding.thisPerson") })}
                         className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/[0.1] bg-white text-[#9AA3B2] hover:border-brand-teal-dark"
                       >
                         {leader.photoUrl ? (
@@ -3190,8 +3185,8 @@ export function EmployerOnboardingForm({
                           value={leader.name}
                           maxLength={LEADER_FIELD_MAX}
                           onChange={(e) => updateLeader(index, { name: e.target.value })}
-                          placeholder="Name"
-                          aria-label={`Name of person ${index + 1}`}
+                          placeholder={t("employerOnboarding.name")}
+                          aria-label={t("employerOnboarding.personNameN", { n: index + 1 })}
                           className={inputClass}
                         />
                         <input
@@ -3199,15 +3194,15 @@ export function EmployerOnboardingForm({
                           value={leader.title}
                           maxLength={LEADER_FIELD_MAX}
                           onChange={(e) => updateLeader(index, { title: e.target.value })}
-                          placeholder="Role, e.g. Founder & CEO"
-                          aria-label={`Role of person ${index + 1}`}
+                          placeholder={t("employerOnboarding.roleEGFounderCeo")}
+                          aria-label={t("employerOnboarding.personRoleN", { n: index + 1 })}
                           className={inputClass}
                         />
                       </div>
                       <button
                         type="button"
                         onClick={() => setLeaders((prev) => prev.filter((_, i) => i !== index))}
-                        aria-label={`Remove ${leader.name || "this person"}`}
+                        aria-label={t("employerOnboarding.removeItem", { item: leader.name || t("employerOnboarding.thisPerson") })}
                         className="flex h-[28px] w-[28px] shrink-0 items-center justify-center rounded-full text-[#9AA3B2] hover:bg-black/[0.06] hover:text-red-500"
                       >
                         <XIcon className="h-[11px] w-[11px]" />
@@ -3215,7 +3210,7 @@ export function EmployerOnboardingForm({
                     </div>
                   ))}
                   <p className={`text-xs ${leaderError ? "text-red-500" : "text-[#9AA3B2]"}`}>
-                    {leaderError ?? "Tap the circle to add a photo (optional)."}
+                    {leaderError ?? t("employerOnboarding.leaderPhotoHint")}
                   </p>
                 </div>
               )}
@@ -3249,7 +3244,7 @@ export function EmployerOnboardingForm({
               </div>
             </div>
           ) : (
-            !formValid && <p className="mb-[12px] text-xs text-[#A66A61]">Check the fields marked in red above.</p>
+            !formValid && <p className="mb-[12px] text-xs text-[#A66A61]">{t("employerOnboarding.checkTheFieldsMarkedInRed")}</p>
           )}
           {error && <p className="mb-[8px] text-xs text-red-500">{error}</p>}
           <button
@@ -3259,9 +3254,9 @@ export function EmployerOnboardingForm({
             onClick={() => handleSubmit()}
             className="flex h-[38px] w-full items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {submitting ? "Saving…" : saveLabel}
+            {submitting ? t("employerOnboarding.saving") : saveLabel}
           </button>
-          {savedAt && !error && <p className="mt-[8px] text-xs text-brand-teal-dark">Saved.</p>}
+          {savedAt && !error && <p className="mt-[8px] text-xs text-brand-teal-dark">{t("employerOnboarding.saved")}</p>}
         </div>
       </div>
       </div>
@@ -3281,7 +3276,7 @@ export function EmployerOnboardingForm({
           >
           <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px]">
             <p className="flex items-center gap-[8px] text-left text-lg font-semibold text-[#141B2E]">
-              Required
+              {t("employerOnboarding.required")}
               {requiredChecklistComplete && <ChecklistDoneBadge />}
             </p>
             <ul className="mt-[16px] flex flex-col gap-[4px]">
@@ -3314,7 +3309,7 @@ export function EmployerOnboardingForm({
           <div className={cardClass}>
           <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px]">
             <p className="flex items-center gap-[8px] text-left text-lg font-semibold text-[#141B2E]">
-              Optional
+              {t("employerOnboarding.optional2")}
               {boostChecklistRemaining === 0 && <ChecklistDoneBadge />}
             </p>
             <ul className="mt-[16px] flex flex-col gap-[4px]">
@@ -3348,11 +3343,10 @@ export function EmployerOnboardingForm({
         </div>
 
       {showResetConfirm && (
-        <Modal ariaLabel="Reset company details?" onClose={() => setShowResetConfirm(false)}>
-          <h2 className="text-lg font-semibold text-[#141B2E]">Reset company details?</h2>
+        <Modal ariaLabel={t("employerOnboarding.resetCompanyDetails")} onClose={() => setShowResetConfirm(false)}>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("employerOnboarding.resetCompanyDetails")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            This clears the company name and every company detail — including anything you typed yourself — so you
-            can start over. It can&rsquo;t be undone.
+            {t("employerOnboarding.thisClearsTheCompanyNameAnd")}
           </p>
           <div className="mt-[18px] flex flex-col gap-[8px]">
             <button
@@ -3363,14 +3357,14 @@ export function EmployerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-red-500 hover:bg-red-50"
             >
-              Reset everything
+              {t("employerOnboarding.resetEverything")}
             </button>
             <button
               type="button"
               onClick={() => setShowResetConfirm(false)}
               className="flex h-[38px] items-center justify-center text-sm text-[#9AA3B2] hover:text-[#141B2E]"
             >
-              Keep my details
+              {t("employerOnboarding.keepMyDetails")}
             </button>
           </div>
         </Modal>
@@ -3378,16 +3372,15 @@ export function EmployerOnboardingForm({
 
       {showLeaveConfirm && (
         <Modal
-          ariaLabel="Leave without saving?"
+          ariaLabel={t("employerOnboarding.leaveWithoutSaving")}
           onClose={() => {
             setShowLeaveConfirm(false);
             setPendingProceed(null);
           }}
         >
-          <h2 className="text-lg font-semibold text-[#141B2E]">Leave without saving?</h2>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("employerOnboarding.leaveWithoutSaving")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
-            You&rsquo;ve made changes that haven&rsquo;t been saved yet. Save them before you go, or
-            discard and leave.
+            {t("employerOnboarding.youveMadeChangesThatHaventBeen")}
           </p>
           <div className="mt-[18px] flex flex-col gap-[8px]">
             <button
@@ -3396,14 +3389,14 @@ export function EmployerOnboardingForm({
               onClick={saveAndLeave}
               className="flex h-[38px] items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Saving…" : "Save changes"}
+              {submitting ? t("employerOnboarding.saving") : t("employerOnboarding.saveChanges")}
             </button>
             <button
               type="button"
               onClick={discardAndLeave}
               className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-red-500 hover:bg-red-50"
             >
-              Discard changes
+              {t("employerOnboarding.discardChanges")}
             </button>
             <button
               type="button"
@@ -3413,7 +3406,7 @@ export function EmployerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center text-sm text-[#9AA3B2] hover:text-[#141B2E]"
             >
-              Keep editing
+              {t("employerOnboarding.keepEditing")}
             </button>
           </div>
         </Modal>
@@ -3421,17 +3414,17 @@ export function EmployerOnboardingForm({
 
       {showFinishSuccess && (
         <Modal
-          ariaLabel="Company profile complete!"
+          ariaLabel={t("employerOnboarding.companyProfileComplete")}
           onClose={() => {
             setShowFinishSuccess(false);
             navigate({ to: "/employer/dashboard" });
           }}
         >
-          <h2 className="text-lg font-semibold text-[#141B2E]">You&rsquo;re all set! 🎉</h2>
+          <h2 className="text-lg font-semibold text-[#141B2E]">{t("employerOnboarding.youReAllSet")}</h2>
           <p className="mt-[10px] text-sm leading-[20px] text-[#4B5468]">
             {createNew
-              ? "Thank you for setting up your new company — it's ready to go. Let's get you to your dashboard so you can start posting jobs."
-              : "Thank you so much for taking the time to fill in your company profile — it's looking great! Let's get you to your dashboard so you can start hiring."}
+              ? t("employerOnboarding.newCompanyThanks")
+              : t("employerOnboarding.onboardingThanks")}
           </p>
           <div className="mt-[20px] flex flex-col gap-[8px]">
             <button
@@ -3442,7 +3435,7 @@ export function EmployerOnboardingForm({
               }}
               className="flex h-[38px] items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white transition-opacity hover:opacity-90"
             >
-              Take me to my dashboard
+              {t("employerOnboarding.takeMeToMyDashboard")}
             </button>
           </div>
         </Modal>
