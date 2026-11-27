@@ -1,5 +1,6 @@
 import type { RouterClient } from "@orpc/server";
 import { publicProcedure } from "../index";
+import { adminRouter } from "./admin";
 import { aiRouter } from "./ai";
 import { applicationRouter } from "./application";
 import { authRouter } from "./auth";
@@ -23,6 +24,7 @@ export const appRouter = {
 	employer: employerRouter,
 	job: jobRouter,
 	application: applicationRouter,
+	admin: adminRouter,
 };
 
 export type AppRouter = typeof appRouter;

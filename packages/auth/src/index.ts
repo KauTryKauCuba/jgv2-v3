@@ -1,7 +1,9 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
+import { APIError } from "better-auth/api";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, bearer, emailOTP } from "better-auth/plugins";
 import * as schema from "@jobgiga-app/db/schema/auth";
+import { eq } from "drizzle-orm";
 
 export type CreateAuthOptions = {
 	// The drizzle instance the entrypoint built (D1 on Cloudflare, SQLite
@@ -35,6 +37,25 @@ export function createAuth({ db, corsOrigins, secret, baseURL }: CreateAuthOptio
 			schema,
 		}),
 		trustedOrigins: corsOrigins,
+		databaseHooks: {
+			session: {
+				create: {
+					// v1: a deleted account can't sign in again ("This account has
+					// been deleted." — v1's auth router and context both refuse it).
+					// Deletion itself is soft (user.deleted_at), so the row is still
+					// here and the email OTP would otherwise sign it straight back in.
+					async before(newSession) {
+						// biome-ignore lint: driver-specific drizzle instance, see above.
+						const [row] = await (db as any)
+							.select({ deletedAt: schema.user.deletedAt })
+							.from(schema.user)
+							.where(eq(schema.user.id, newSession.userId))
+							.limit(1);
+						if (row?.deletedAt) throw new APIError("FORBIDDEN", { message: "This account has been deleted." });
+					},
+				},
+			},
+		},
 		plugins: [
 			bearer(),
 			admin({

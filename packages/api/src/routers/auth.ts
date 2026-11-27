@@ -1,7 +1,13 @@
-import { jobseekerProfile, member, user } from "@jobgiga-app/db/schema/auth";
-import { eq } from "drizzle-orm";
+import { accountDeletionRequests, jobseekerProfile, member, user } from "@jobgiga-app/db/schema/auth";
+import { ORPCError } from "@orpc/server";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
+import {
+	assertUserCanRequestDeletion,
+	executeAccountDeletion,
+	resolveDeletionPath,
+} from "../lib/account/deletion";
 import { fileUrl } from "../lib/uploads";
 
 // biome-ignore lint: context.db is driver-specific (D1 vs bun-sqlite); both
@@ -21,11 +27,13 @@ export const authRouter = {
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
 			const [existing] = await db
-				.select({ id: user.id })
+				.select({ id: user.id, deletedAt: user.deletedAt })
 				.from(user)
 				.where(eq(user.email, input.email.trim().toLowerCase()))
 				.limit(1);
-			return { exists: Boolean(existing) };
+			// v1 refuses deleted accounts at sign-in ("This account has been
+			// deleted."); the modal shows that before sending a code.
+			return { exists: Boolean(existing), deleted: Boolean(existing?.deletedAt) };
 		}),
 
 	// The redesign's /api/auth/me: what the navbar shows for the signed-in
@@ -59,6 +67,98 @@ export const authRouter = {
 			email: (account?.email as string | undefined) ?? context.session.user.email,
 			avatarUrl: fileUrl(context.origin, profile?.avatarKey) ?? (account?.image as string | null | undefined) ?? null,
 			phoneVerified: Boolean(account?.phoneVerified),
+			// v1's platform admins see the navbar's "Superadmin panel" link.
+			isSuperadmin: (context.session.user as { role?: string | null }).role === "admin",
 		};
+	}),
+
+	// v1's auth.requestAccountDeletion. No company → deleted now (soft:
+	// user.deleted_at, sessions removed). A company member → a request for
+	// whoever is above them (an hr manager's goes to a platform admin).
+	requestAccountDeletion: protectedProcedure
+		.input(
+			z.object({
+				confirm: z.literal(true),
+				reason: z.string().max(500).optional(),
+				organizationId: z.string().optional(),
+			}),
+		)
+		.handler(async ({ context, input }) => {
+			const db = context.db as AnyDb;
+			const userId = context.session.user.id;
+			if ((context.session.user as { role?: string | null }).role === "admin") {
+				throw new ORPCError("FORBIDDEN", { message: "Platform admin accounts cannot be deleted via self-service." });
+			}
+			await assertUserCanRequestDeletion(db, userId);
+			const path = await resolveDeletionPath(db, userId, input.organizationId ?? null);
+			if (path.canSelfDelete) {
+				const { deletedAt } = await executeAccountDeletion(db, { userId, reason: input.reason });
+				return { status: "completed" as const, deletedAt };
+			}
+			const requestId = crypto.randomUUID();
+			await db.insert(accountDeletionRequests).values({
+				id: requestId,
+				userId,
+				organizationId: path.organizationId,
+				requesterMemberRole: path.requesterMemberRole,
+				requiredApproverRole: path.requiredApproverRole,
+				status: "pending",
+				reason: input.reason ?? null,
+			});
+			return {
+				status: "pending" as const,
+				requestId,
+				requiredApprover: path.requiredApproverRole,
+				organizationId: path.organizationId,
+			};
+		}),
+
+	// v1's auth.getAccountDeletionStatus: the latest request, if any.
+	getAccountDeletionStatus: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const [latest] = await db
+			.select({
+				id: accountDeletionRequests.id,
+				status: accountDeletionRequests.status,
+				requiredApproverRole: accountDeletionRequests.requiredApproverRole,
+				organizationId: accountDeletionRequests.organizationId,
+				rejectionReason: accountDeletionRequests.rejectionReason,
+				createdAt: accountDeletionRequests.createdAt,
+				reviewedAt: accountDeletionRequests.reviewedAt,
+			})
+			.from(accountDeletionRequests)
+			.where(eq(accountDeletionRequests.userId, userId))
+			.orderBy(desc(accountDeletionRequests.createdAt))
+			.limit(1);
+		const [userRow] = await db.select({ deletedAt: user.deletedAt }).from(user).where(eq(user.id, userId)).limit(1);
+		if (userRow?.deletedAt) return { status: "completed" as const, deletedAt: userRow.deletedAt as string, request: null };
+		if (!latest) return { status: "none" as const, request: null };
+		return {
+			status: latest.status as "pending" | "approved" | "rejected" | "canceled" | "completed",
+			request: latest as {
+				id: string;
+				status: string;
+				requiredApproverRole: string;
+				organizationId: string | null;
+				rejectionReason: string | null;
+				createdAt: string;
+				reviewedAt: string | null;
+			},
+		};
+	}),
+
+	// v1's auth.cancelAccountDeletion.
+	cancelAccountDeletion: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const [pending] = await db
+			.select({ id: accountDeletionRequests.id })
+			.from(accountDeletionRequests)
+			.where(and(eq(accountDeletionRequests.userId, userId), eq(accountDeletionRequests.status, "pending")))
+			.limit(1);
+		if (!pending) throw new ORPCError("NOT_FOUND", { message: "No pending account deletion request found" });
+		await db.update(accountDeletionRequests).set({ status: "canceled" }).where(eq(accountDeletionRequests.id, pending.id));
+		return { success: true, requestId: pending.id as string };
 	}),
 };

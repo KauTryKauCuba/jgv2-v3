@@ -16,7 +16,9 @@
 		"db:studio:local": "drizzle-kit studio --config=drizzle.config.local.ts",
 		"seed:local": "bun run src/seed-local.ts",
 		"seed:local:sqlite": "bun run src/seed-local.ts --sqlite",
-		"seed:sample:local": "bun run src/seeder/seed-dashboard-sample-local.ts"
+		"seed:sample:local": "bun run src/seeder/seed-dashboard-sample-local.ts",
+		"jobs:approve:local": "bun run src/seeder/approve-jobs-local.ts",
+		"admin:grant:local": "bun run src/seeder/grant-admin-local.ts"
 	},
 	"dependencies": {
 		"drizzle-orm": "catalog:"

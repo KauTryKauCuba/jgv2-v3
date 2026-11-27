@@ -305,9 +305,9 @@ function acceptedWorkAuthorizations(workEligibility: string): string[] {
 /**
  * The redesign's computeMatchResults (src/lib/match-results.ts) on v1's
  * tables: every active applicant to the company's live jobs, scored against
- * the job. v1's job has no soft skills, nice-to-have skills or driving
- * licence, so those parts are left out of the score (and reweighted), as the
- * redesign does for any missing signal.
+ * the job. Jobs from Post a job carry every signal; v1's older jobs have no
+ * soft skills, nice-to-have skills or driving licence, so those parts are left
+ * out of their score (and reweighted), as the redesign does for any missing signal.
  */
 export async function computeMatchResults(db: AnyDb, origin: string, organizationId: string, criteria: CriteriaFlags) {
 	const postings = (await db
@@ -318,6 +318,13 @@ export async function computeMatchResults(db: AnyDb, origin: string, organizatio
 			workArrangement: job.work_arrangement,
 			workEligibility: job.work_eligibility,
 			experienceTypeId: job.experienceTypeId,
+			minYearsExperience: job.minYearsExperience,
+			softSkills: job.softSkills,
+			niceToHaveSkills: job.niceToHaveSkills,
+			workAuthorizations: job.workAuthorizations,
+			drivingLicense: job.drivingLicense,
+			postingIndustry: job.industry,
+			locationText: job.location,
 			industry: industries.name,
 			address: job.address,
 			cityName: cities.name,
@@ -369,9 +376,12 @@ export async function computeMatchResults(db: AnyDb, origin: string, organizatio
 		.map((c) => {
 			const posting = byId.get(c.jobId);
 			const { eligible, reasons } = hardFilterCheck({
-				requiredWorkAuthorizations: acceptedWorkAuthorizations(posting.workEligibility),
+				// Post a job's own list, else what v1's local / international means.
+				requiredWorkAuthorizations: posting.workAuthorizations?.length
+					? posting.workAuthorizations
+					: acceptedWorkAuthorizations(posting.workEligibility),
 				candidateWorkAuthorization: c.workEligibility ?? "",
-				requiredDrivingLicense: null,
+				requiredDrivingLicense: posting.drivingLicense ?? null,
 				candidateDrivingLicense: c.drivingLicense ?? null,
 				enabledWorkAuthorization: criteria.workAuthorization,
 				enabledDrivingLicense: criteria.drivingLicense,
@@ -379,13 +389,13 @@ export async function computeMatchResults(db: AnyDb, origin: string, organizatio
 			const allSkills = [...(c.professionalSkills ?? []), ...(c.softSkills ?? []), ...(c.otherSkills ?? [])];
 			const breakdown: MatchBreakdown = {
 				skills: skillsOverlapScore(requiredSkills.get(c.jobId) ?? [], allSkills, canonicalizeSkill),
-				softSkills: null,
-				niceToHaveSkills: null,
+				softSkills: skillsOverlapScore(posting.softSkills ?? [], allSkills, canonicalizeSkill),
+				niceToHaveSkills: skillsOverlapScore(posting.niceToHaveSkills ?? [], allSkills, canonicalizeSkill),
 				experience: experienceFitScore(
-					MIN_YEARS_BY_EXPERIENCE_TYPE[posting.experienceTypeId as number] ?? null,
+					posting.minYearsExperience ?? MIN_YEARS_BY_EXPERIENCE_TYPE[posting.experienceTypeId as number] ?? null,
 					c.yearsExperience ?? 0,
 				),
-				industry: industryMatchScore(posting.industry ?? null, c.preferredIndustry ?? ""),
+				industry: industryMatchScore(posting.postingIndustry ?? posting.industry ?? null, c.preferredIndustry ?? ""),
 				workArrangement: workArrangementMatchScore(toWorkArrangement(posting.workArrangement), c.workArrangement ?? ""),
 				employmentType: employmentTypeMatchScore(posting.employmentType, c.desiredJobType ?? ""),
 			};

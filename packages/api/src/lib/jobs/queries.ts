@@ -28,8 +28,14 @@ export async function inChunks<T>(ids: string[], load: (chunk: string[]) => Prom
 	return out;
 }
 
-/** "Petaling Jaya, Selangor" from v1's city/state lookups, else the typed address. */
-export function jobLocation(row: { cityName: string | null; stateName: string | null; address: string | null }): string {
+/** The posting's own "City, State" (Post a job saves it), else v1's city/state lookups, else the address. */
+export function jobLocation(row: {
+	locationText?: string | null;
+	cityName: string | null;
+	stateName: string | null;
+	address: string | null;
+}): string {
+	if (row.locationText?.trim()) return row.locationText.trim();
 	const place = [row.cityName, row.stateName].filter(Boolean).join(", ");
 	return place || row.address?.trim() || "";
 }
@@ -48,12 +54,14 @@ export async function loadJobCards(db: AnyDb, where: SQL | undefined, limit = 50
 			workArrangement: job.work_arrangement,
 			workEligibility: job.work_eligibility,
 			address: job.address,
+			locationText: job.location,
 			cityName: cities.name,
 			stateName: states.name,
 			salaryMin: job.salaryMin,
 			salaryMax: job.salaryMax,
 			showSalary: job.showSalary,
 			salaryTypeName: salaryTypes.name,
+			salaryPeriodText: job.salaryPeriod,
 			experienceTypeId: job.experienceTypeId,
 			views: job.views,
 			publishedAt: job.publishedAt,
@@ -85,7 +93,10 @@ export async function loadJobCards(db: AnyDb, where: SQL | undefined, limit = 50
 		location: jobLocation(r),
 		salaryMin: r.showSalary ? ((r.salaryMin as number | null) ?? null) : null,
 		salaryMax: r.showSalary ? ((r.salaryMax as number | null) ?? null) : null,
-		salaryPeriod: toSalaryPeriod(r.salaryTypeName),
+		// Post a job saves the period itself; v1's rows only have a salary type
+		// (their salary_period is the column default, "month").
+		salaryPeriod:
+			r.salaryPeriodText && r.salaryPeriodText !== "month" ? r.salaryPeriodText : toSalaryPeriod(r.salaryTypeName),
 		experienceTypeId: (r.experienceTypeId as number | null) ?? null,
 		views: (r.views as number) ?? 0,
 		publishedAt: r.publishedAt ? toIso(r.publishedAt) : null,

@@ -14,14 +14,17 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as SuperadminRouteRouteImport } from './routes/superadmin/route'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies/$companyId'
 import { Route as EmployerIndexRouteImport } from './routes/employer/index'
 import { Route as EmployerAboutRouteImport } from './routes/employer/about'
+import { Route as EmployerCompanyRouteImport } from './routes/employer/company'
 import { Route as EmployerDashboardRouteImport } from './routes/employer/dashboard'
 import { Route as EmployerOnboardingRouteImport } from './routes/employer/onboarding'
 import { Route as EmployerPrivacyRouteImport } from './routes/employer/privacy'
+import { Route as EmployerProfileRouteImport } from './routes/employer/profile'
 import { Route as EmployerReleaseNotesRouteImport } from './routes/employer/release-notes'
 import { Route as EmployerSecurityRouteImport } from './routes/employer/security'
 import { Route as EmployerTermsRouteImport } from './routes/employer/terms'
@@ -33,6 +36,12 @@ import { Route as JobseekerPrivacyRouteImport } from './routes/jobseeker/privacy
 import { Route as JobseekerReleaseNotesRouteImport } from './routes/jobseeker/release-notes'
 import { Route as JobseekerSecurityRouteImport } from './routes/jobseeker/security'
 import { Route as JobseekerTermsRouteImport } from './routes/jobseeker/terms'
+import { Route as SuperadminIndexRouteImport } from './routes/superadmin/index'
+import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/dashboard'
+import { Route as SuperadminEmployersRouteImport } from './routes/superadmin/employers'
+import { Route as SuperadminJobPostingsRouteImport } from './routes/superadmin/job-postings'
+import { Route as EmployerJobsIndexRouteImport } from './routes/employer/jobs/index'
+import { Route as EmployerJobsPostajobRouteImport } from './routes/employer/jobs/postajob'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -57,6 +66,11 @@ const ReleaseNotesRoute = ReleaseNotesRouteImport.update({
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperadminRouteRoute = SuperadminRouteRouteImport.update({
+  id: '/superadmin',
+  path: '/superadmin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -84,6 +98,11 @@ const EmployerAboutRoute = EmployerAboutRouteImport.update({
   path: '/employer/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployerCompanyRoute = EmployerCompanyRouteImport.update({
+  id: '/employer/company',
+  path: '/employer/company',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmployerDashboardRoute = EmployerDashboardRouteImport.update({
   id: '/employer/dashboard',
   path: '/employer/dashboard',
@@ -97,6 +116,11 @@ const EmployerOnboardingRoute = EmployerOnboardingRouteImport.update({
 const EmployerPrivacyRoute = EmployerPrivacyRouteImport.update({
   id: '/employer/privacy',
   path: '/employer/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerProfileRoute = EmployerProfileRouteImport.update({
+  id: '/employer/profile',
+  path: '/employer/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployerReleaseNotesRoute = EmployerReleaseNotesRouteImport.update({
@@ -154,9 +178,40 @@ const JobseekerTermsRoute = JobseekerTermsRouteImport.update({
   path: '/jobseeker/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuperadminIndexRoute = SuperadminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
+const SuperadminDashboardRoute = SuperadminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
+const SuperadminEmployersRoute = SuperadminEmployersRouteImport.update({
+  id: '/employers',
+  path: '/employers',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
+const SuperadminJobPostingsRoute = SuperadminJobPostingsRouteImport.update({
+  id: '/job-postings',
+  path: '/job-postings',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
+const EmployerJobsIndexRoute = EmployerJobsIndexRouteImport.update({
+  id: '/employer/jobs/',
+  path: '/employer/jobs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerJobsPostajobRoute = EmployerJobsPostajobRouteImport.update({
+  id: '/employer/jobs/postajob',
+  path: '/employer/jobs/postajob',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/superadmin': typeof SuperadminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
@@ -164,9 +219,11 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
+  '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
@@ -177,9 +234,15 @@ export interface FileRoutesByFullPath {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
+  '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
+  '/employer/jobs/': typeof EmployerJobsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -190,9 +253,11 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
+  '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
@@ -203,13 +268,20 @@ export interface FileRoutesByTo {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies': typeof CompaniesIndexRoute
   '/employer': typeof EmployerIndexRoute
   '/jobseeker': typeof JobseekerIndexRoute
+  '/superadmin': typeof SuperadminIndexRoute
+  '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
+  '/employer/jobs': typeof EmployerJobsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/superadmin': typeof SuperadminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
@@ -217,9 +289,11 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
+  '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
   '/employer/terms': typeof EmployerTermsRoute
@@ -230,14 +304,21 @@ export interface FileRoutesById {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
+  '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
+  '/employer/jobs/': typeof EmployerJobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/superadmin'
     | '/about'
     | '/privacy'
     | '/release-notes'
@@ -245,9 +326,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/company'
     | '/employer/dashboard'
     | '/employer/onboarding'
     | '/employer/privacy'
+    | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
@@ -258,9 +341,15 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/dashboard'
+    | '/superadmin/employers'
+    | '/superadmin/job-postings'
     | '/companies/'
     | '/employer/'
     | '/jobseeker/'
+    | '/superadmin/'
+    | '/employer/jobs/postajob'
+    | '/employer/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -271,9 +360,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/company'
     | '/employer/dashboard'
     | '/employer/onboarding'
     | '/employer/privacy'
+    | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
@@ -284,12 +375,19 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/dashboard'
+    | '/superadmin/employers'
+    | '/superadmin/job-postings'
     | '/companies'
     | '/employer'
     | '/jobseeker'
+    | '/superadmin'
+    | '/employer/jobs/postajob'
+    | '/employer/jobs'
   id:
     | '__root__'
     | '/'
+    | '/superadmin'
     | '/about'
     | '/privacy'
     | '/release-notes'
@@ -297,9 +395,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/company'
     | '/employer/dashboard'
     | '/employer/onboarding'
     | '/employer/privacy'
+    | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
     | '/employer/terms'
@@ -310,13 +410,20 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/dashboard'
+    | '/superadmin/employers'
+    | '/superadmin/job-postings'
     | '/companies/'
     | '/employer/'
     | '/jobseeker/'
+    | '/superadmin/'
+    | '/employer/jobs/postajob'
+    | '/employer/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SuperadminRouteRoute: typeof SuperadminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   PrivacyRoute: typeof PrivacyRoute
   ReleaseNotesRoute: typeof ReleaseNotesRoute
@@ -324,9 +431,11 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   EmployerAboutRoute: typeof EmployerAboutRoute
+  EmployerCompanyRoute: typeof EmployerCompanyRoute
   EmployerDashboardRoute: typeof EmployerDashboardRoute
   EmployerOnboardingRoute: typeof EmployerOnboardingRoute
   EmployerPrivacyRoute: typeof EmployerPrivacyRoute
+  EmployerProfileRoute: typeof EmployerProfileRoute
   EmployerReleaseNotesRoute: typeof EmployerReleaseNotesRoute
   EmployerSecurityRoute: typeof EmployerSecurityRoute
   EmployerTermsRoute: typeof EmployerTermsRoute
@@ -340,6 +449,8 @@ export interface RootRouteChildren {
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   EmployerIndexRoute: typeof EmployerIndexRoute
   JobseekerIndexRoute: typeof JobseekerIndexRoute
+  EmployerJobsPostajobRoute: typeof EmployerJobsPostajobRoute
+  EmployerJobsIndexRoute: typeof EmployerJobsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -379,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/superadmin': {
+      id: '/superadmin'
+      path: '/superadmin'
+      fullPath: '/superadmin'
+      preLoaderRoute: typeof SuperadminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -414,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployerAboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employer/company': {
+      id: '/employer/company'
+      path: '/employer/company'
+      fullPath: '/employer/company'
+      preLoaderRoute: typeof EmployerCompanyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/employer/dashboard': {
       id: '/employer/dashboard'
       path: '/employer/dashboard'
@@ -433,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: '/employer/privacy'
       fullPath: '/employer/privacy'
       preLoaderRoute: typeof EmployerPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/profile': {
+      id: '/employer/profile'
+      path: '/employer/profile'
+      fullPath: '/employer/profile'
+      preLoaderRoute: typeof EmployerProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employer/release-notes': {
@@ -512,11 +644,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobseekerTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/superadmin/': {
+      id: '/superadmin/'
+      path: '/'
+      fullPath: '/superadmin/'
+      preLoaderRoute: typeof SuperadminIndexRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
+    '/superadmin/dashboard': {
+      id: '/superadmin/dashboard'
+      path: '/dashboard'
+      fullPath: '/superadmin/dashboard'
+      preLoaderRoute: typeof SuperadminDashboardRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
+    '/superadmin/employers': {
+      id: '/superadmin/employers'
+      path: '/employers'
+      fullPath: '/superadmin/employers'
+      preLoaderRoute: typeof SuperadminEmployersRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
+    '/superadmin/job-postings': {
+      id: '/superadmin/job-postings'
+      path: '/job-postings'
+      fullPath: '/superadmin/job-postings'
+      preLoaderRoute: typeof SuperadminJobPostingsRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
+    '/employer/jobs/': {
+      id: '/employer/jobs/'
+      path: '/employer/jobs'
+      fullPath: '/employer/jobs/'
+      preLoaderRoute: typeof EmployerJobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/jobs/postajob': {
+      id: '/employer/jobs/postajob'
+      path: '/employer/jobs/postajob'
+      fullPath: '/employer/jobs/postajob'
+      preLoaderRoute: typeof EmployerJobsPostajobRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface SuperadminRouteRouteChildren {
+  SuperadminDashboardRoute: typeof SuperadminDashboardRoute
+  SuperadminEmployersRoute: typeof SuperadminEmployersRoute
+  SuperadminJobPostingsRoute: typeof SuperadminJobPostingsRoute
+  SuperadminIndexRoute: typeof SuperadminIndexRoute
+}
+
+const SuperadminRouteRouteChildren: SuperadminRouteRouteChildren = {
+  SuperadminDashboardRoute: SuperadminDashboardRoute,
+  SuperadminEmployersRoute: SuperadminEmployersRoute,
+  SuperadminJobPostingsRoute: SuperadminJobPostingsRoute,
+  SuperadminIndexRoute: SuperadminIndexRoute,
+}
+
+const SuperadminRouteRouteWithChildren = SuperadminRouteRoute._addFileChildren(
+  SuperadminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SuperadminRouteRoute: SuperadminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   PrivacyRoute: PrivacyRoute,
   ReleaseNotesRoute: ReleaseNotesRoute,
@@ -524,9 +717,11 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   EmployerAboutRoute: EmployerAboutRoute,
+  EmployerCompanyRoute: EmployerCompanyRoute,
   EmployerDashboardRoute: EmployerDashboardRoute,
   EmployerOnboardingRoute: EmployerOnboardingRoute,
   EmployerPrivacyRoute: EmployerPrivacyRoute,
+  EmployerProfileRoute: EmployerProfileRoute,
   EmployerReleaseNotesRoute: EmployerReleaseNotesRoute,
   EmployerSecurityRoute: EmployerSecurityRoute,
   EmployerTermsRoute: EmployerTermsRoute,
@@ -540,6 +735,8 @@ const rootRouteChildren: RootRouteChildren = {
   CompaniesIndexRoute: CompaniesIndexRoute,
   EmployerIndexRoute: EmployerIndexRoute,
   JobseekerIndexRoute: JobseekerIndexRoute,
+  EmployerJobsPostajobRoute: EmployerJobsPostajobRoute,
+  EmployerJobsIndexRoute: EmployerJobsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,10 +1,12 @@
-import { member, organization, organizationAddress, organizationBadge } from "@jobgiga-app/db/schema/auth";
+import { member, organization, organizationAddress, organizationBadge, user } from "@jobgiga-app/db/schema/auth";
 import { employerOnboardingDraft } from "@jobgiga-app/db/schema/onboarding";
 import { ORPCError } from "@orpc/server";
-import { eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../index";
 import { lookupCompany } from "../lib/employer/company-lookup";
+import { hasFullAccess, loadCurrentCompany } from "../lib/employer/access";
+import { getSalaryInsight, suggestJobPosting, suggestPostingSkills, suggestSalary } from "../lib/employer/job-ai";
 import { buildDashboardData, computeMatchResults, loadEmployerAccess } from "../lib/employer/dashboard";
 import { sanitizeDescriptionHtml } from "../lib/sanitize-html";
 import type { Storage } from "../lib/storage/types";
@@ -30,7 +32,9 @@ import {
 import { INDUSTRIES } from "../shared/industries";
 import { CRITERIA_KEYS, type CriteriaFlags } from "../shared/matching";
 import { MALAYSIA_STATES } from "../shared/malaysia";
-import { isValidMalaysianPhone } from "../shared/phone";
+import { isValidMalaysianPhone, toMalaysianMobileE164 } from "../shared/phone";
+import { toIso } from "../shared/application-status";
+import type { EmployerAddress, EmployerProfile } from "../shared/employer-profile";
 
 // The redesign's /api/employer/{onboarding-draft,lookup-company,uploads,
 // profile} routes as oRPC procedures. Validation rules and error messages are
@@ -415,10 +419,16 @@ export const employerRouter = {
 			recentNews,
 		} = input;
 
-		// Onboarding only creates a company — once this account belongs to one,
-		// it edits it from Company Profile instead (not ported yet).
-		const [existing] = await db.select({ id: member.id }).from(member).where(eq(member.userId, userId)).limit(1);
-		if (existing) throw new ORPCError("CONFLICT", { message: "Your company is already set up." });
+		// No company yet: onboarding creates one. Already in one: Company
+		// Profile / My Profile edit it (the redesign's POST /api/employer/profile).
+		// "Add a company" (createNew) comes with the company switcher.
+		const current = await loadCurrentCompany(db, userId);
+		if (current && input.createNew === true) {
+			throw new ORPCError("CONFLICT", { message: "Adding another company isn't available yet." });
+		}
+		if (current && !hasFullAccess(current.accessLevel)) {
+			throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can edit the company profile." });
+		}
 
 		if (!isOptionalString(avatarUrl) || (typeof avatarUrl === "string" && avatarUrl.length > 6_000_000)) {
 			bad("Invalid profile photo.");
@@ -506,7 +516,7 @@ export const employerRouter = {
 		// An existing SSM document must be the one this user's own draft saved —
 		// the file route grants access to whichever company references a file,
 		// so accepting someone else's key here would hand over their certificate.
-		if (ssmKeyIn !== null) {
+		if (ssmKeyIn !== null && ssmKeyIn !== (current?.ssmDocumentKey ?? null)) {
 			const draft = await readDraft(db, userId);
 			if (ssmKeyIn !== (draft?.ssmDocumentUrl ?? null)) bad("Invalid SSM document — please upload it again.");
 		}
@@ -529,10 +539,20 @@ export const employerRouter = {
 		}
 		const ssmDocumentKey = isBase64DataUrl(ssmDocumentUrl)
 			? await saveDataUrl(storage, ssmDocumentUrl as string, "ssm-documents")
-			: ssmKeyIn;
-		const ssmVerificationStatus = ssmDocumentKey ? "pending" : "unverified";
+			: ssmDocumentUrl === undefined
+				? (current?.ssmDocumentKey ?? null)
+				: ssmKeyIn;
+		// A new or changed document, or a changed SSM number, restarts review —
+		// even for a verified company. Otherwise the status stays as it was.
+		const ssmNeedsReview =
+			!current || ssmDocumentKey !== current.ssmDocumentKey || ssmNumber.trim() !== current.ssmNumber;
+		const ssmVerificationStatus = ssmNeedsReview
+			? ssmDocumentKey
+				? "pending"
+				: "unverified"
+			: current!.ssmVerificationStatus;
 
-		const organizationId = crypto.randomUUID();
+		const organizationId = current?.organizationId ?? crypto.randomUUID();
 		const cleanName = companyName.trim();
 		const description = isNonEmptyString(companyDescription) ? sanitizeDescriptionHtml(companyDescription.trim()) : null;
 		const website = isNonEmptyString(websiteUrl) ? websiteUrl.trim() : null;
@@ -565,55 +585,71 @@ export const employerRouter = {
 			earned.push("profile_boosted");
 		}
 
+		const companyValues = {
+			legalName: cleanName,
+			displayName: cleanName,
+			companyLogo: logoKey,
+			companySize,
+			ssmNumber: ssmNumber.trim(),
+			website,
+			email,
+			phoneNumber: phone,
+			description,
+			facebookUrl: isNonEmptyString(companyFacebook) ? companyFacebook.trim() : null,
+			linkedinUrl: linkedin,
+			instagramUrl: isNonEmptyString(companyInstagram) ? companyInstagram.trim() : null,
+			industry: industry.trim(),
+			industryCategory,
+			foundedYear: founded,
+			companyType: type,
+			benefits: (benefits as string[]).map((b) => b.trim()),
+			officePhotoKey,
+			recentNews: isNewsItemArray(recentNews)
+				? recentNews.map((item) => ({ title: item.title.trim(), url: item.url.trim() }))
+				: [],
+			galleryPhotos: workplace.values.galleryPhotos ?? [],
+			facilities: workplace.values.facilities ?? [],
+			dressCode: workplace.values.dressCode ?? null,
+			awards: workplace.values.awards ?? [],
+			leaders: workplace.values.leaders ?? [],
+			ssmDocumentKey,
+			ssmVerificationStatus,
+			...(ssmNeedsReview && current ? { ssmVerifiedAt: null, ssmRejectionReason: null } : {}),
+			updatedAt: now,
+		};
+		const contactValues = {
+			name: contactName.trim(),
+			email: contactEmail.trim().toLowerCase(),
+			contactRole: contactRole.trim(),
+			positionTitle: contactPosition.trim(),
+			phoneNumber: contactPhone.trim(),
+			avatarKey,
+		};
+
 		await db.batch([
-			db.insert(organization).values({
-				id: organizationId,
-				legalName: cleanName,
-				displayName: cleanName,
-				companyLogo: logoKey,
-				companySize,
-				ssmNumber: ssmNumber.trim(),
-				website,
-				email,
-				phoneNumber: phone,
-				description,
-				facebookUrl: isNonEmptyString(companyFacebook) ? companyFacebook.trim() : null,
-				linkedinUrl: linkedin,
-				instagramUrl: isNonEmptyString(companyInstagram) ? companyInstagram.trim() : null,
-				industry: industry.trim(),
-				industryCategory,
-				foundedYear: founded,
-				companyType: type,
-				benefits: (benefits as string[]).map((b) => b.trim()),
-				officePhotoKey,
-				bannerKey,
-				recentNews: isNewsItemArray(recentNews)
-					? recentNews.map((item) => ({ title: item.title.trim(), url: item.url.trim() }))
-					: [],
-				galleryPhotos: workplace.values.galleryPhotos ?? [],
-				facilities: workplace.values.facilities ?? [],
-				dressCode: workplace.values.dressCode ?? null,
-				awards: workplace.values.awards ?? [],
-				leaders: workplace.values.leaders ?? [],
-				ssmDocumentKey,
-				ssmVerificationStatus,
-				createdByUserId: userId,
-				updatedAt: now,
-			}),
-			db.insert(member).values({
-				id: crypto.randomUUID(),
-				organizationId,
-				userId,
-				name: contactName.trim(),
-				email: contactEmail.trim().toLowerCase(),
-				// v1's team role / access level for the company's registrant.
-				role: "hr manager",
-				accessLevel: "owner",
-				contactRole: contactRole.trim(),
-				positionTitle: contactPosition.trim(),
-				phoneNumber: contactPhone.trim(),
-				avatarKey,
-			}),
+			...(current
+				? [
+						db
+							.update(organization)
+							// Omitted banner = keep the current one.
+							.set({ ...companyValues, ...(bannerUrl !== undefined ? { bannerKey } : {}) })
+							.where(eq(organization.id, organizationId)),
+						// "About you" is the saver's own membership row.
+						db.update(member).set(contactValues).where(eq(member.id, current.memberId)),
+						db.delete(organizationAddress).where(eq(organizationAddress.organizationId, organizationId)),
+					]
+				: [
+						db.insert(organization).values({ id: organizationId, ...companyValues, bannerKey, createdByUserId: userId }),
+						db.insert(member).values({
+							id: crypto.randomUUID(),
+							organizationId,
+							userId,
+							...contactValues,
+							// v1's team role / access level for the company's registrant.
+							role: "hr manager",
+							accessLevel: "owner",
+						}),
+					]),
 			...addresses.map((a, i) =>
 				db.insert(organizationAddress).values({
 					id: crypto.randomUUID(),
@@ -641,6 +677,95 @@ export const employerRouter = {
 			...(bannerUrl !== undefined ? { bannerUrl: fileUrl(context.origin, bannerKey) } : {}),
 			ssmDocumentUrl: fileUrl(context.origin, ssmDocumentKey),
 			ssmVerificationStatus,
+		};
+	}),
+
+	// Company Profile and My Profile (the redesign's getEmployerProfileForUser
+	// + getEmployerAddresses + getEarnedBadges): the saved company and the
+	// signer-in's own "About you", in the shape the form edits.
+	getProfile: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const current = await loadCurrentCompany(db, userId);
+		if (!current) throw new ORPCError("NOT_FOUND", { message: "Finish onboarding first." });
+		const [[org], [me], addresses, badges, [account]] = await Promise.all([
+			db.select().from(organization).where(eq(organization.id, current.organizationId)).limit(1),
+			db.select().from(member).where(eq(member.id, current.memberId)).limit(1),
+			db
+				.select()
+				.from(organizationAddress)
+				.where(eq(organizationAddress.organizationId, current.organizationId))
+				.orderBy(asc(organizationAddress.sortOrder)),
+			db
+				.select({ badgeKey: organizationBadge.badgeKey, earnedAt: organizationBadge.earnedAt })
+				.from(organizationBadge)
+				.where(eq(organizationBadge.organizationId, current.organizationId)),
+			db.select({ phoneNumber: user.phoneNumber, phoneVerified: user.phoneVerified }).from(user).where(eq(user.id, userId)).limit(1),
+		]);
+		const url = (key: string | null | undefined) => fileUrl(context.origin, key);
+		const contactPhone = (me.phoneNumber as string | null) ?? "";
+		const e164 = toMalaysianMobileE164(contactPhone);
+		const profile: EmployerProfile = {
+			id: org.id,
+			avatarUrl: url(me.avatarKey),
+			contactName: me.name ?? "",
+			contactRole: me.contactRole ?? "",
+			contactPosition: me.positionTitle ?? "",
+			contactPhone,
+			contactEmail: me.email ?? context.session.user.email,
+			companyName: org.displayName,
+			ssmNumber: org.ssmNumber ?? "",
+			ssmDocumentUrl: url(org.ssmDocumentKey),
+			ssmVerificationStatus: org.ssmVerificationStatus,
+			ssmRejectionReason: org.ssmRejectionReason ?? null,
+			industry: org.industry ?? "",
+			industryCategory: org.industryCategory ?? "",
+			companySize: org.companySize ?? "",
+			companyDescription: org.description ?? null,
+			logoUrl: url(org.companyLogo),
+			benefits: org.benefits ?? [],
+			websiteUrl: org.website ?? null,
+			companyEmail: org.email ?? null,
+			companyPhone: org.phoneNumber ?? null,
+			companyLinkedin: org.linkedinUrl ?? null,
+			companyFacebook: org.facebookUrl ?? null,
+			companyInstagram: org.instagramUrl ?? null,
+			foundedYear: org.foundedYear ?? null,
+			companyType: org.companyType ?? null,
+			officePhotoUrl: url(org.officePhotoKey),
+			bannerUrl: url(org.bannerKey),
+			recentNews: org.recentNews ?? [],
+			galleryPhotos: ((org.galleryPhotos ?? []) as string[]).map((k) => url(k) as string),
+			facilities: org.facilities ?? [],
+			dressCode: org.dressCode ?? null,
+			awards: org.awards ?? [],
+			leaders: ((org.leaders ?? []) as { name: string; title: string; photoUrl: string | null }[]).map((l) => ({
+				...l,
+				photoUrl: url(l.photoUrl),
+			})),
+		};
+		return {
+			profile,
+			addresses: (addresses as AnyDb[]).map(
+				(a): EmployerAddress => ({
+					id: a.id,
+					label: a.label,
+					addressLine1: a.addressLine1,
+					addressLine2: a.addressLine2 ?? null,
+					area: a.area ?? null,
+					city: a.city,
+					state: a.state,
+					postcode: a.postcode,
+					isJobDefault: Boolean(a.isJobDefault),
+				}),
+			),
+			earnedBadges: Object.fromEntries((badges as AnyDb[]).map((b) => [b.badgeKey, toIso(b.earnedAt)])) as Record<string, string>,
+			canManage: hasFullAccess(current.accessLevel),
+			// So the phone field shows "verified" on its first frame.
+			phoneStatus: {
+				canVerify: true,
+				verified: !!e164 && !!account?.phoneVerified && account.phoneNumber === e164,
+			},
 		};
 	}),
 
@@ -691,4 +816,103 @@ export const employerRouter = {
 			}
 			return { ok: true as const };
 		}),
+
+	// ── Post a job's helpers ──
+
+	// The redesign's POST /api/employer/suggest-job-posting ("Fill with AI"):
+	// the whole posting drafted from its title.
+	suggestJobPosting: protectedProcedure
+		.input(
+			z.object({
+				jobTitle: z.string(),
+				companyIndustry: z.string().nullish(),
+				companySize: z.string().nullish(),
+				companyLocation: z.string().nullish(),
+			}),
+		)
+		.handler(async ({ input, context }) => {
+			if (!input.jobTitle.trim()) bad("Enter a job title first.");
+			const out = await suggestJobPosting(context.db, context.ai, context.session.user.id, input);
+			if (!out.ok) throw new ORPCError(out.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: out.error });
+			return { result: out.result, usage: out.usage, provider: out.provider, durationMs: out.durationMs };
+		}),
+
+	// The redesign's POST /api/employer/suggest-salary.
+	suggestSalary: protectedProcedure.input(z.record(z.string(), z.unknown())).handler(async ({ input, context }) => {
+		const out = await suggestSalary(context.db, context.ai, context.session.user.id, input);
+		if (!out.ok) throw new ORPCError(out.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: out.error });
+		return { suggestion: out.suggestion };
+	}),
+
+	// The redesign's POST /api/employer/suggest-skills.
+	suggestSkills: protectedProcedure.input(z.object({ jobTitle: z.string() })).handler(async ({ input, context }) => {
+		if (!input.jobTitle.trim()) bad("Enter a job title first.");
+		const out = await suggestPostingSkills(context.db, context.ai, context.session.user.id, input.jobTitle);
+		if (!out.ok) throw new ORPCError(out.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: out.error });
+		return { suggestions: out.suggestions, usage: out.usage, durationMs: out.durationMs };
+	}),
+
+	// The redesign's GET /api/employer/salary-insights.
+	salaryInsight: protectedProcedure
+		.input(z.object({ title: z.string(), industry: z.string().nullish(), state: z.string().nullish() }))
+		.handler(async ({ input, context }) => {
+			const title = input.title.trim().slice(0, 120);
+			if (!title) return { insight: null };
+			return {
+				insight: await getSalaryInsight(context.db, {
+					title,
+					industry: input.industry?.slice(0, 120) || null,
+					state: input.state?.slice(0, 60) || null,
+				}),
+			};
+		}),
+
+	// Post a job's company details: addresses (the default work location),
+	// company benefits (pre-filled), and who can be shown as the contact.
+	postJobContext: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const current = await loadCurrentCompany(db, context.session.user.id);
+		if (!current) throw new ORPCError("NOT_FOUND", { message: "Finish onboarding first." });
+		const [[org], addresses, members] = await Promise.all([
+			db.select().from(organization).where(eq(organization.id, current.organizationId)).limit(1),
+			db
+				.select()
+				.from(organizationAddress)
+				.where(eq(organizationAddress.organizationId, current.organizationId))
+				.orderBy(asc(organizationAddress.sortOrder)),
+			db
+				.select({ userId: member.userId, name: member.name, email: member.email, positionTitle: member.positionTitle, avatarKey: member.avatarKey })
+				.from(member)
+				.where(and(eq(member.organizationId, current.organizationId), eq(member.status, "active"))),
+		]);
+		return {
+			canManage: hasFullAccess(current.accessLevel),
+			company: { name: org.displayName as string, logoUrl: fileUrl(context.origin, org.companyLogo), industry: org.industry ?? null, size: org.companySize ?? null },
+			companyBenefits: (org.benefits ?? []) as string[],
+			addresses: (addresses as AnyDb[]).map(
+				(a): EmployerAddress => ({
+					id: a.id,
+					label: a.label,
+					addressLine1: a.addressLine1,
+					addressLine2: a.addressLine2 ?? null,
+					area: a.area ?? null,
+					city: a.city,
+					state: a.state,
+					postcode: a.postcode,
+					isJobDefault: Boolean(a.isJobDefault),
+				}),
+			),
+			// Public details only — no email or phone reaches the page.
+			contactOptions: (members as AnyDb[])
+				.filter((m) => m.userId)
+				.map((m) => ({
+					userId: m.userId as string,
+					name: (m.name as string | null) || ((m.email as string | null) ?? "").split("@")[0] || "",
+					position: (m.positionTitle as string | null) ?? null,
+					avatarUrl: fileUrl(context.origin, m.avatarKey),
+				})),
+			// Hiring managers come with the Team page.
+			hiringManagerOptions: [] as { teamMemberId: string; name: string; email: string; position: string | null; avatarUrl: string | null; pending: boolean }[],
+		};
+	}),
 };

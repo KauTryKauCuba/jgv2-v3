@@ -576,3 +576,40 @@ export const jobseekerProfileRelations = relations(jobseekerProfile, ({ one, man
 	languages: many(jobseekerProfileLanguage),
 	references: many(jobseekerReference),
 }));
+
+// v1's account_deletion_requests, unchanged. A user with no company deletes
+// their own account straight away (user.deleted_at); a company member files
+// a request that someone above them approves (see
+// packages/api/src/lib/account/deletion.ts).
+export const accountDeletionRequests = sqliteTable(
+	"account_deletion_requests",
+	{
+		id: text("id").primaryKey(),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		organizationId: text("organization_id").references(() => organization.id, {
+			onDelete: "set null",
+		}),
+		requesterMemberRole: text("requester_member_role"),
+		requiredApproverRole: text("required_approver_role").notNull(), // superadmin | hr manager | hr staff
+		status: text("status").notNull().default("pending"), // pending | approved | rejected | canceled | completed
+		reason: text("reason"),
+		reviewedByUserId: text("reviewed_by_user_id").references(() => user.id, {
+			onDelete: "set null",
+		}),
+		reviewedAt: text("reviewed_at"),
+		rejectionReason: text("rejection_reason"),
+		createdAt: text("created_at")
+			.default(sql`(datetime('now'))`)
+			.notNull(),
+		updatedAt: text("updated_at")
+			.default(sql`(datetime('now'))`)
+			.$onUpdate(() => sql`datetime('now')`)
+			.notNull(),
+	},
+	(table) => [
+		index("account_deletion_requests_userId_status_idx").on(table.userId, table.status),
+		index("account_deletion_requests_org_status_idx").on(table.organizationId, table.status),
+	],
+);

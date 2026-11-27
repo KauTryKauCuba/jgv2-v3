@@ -15,3 +15,14 @@ export const protectedProcedure = o.use(({ context, next }) => {
 	}
 	return next({ context: { ...context, session: context.session } });
 });
+
+// v1's adminProcedure: platform admins only (user.role = "admin", set by
+// Better-Auth's admin plugin — see packages/db/src/seeder/grant-admin-local.ts).
+// The redesign's superadmin panel runs on these.
+export const adminProcedure = protectedProcedure.use(({ context, next }) => {
+	const role = (context.session.user as { role?: string | null }).role;
+	if (role !== "admin") {
+		throw new ORPCError("FORBIDDEN", { message: "Admin access required" });
+	}
+	return next();
+});

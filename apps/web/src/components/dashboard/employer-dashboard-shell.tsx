@@ -36,13 +36,13 @@ const NAV_PENDING_TIMEOUT_MS = 10_000;
 // redesign) and says "coming soon" when clicked. TODO(route) for each.
 const NAV_ITEMS = [
   { key: "overview", href: "/employer/dashboard", icon: HomeIcon, ready: true },
-  { key: "jobs", href: "/employer/jobs", icon: BriefcaseIcon, ready: false },
+  { key: "jobs", href: "/employer/jobs", icon: BriefcaseIcon, ready: true },
   { key: "applicants", href: "/employer/applicants", icon: UsersIcon, ready: false },
   { key: "interviews", href: "/employer/interviews", icon: CalendarIcon, ready: false },
-  { key: "company", href: "/employer/company", icon: BuildingIcon, ready: false },
+  { key: "company", href: "/employer/company", icon: BuildingIcon, ready: true },
   { key: "advertisement", href: "/employer/advertisement", icon: MegaphoneIcon, ready: false },
   { key: "team", href: "/employer/team", icon: UsersIcon, ready: false },
-  { key: "profile", href: "/employer/profile", icon: UserIcon, ready: false },
+  { key: "profile", href: "/employer/profile", icon: UserIcon, ready: true },
 ] as const;
 
 // A panelist only sits on interviews (the redesign's Panel role); the pages

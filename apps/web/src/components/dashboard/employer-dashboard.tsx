@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { authClient } from "@/lib/auth-client";
-import { showComingSoon } from "@/lib/coming-soon";
 import { orpc } from "@/utils/orpc";
 import { EmployerDashboardOverview } from "./employer-dashboard-overview";
 import { EmployerDashboardShell } from "./employer-dashboard-shell";
@@ -12,6 +12,7 @@ import { EmployerDashboardShell } from "./employer-dashboard-shell";
  */
 export function EmployerDashboard() {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   const { data: session } = authClient.useSession();
   const me = useQuery({ ...orpc.auth.me.queryOptions(), meta: { suppressErrorToast: true } });
   const dashboardQuery = useQuery({ ...orpc.employer.dashboard.queryOptions(), meta: { suppressErrorToast: true } });
@@ -27,10 +28,9 @@ export function EmployerDashboard() {
       headerAction={
         <div className="flex flex-wrap items-center gap-[8px]">
           {canManage && (
-            // TODO(route): /employer/jobs/postajob (Post a job).
             <button
               type="button"
-              onClick={showComingSoon}
+              onClick={() => navigate({ to: "/employer/jobs/postajob" })}
               className="flex h-[38px] items-center justify-center rounded-full bg-brand-teal-dark px-[22px] text-sm text-white transition-opacity hover:opacity-90"
             >
               {t("dashboard.employer.postJob")}

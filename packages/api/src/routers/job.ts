@@ -1,9 +1,20 @@
-import { job, JOB_STATUS, savedJob } from "@jobgiga-app/db/schema/jobs";
+import { member, organizationBadge } from "@jobgiga-app/db/schema/auth";
+import { application, job, JOB_STATUS, savedJob } from "@jobgiga-app/db/schema/jobs";
 import { ORPCError } from "@orpc/server";
-import { and, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "../index";
-import { type JobCard, loadEmployerResponsiveness, loadJobCards } from "../lib/jobs/queries";
+import { hasFullAccess, loadCurrentCompany } from "../lib/employer/access";
+import {
+	benefitStatements,
+	jobValuesFrom,
+	namesByJob,
+	postingFromRow,
+	skillStatements,
+	uniqueJobSlug,
+} from "../lib/jobs/posting";
+import { parsePostingBody } from "../lib/jobs/posting-input";
+import { inChunks, type JobCard, loadEmployerResponsiveness, loadJobCards } from "../lib/jobs/queries";
 
 // biome-ignore lint: db is driver-specific (D1 vs bun-sqlite), loosely typed
 // here, same as the other routers.
@@ -13,6 +24,61 @@ type AnyDb = any;
 // dashboards use so far, under v1's names. The rest (get, create, update,
 // recordView, the admin and analytics calls) comes with Find Job, Post a job
 // and Manage Job.
+
+function bad(message: string): never {
+	throw new ORPCError("BAD_REQUEST", { message });
+}
+
+// The signed-in employer's company, for the Manage Job / Post a job calls.
+// `manage`: only owners and admins create, change or delete postings.
+async function companyFor(db: AnyDb, userId: string, opts: { manage: boolean; message?: string }) {
+	const company = await loadCurrentCompany(db, userId);
+	if (!company) throw new ORPCError("BAD_REQUEST", { message: "Finish your company profile first." });
+	if (opts.manage && !hasFullAccess(company.accessLevel)) {
+		throw new ORPCError("FORBIDDEN", { message: opts.message ?? "Only an owner or admin can change job postings." });
+	}
+	return company;
+}
+
+// Postings → the redesign's shape, with skills, benefits and applicant counts.
+async function toPostings(db: AnyDb, rows: AnyDb[]) {
+	const ids = rows.map((r) => r.id as string);
+	const [skillNames, benefitNames, counts] = await Promise.all([
+		namesByJob(db, ids, "skills"),
+		namesByJob(db, ids, "benefits"),
+		inChunks(ids, (chunk) =>
+			db
+				.select({ jobId: application.jobId, n: count() })
+				.from(application)
+				.where(inArray(application.jobId, chunk))
+				.groupBy(application.jobId),
+		),
+	]);
+	const applicants = new Map((counts as { jobId: string; n: number }[]).map((c) => [c.jobId, c.n]));
+	return rows.map((r) =>
+		postingFromRow(r, {
+			skills: skillNames.get(r.id) ?? [],
+			benefits: benefitNames.get(r.id) ?? [],
+			applicantCount: applicants.get(r.id) ?? 0,
+		}),
+	);
+}
+
+// The contact must be someone active on this company's team.
+async function checkContact(db: AnyDb, organizationId: string, contactUserId: string | null | undefined) {
+	if (!contactUserId) return contactUserId;
+	const [row] = await db
+		.select({ id: member.id })
+		.from(member)
+		.where(and(eq(member.organizationId, organizationId), eq(member.userId, contactUserId), eq(member.status, "active")))
+		.limit(1);
+	return row ? contactUserId : null;
+}
+
+function badge(db: AnyDb, organizationId: string, badgeKey: string) {
+	return db.insert(organizationBadge).values({ id: crypto.randomUUID(), organizationId, badgeKey }).onConflictDoNothing();
+}
+
 export const jobRouter = {
 	// Live jobs, newest first — v1's job.list, without its filters yet (they
 	// come with the Find Job page). Each row is what the redesign's job cards
@@ -71,4 +137,111 @@ export const jobRouter = {
 			return rows as { id: string; jobId: string; savedAt: string }[];
 		}),
 	},
+
+	// ── Manage Job / Post a job (the redesign's /api/employer/job-postings) ──
+
+	// v1's job.listOrgJobs: the company's postings, newest first, in the
+	// redesign's shape with applicant and view counts.
+	listOrgJobs: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const company = await loadCurrentCompany(db, context.session.user.id);
+		if (!company) return { postings: [] };
+		const rows = await db.select().from(job).where(eq(job.organizationId, company.organizationId)).orderBy(desc(job.createdAt));
+		return { postings: await toPostings(db, rows) };
+	}),
+
+	// v1's job.getForEdit: one posting, for reopening a draft or editing.
+	getForEdit: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
+		const db = context.db as AnyDb;
+		const company = await companyFor(db, context.session.user.id, { manage: false });
+		const [row] = await db
+			.select()
+			.from(job)
+			.where(and(eq(job.id, input.id), eq(job.organizationId, company.organizationId)))
+			.limit(1);
+		if (!row) throw new ORPCError("NOT_FOUND", { message: "Not found." });
+		const [posting] = await toPostings(db, [row]);
+		// Hiring managers come with the Team page.
+		return { posting: { ...posting!, hiringManagerIds: [] as string[] } };
+	}),
+
+	// v1's job.create: a new posting, saved as a draft or sent for review
+	// ("pending" — an admin publishes it, as in v1 and the redesign).
+	create: protectedProcedure.input(z.record(z.string(), z.unknown())).handler(async ({ input, context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const company = await companyFor(db, userId, { manage: true, message: "Only an owner or admin can post jobs." });
+		const parsed = parsePostingBody(input, { mode: "create" });
+		if (!parsed.ok) bad(parsed.error);
+		const f = parsed.fields;
+		f.contactUserId = await checkContact(db, company.organizationId, f.contactUserId);
+
+		const id = crypto.randomUUID();
+		const values = await jobValuesFrom(db, f);
+		const slug = await uniqueJobSlug(db, company.companyName, f.title as string);
+		const [skillsQ, benefitsQ] = await Promise.all([
+			skillStatements(db, id, f.skills ?? []),
+			benefitStatements(db, id, company.organizationId, f.benefits ?? []),
+		]);
+		await db.batch([
+			db.insert(job).values({
+				...values,
+				id,
+				organizationId: company.organizationId,
+				slug,
+				createdById: userId,
+			}),
+			...skillsQ,
+			...benefitsQ,
+			badge(db, company.organizationId, "first_job_posted"),
+			...(f.screeningEnabled ? [badge(db, company.organizationId, "screening_enabled")] : []),
+		]);
+		const [row] = await db.select().from(job).where(eq(job.id, id)).limit(1);
+		const [posting] = await toPostings(db, [row]);
+		return { posting: posting! };
+	}),
+
+	// v1's job.update: change any fields sent; status can go to draft,
+	// pending (resubmit) or closed.
+	update: protectedProcedure
+		.input(z.object({ id: z.string() }).catchall(z.unknown()))
+		.handler(async ({ input, context }) => {
+			const db = context.db as AnyDb;
+			const company = await companyFor(db, context.session.user.id, { manage: true });
+			const [existing] = await db
+				.select()
+				.from(job)
+				.where(and(eq(job.id, input.id), eq(job.organizationId, company.organizationId)))
+				.limit(1);
+			if (!existing) throw new ORPCError("NOT_FOUND", { message: "Not found." });
+			const { id, ...body } = input;
+			const parsed = parsePostingBody(body, { mode: "update", screeningEnabledBefore: Boolean(existing.screeningEnabled) });
+			if (!parsed.ok) bad(parsed.error);
+			const f = parsed.fields;
+			if (f.contactUserId !== undefined) f.contactUserId = await checkContact(db, company.organizationId, f.contactUserId);
+
+			const values = await jobValuesFrom(db, f);
+			const [skillsQ, benefitsQ] = await Promise.all([
+				f.skills !== undefined ? skillStatements(db, id, f.skills) : [],
+				f.benefits !== undefined ? benefitStatements(db, id, company.organizationId, f.benefits) : [],
+			]);
+			const screeningOn = f.screeningEnabled ?? Boolean(existing.screeningEnabled);
+			await db.batch([
+				db.update(job).set(values).where(eq(job.id, id)),
+				...skillsQ,
+				...benefitsQ,
+				...(screeningOn ? [badge(db, company.organizationId, "screening_enabled")] : []),
+			]);
+			const [row] = await db.select().from(job).where(eq(job.id, id)).limit(1);
+			const [posting] = await toPostings(db, [row]);
+			return { posting: { ...posting!, hiringManagerIds: [] as string[] } };
+		}),
+
+	// v1's job.delete: removes the posting (its applications go with it).
+	delete: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
+		const db = context.db as AnyDb;
+		const company = await companyFor(db, context.session.user.id, { manage: true });
+		await db.delete(job).where(and(eq(job.id, input.id), eq(job.organizationId, company.organizationId)));
+		return { ok: true as const };
+	}),
 };

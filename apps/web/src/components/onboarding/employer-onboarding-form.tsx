@@ -1696,6 +1696,8 @@ export function EmployerOnboardingForm({
           ssmDocumentUrl: savedSsmDocumentUrl,
         });
         void queryClient.invalidateQueries({ queryKey: orpc.employer.key() });
+        // The navbar's name and photo too, as the redesign's page refresh did.
+        void queryClient.invalidateQueries({ queryKey: orpc.auth.me.key() });
       } else {
         // Same reasoning as the jobseeker form: no router.refresh()/push here
         // — the modal's own button takes them to the dashboard, which loads
@@ -3158,7 +3160,7 @@ export function EmployerOnboardingForm({
                 onChange={(e) => void uploadLeaderPhoto(e.target.files?.[0])}
               />
               {leaders.length === 0 ? (
-                <p className="mt-[6px] text-xs text-[#9AA3B2]">Your founder, CEO or managing director — up to {MAX_LEADERS}.</p>
+                <p className="mt-[6px] text-xs text-[#9AA3B2]">{t("employerOnboarding.leadershipHint", { max: MAX_LEADERS })}</p>
               ) : (
                 <div className="mt-[8px] flex flex-col gap-[8px]">
                   {leaders.map((leader, index) => (
@@ -3227,7 +3229,7 @@ export function EmployerOnboardingForm({
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
           {!requiredChecklistComplete ? (
             <div className="mb-[12px]">
-              <p className="text-sm text-[#141B2E]">Still needed to {mode === "edit" ? "save" : "finish"}:</p>
+              <p className="text-sm text-[#141B2E]">{mode === "edit" ? t("employerOnboarding.stillNeededToSave") : t("employerOnboarding.stillNeededToFinish")}</p>
               <div className="mt-[8px] flex flex-wrap gap-[6px]">
                 {requiredFieldChecklist
                   .filter((item) => !item.done)

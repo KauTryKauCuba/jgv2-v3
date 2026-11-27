@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { showComingSoon } from "@/lib/coming-soon";
 import { useDraftName } from "@/components/onboarding/draft-name-context";
 import { authClient } from "@/lib/auth-client";
 import { postAuthRedirect } from "@/lib/route-guards";
@@ -28,8 +29,9 @@ const navLinkClass = `${plainLinkClass} aria-[current=page]:font-semibold`;
  *
  * v3 has no stored "active role" yet (the redesign keeps one per session):
  * the side you're on is the role. Not ported yet, since their pages don't
- * exist in v3: My Profile / Company Profile links, the notification bell,
- * the superadmin link, and the employer's company-logo avatar.
+ * exist in v3: the notification bell and the employer's company-logo
+ * avatar. The jobseeker's My Profile says "coming soon" until that page is
+ * ported.
  *
  * `appShell`: inside the signed-in dashboards — the wider dashboard frame,
  * and no Find companies / About / Employer · Jobseeker links (the dashboard
@@ -255,6 +257,36 @@ export function Navbar({
                         </button>
                       )}
                     </div>
+                    {/* Not inside the dashboards — their sidebar has these. */}
+                    {!onboarding && !appShell && (
+                      pageRole === "employer" ? (
+                        <>
+                          <Link to="/employer/profile" onClick={() => setMenuOpen(false)} className={menuItemClass}>
+                            {t("nav.myProfile")}
+                          </Link>
+                          <Link to="/employer/company" onClick={() => setMenuOpen(false)} className={menuItemClass}>
+                            {t("nav.companyProfile")}
+                          </Link>
+                        </>
+                      ) : (
+                        // TODO(route): /jobseeker/profile (the jobseeker's My Profile).
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMenuOpen(false);
+                            showComingSoon();
+                          }}
+                          className={menuItemClass}
+                        >
+                          {t("nav.myProfile")}
+                        </button>
+                      )
+                    )}
+                    {me?.isSuperadmin && (
+                      <Link to="/superadmin/dashboard" onClick={() => setMenuOpen(false)} className={menuItemClass}>
+                        {t("nav.superadminPanel")}
+                      </Link>
+                    )}
                     <div className="px-[16px] py-[9px]">
                       <p className="text-xs text-[#141B2E]">{t("nav.aiUsage")}</p>
                       <p className="mt-[2px] text-xs text-[#9AA3B2]">

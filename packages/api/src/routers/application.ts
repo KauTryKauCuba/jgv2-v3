@@ -28,6 +28,7 @@ export const applicationRouter = {
 				jobId: job.id,
 				title: job.title,
 				address: job.address,
+				locationText: job.location,
 				cityName: cities.name,
 				stateName: states.name,
 				companyName: organization.displayName,

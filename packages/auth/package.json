@@ -14,7 +14,8 @@
 	},
 	"dependencies": {
 		"@jobgiga-app/db": "workspace:*",
-		"better-auth": "catalog:"
+		"better-auth": "catalog:",
+		"drizzle-orm": "catalog:"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

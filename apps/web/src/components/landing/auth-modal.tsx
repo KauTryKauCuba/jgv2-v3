@@ -113,13 +113,17 @@ export function AuthModal({
 			// (see otp/request's role-omitted branch). Without this check,
 			// Better-Auth's emailOTP plugin would happily create a brand new
 			// account the moment anyone verifies a code, even from "Sign in".
-			if (isSignIn) {
-				const { exists } = await accountExistsMutation.mutateAsync({ email: targetEmail });
-				if (!exists) {
-					setAccountNotFound(true);
-					setError(t("auth.accountNotFound"));
-					return;
-				}
+			// v1 also refuses deleted accounts, on both buttons ("This account
+			// has been deleted."); the server blocks the session too.
+			const { exists, deleted } = await accountExistsMutation.mutateAsync({ email: targetEmail });
+			if (deleted) {
+				setError(t("auth.accountDeleted"));
+				return;
+			}
+			if (isSignIn && !exists) {
+				setAccountNotFound(true);
+				setError(t("auth.accountNotFound"));
+				return;
 			}
 			await requestOtp(targetEmail);
 			setOtp(Array(OTP_LENGTH).fill(""));

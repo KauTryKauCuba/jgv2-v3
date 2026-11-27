@@ -90,6 +90,7 @@
       "dependencies": {
         "@jobgiga-app/db": "workspace:*",
         "better-auth": "catalog:",
+        "drizzle-orm": "catalog:",
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20250822.0",

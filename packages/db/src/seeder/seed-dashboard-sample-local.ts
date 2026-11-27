@@ -29,6 +29,8 @@ const at = (days: number, hour: number) =>
 const malaysianCity = (name: string) =>
 	`(SELECT c.id FROM cities c JOIN states s ON s.id = c.state_id WHERE c.name = ${q(name)} AND s.country_id = 132 LIMIT 1)`;
 const stateOf = (city: string) => `(SELECT state_id FROM cities WHERE id = ${malaysianCity(city)})`;
+// v1's state names → the redesign's ("Johor" and "Selangor" are the same in both).
+const stateName = (city: string) => (city === "Johor Bahru" ? "Johor" : "Selangor");
 
 const REMOVE = `
 DELETE FROM saved_job WHERE id LIKE 'sample-%';
@@ -47,6 +49,8 @@ type SampleJob = {
 	title: string;
 	city: string;
 	industry: string;
+	// The redesign's industry name (Post a job's list), alongside v1's.
+	postingIndustry: string;
 	employmentType: string;
 	workArrangement: string;
 	salary: [number, number];
@@ -59,12 +63,12 @@ type SampleJob = {
 };
 
 const JOBS: SampleJob[] = [
-	{ id: "sample-job-1", title: "Senior Graphic Designer", city: "Petaling Jaya", industry: "Advertising & Arts & Media", employmentType: "full_time", workArrangement: "hybrid", salary: [4500, 6500], salaryType: "Monthly", experienceTypeId: 5, status: "published", views: 412, postedDaysAgo: 30, skills: ["Adobe Suite", "Digital Marketing", "Collaboration"] },
-	{ id: "sample-job-2", title: "Customer Service Executive", city: "Shah Alam", industry: "BPO & Call Center", employmentType: "full_time", workArrangement: "onsite", salary: [2800, 3500], salaryType: "Monthly", experienceTypeId: 4, status: "published", views: 268, postedDaysAgo: 21, skills: ["Customer Service", "Call Centre", "English Language", "MS Office"] },
-	{ id: "sample-job-3", title: "Account Manager", city: "Cyberjaya", industry: "Business Service", employmentType: "full_time", workArrangement: "hybrid", salary: [5000, 7000], salaryType: "Monthly", experienceTypeId: 5, status: "published", views: 190, postedDaysAgo: 14, skills: ["Account Management", "Salesforce", "Sales Pipeline"] },
-	{ id: "sample-job-4", title: "Part-time Retail Assistant", city: "Subang Jaya", industry: "Apparel", employmentType: "part_time", workArrangement: "onsite", salary: [12, 15], salaryType: "Hourly", experienceTypeId: 1, status: "published", views: 95, postedDaysAgo: 7, skills: ["Customer Oriented", "Team Player"] },
-	{ id: "sample-job-5", title: "Marketing Intern", city: "Petaling Jaya", industry: "Advertising & Arts & Media", employmentType: "internship", workArrangement: "onsite", salary: [1000, 1200], salaryType: "Monthly", experienceTypeId: 2, status: "pending", views: 0, postedDaysAgo: 1, skills: ["Digital Marketing", "TikTok"] },
-	{ id: "sample-job-6", title: "Operations Lead", city: "Johor Bahru", industry: "Automotive", employmentType: "full_time", workArrangement: "onsite", salary: [6000, 8500], salaryType: "Monthly", experienceTypeId: 6, status: "rejected", views: 12, postedDaysAgo: 3, skills: ["Project Management", "Budgeting", "Scheduling"] },
+	{ id: "sample-job-1", postingIndustry: "Marketing & Advertising", title: "Senior Graphic Designer", city: "Petaling Jaya", industry: "Advertising & Arts & Media", employmentType: "full_time", workArrangement: "hybrid", salary: [4500, 6500], salaryType: "Monthly", experienceTypeId: 5, status: "published", views: 412, postedDaysAgo: 30, skills: ["Adobe Suite", "Digital Marketing", "Collaboration"] },
+	{ id: "sample-job-2", postingIndustry: "Customer Service & Support", title: "Customer Service Executive", city: "Shah Alam", industry: "BPO & Call Center", employmentType: "full_time", workArrangement: "onsite", salary: [2800, 3500], salaryType: "Monthly", experienceTypeId: 4, status: "published", views: 268, postedDaysAgo: 21, skills: ["Customer Service", "Call Centre", "English Language", "MS Office"] },
+	{ id: "sample-job-3", postingIndustry: "Sales & Business Development", title: "Account Manager", city: "Cyberjaya", industry: "Business Service", employmentType: "full_time", workArrangement: "hybrid", salary: [5000, 7000], salaryType: "Monthly", experienceTypeId: 5, status: "published", views: 190, postedDaysAgo: 14, skills: ["Account Management", "Salesforce", "Sales Pipeline"] },
+	{ id: "sample-job-4", postingIndustry: "Retail & Consumer Goods", title: "Part-time Retail Assistant", city: "Subang Jaya", industry: "Apparel", employmentType: "part_time", workArrangement: "onsite", salary: [12, 15], salaryType: "Hourly", experienceTypeId: 1, status: "published", views: 95, postedDaysAgo: 7, skills: ["Customer Oriented", "Team Player"] },
+	{ id: "sample-job-5", postingIndustry: "Marketing & Advertising", title: "Marketing Intern", city: "Petaling Jaya", industry: "Advertising & Arts & Media", employmentType: "internship", workArrangement: "onsite", salary: [1000, 1200], salaryType: "Monthly", experienceTypeId: 2, status: "pending", views: 0, postedDaysAgo: 1, skills: ["Digital Marketing", "TikTok"] },
+	{ id: "sample-job-6", postingIndustry: "Logistics & Supply Chain", title: "Operations Lead", city: "Johor Bahru", industry: "Automotive", employmentType: "full_time", workArrangement: "onsite", salary: [6000, 8500], salaryType: "Monthly", experienceTypeId: 6, status: "rejected", views: 12, postedDaysAgo: 3, skills: ["Project Management", "Budgeting", "Scheduling"] },
 ];
 
 type SampleApplicant = {
@@ -131,11 +135,12 @@ function buildSql(employerEmail: string | undefined, jobseekerEmail: string | un
 	const createdBy = employerEmail ? userByEmail(employerEmail) : "NULL";
 
 	for (const j of JOBS) {
-		sql.push(`INSERT INTO job (id, organization_id, title, description, industry_id, country_id, state_id, city_id,
+		sql.push(`INSERT INTO job (id, organization_id, title, description, industry_id, industry, location, city, state, slug, country_id, state_id, city_id,
   employment_type, work_arrangement, work_eligibility, location_type, salary_min, salary_max, salary_type_id, currency_type_id,
   salary_currency, experience_type_id, status, is_active, views, created_by_id, published_at, created_at, updated_at)
 VALUES (${q(j.id)}, ${orgId}, ${q(j.title)}, ${q(`<p>Sample job for the dashboards: ${j.title}.</p>`)},
-  (SELECT id FROM industries WHERE name = ${q(j.industry)} LIMIT 1), 132, ${stateOf(j.city)}, ${malaysianCity(j.city)},
+  (SELECT id FROM industries WHERE name = ${q(j.industry)} LIMIT 1), ${q(j.postingIndustry)}, ${q(`${j.city}, ${stateName(j.city)}`)},
+  ${q(j.city)}, ${q(stateName(j.city))}, ${q(j.id)}, 132, ${stateOf(j.city)}, ${malaysianCity(j.city)},
   ${q(j.employmentType)}, ${q(j.workArrangement)}, 'local', ${q(j.workArrangement === "remote" ? "remote" : "onsite")},
   ${j.salary[0]}, ${j.salary[1]}, (SELECT id FROM salary_types WHERE name = ${q(j.salaryType)}), 1, 'MYR', ${j.experienceTypeId},
   ${q(j.status)}, 1, ${j.views}, ${createdBy}, ${j.status === "published" ? ago(j.postedDaysAgo) : "NULL"}, ${ago(j.postedDaysAgo)}, ${ago(j.postedDaysAgo)});`);

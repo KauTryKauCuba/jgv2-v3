@@ -67,3 +67,18 @@ export async function requireNotOnboarded(role: PageRole): Promise<AuthContext> 
 export async function postAuthRedirect(role: PageRole): Promise<string> {
 	return (await isOnboarded(role)) ? DASHBOARD_PATH[role] : ONBOARDING_PATH[role];
 }
+
+/**
+ * The superadmin panel (the redesign's isSuperadminEmail check on every
+ * /superadmin page): signed in, and a platform admin (auth.me's
+ * isSuperadmin — v1's user.role = "admin"). Anyone else goes to the home
+ * page, like the redesign (which in v3 is the employer landing page).
+ */
+export async function requireAdmin(): Promise<AuthContext> {
+	const auth = await requireAuth("employer");
+	const me = await queryClient.fetchQuery({ ...orpc.auth.me.queryOptions(), staleTime: 0 }).catch(() => null);
+	if (!me?.isSuperadmin) {
+		throw redirect({ to: "/" });
+	}
+	return auth;
+}

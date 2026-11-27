@@ -1,6 +1,7 @@
 import type { DashboardData } from "@jobgiga-app/api/lib/employer/dashboard";
 import type { CriteriaFlags } from "@jobgiga-app/api/shared/matching";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -52,12 +53,13 @@ function SectionCard({
   animationDelayMs = 0,
 }: {
   title: string;
-  // TODO(route): every "View all" here opens a page v3 doesn't have yet.
+  // TODO(route): every "View all" here but Manage Job's opens a page v3 doesn't have yet.
   viewAllHref?: string;
   children: React.ReactNode;
   animationDelayMs?: number;
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   return (
     <div className={`h-full animate-fade-in-up ${gradientFrameClass("teal")}`} style={{ animationDelay: `${animationDelayMs}ms` }}>
       <div className="flex h-full flex-col gap-[14px] rounded-[19px] bg-white p-[16px] sm:p-[22px]">
@@ -68,7 +70,8 @@ function SectionCard({
               href={viewAllHref}
               onClick={(e) => {
                 e.preventDefault();
-                showComingSoon();
+                if (viewAllHref === "/employer/jobs") navigate({ to: "/employer/jobs" });
+                else showComingSoon();
               }}
               className="text-sm text-brand-teal-dark hover:underline"
             >
@@ -266,6 +269,7 @@ export function EmployerDashboardOverview({
   canManage?: boolean;
 }) {
   const { t, i18n } = useTranslation("common");
+  const navigate = useNavigate();
   const locale = i18n.resolvedLanguage === "ms" ? "ms-MY" : "en-MY";
   // The same scores Top Matches uses (one shared request), for the badges on
   // Recent applicants.
@@ -345,7 +349,7 @@ export function EmployerDashboardOverview({
     tile("interviews-this-week", data.stats.interviewsThisWeek, CalendarIcon, "#C7CBF7", "text-[#7C5CD1]", () => scrollToSection("upcoming-interviews")),
     tile("needs-evaluation", data.stats.needsEvaluation, PencilIcon, "#FFCFA3", "text-[#B06A2A]", showComingSoon),
     tile("reschedule-requests", data.stats.rescheduleRequests, CalendarIcon, "#FFCDA1", "text-[#C2600A]", showComingSoon),
-    tile("postings-needing-attention", data.stats.postingsNeedingAttention, FlagIcon, "#F9B9B9", "text-red-500", showComingSoon),
+    tile("postings-needing-attention", data.stats.postingsNeedingAttention, FlagIcon, "#F9B9B9", "text-red-500", () => navigate({ to: "/employer/jobs" })),
     tile("no-shows", data.stats.noShows, XCircleIcon, "#D4D7DC", "text-[#4B5468]", showComingSoon),
     tile("new-applicants", data.stats.newApplicants, StackIcon, "#C9CFDA", "text-[#4B5468]", showComingSoon),
     tile("kiv", data.stats.kiv, ClockIcon, "#B9C3F9", "text-[#5566B0]", showComingSoon),
@@ -608,13 +612,14 @@ export function EmployerDashboardOverview({
                 {data.postingPerformance.map((posting) => {
                   const pill = POSTING_STATUS_PILL[posting.status];
                   return (
-                    // TODO(route): /employer/jobs?id=<id> (Manage Job).
+                    // Like the redesign: ?id= is carried along, though Manage Job
+                    // opens on its list either way.
                     <a
                       key={posting.id}
                       href={`/employer/jobs?id=${posting.id}`}
                       onClick={(e) => {
                         e.preventDefault();
-                        showComingSoon();
+                        navigate({ to: "/employer/jobs", search: { id: posting.id } });
                       }}
                       className="flex flex-col gap-[8px] rounded-[12px] border border-[#EAEDF2] bg-[#F8FAFB] p-[12px] transition-colors hover:border-brand-teal-dark"
                     >

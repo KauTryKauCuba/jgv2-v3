@@ -3510,7 +3510,7 @@ export function JobseekerOnboardingForm({
         <div className="rounded-[19px] bg-white p-[16px] sm:p-[22px] text-left">
           {!formValid && (
             <div className="mb-[12px]">
-              <p className="text-sm text-[#141B2E]">Still needed to {mode === "edit" ? "save" : "finish"}:</p>
+              <p className="text-sm text-[#141B2E]">{mode === "edit" ? t("jobseekerOnboarding.stillNeededToSave") : t("jobseekerOnboarding.stillNeededToFinish")}</p>
               <div className="mt-[8px] flex flex-wrap gap-[6px]">
                 {requiredFieldChecklist
                   .filter((item) => !item.done)

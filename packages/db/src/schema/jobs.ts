@@ -86,6 +86,9 @@ export const JOB_STATUS = {
 	EXPIRED: "expired",
 	ARCHIVED: "archived",
 	REJECTED: "rejected",
+	// v3: the redesign's two extra posting states.
+	FILLED: "filled",
+	FLAGGED: "flagged",
 } as const;
 
 export const LOCATION_TYPE = {
@@ -216,6 +219,66 @@ export const job = sqliteTable(
 			.$onUpdate(() => sql`datetime('now')`)
 			.notNull(),
 		appStartedCount: integer('app_started_count').default(0),
+
+		// ── v3: the redesign's Post a job fields that v1's job has no column
+		// for, added in v1's style. Where v1 does have a column, that's used
+		// instead (title, description, responsibilities, address, city/state
+		// ids, employment type, work arrangement, salary, show salary, skills
+		// via job_skills, benefits via job_benefits, education and experience
+		// type ids, status). See packages/api/src/lib/jobs/posting.ts.
+		// URL slug, made once from company name + title.
+		slug: text("slug").unique(),
+		// The employer's own label for telling postings apart; never shown to jobseekers.
+		postingName: text("posting_name"),
+		// One of the redesign's INDUSTRIES (industryId is set too when v1 has the same name).
+		industry: text("industry"),
+		// The short "City, State" shown on cards; the address parts below.
+		location: text("location"),
+		addressLine2: text("address_line2"),
+		area: text("area"),
+		city: text("city"),
+		state: text("state"),
+		postcode: text("postcode"),
+		// Hybrid only: office days a week (1–4).
+		officeDaysPerWeek: integer("office_days_per_week"),
+		// "month" | "hour" | "day" | "project" | "year" (salaryTypeId too, where v1 has the type).
+		salaryPeriod: text("salary_period").notNull().default("month"),
+		openings: integer("openings").notNull().default(1),
+		softSkills: text("soft_skills", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+		niceToHaveSkills: text("nice_to_have_skills", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+		// Exact figures behind experienceTypeId / educationTypeId.
+		minYearsExperience: integer("min_years_experience"),
+		minQualificationTier: text("min_qualification_tier"),
+		// [{ language, dialect, level }] — the redesign's language list is wider than v1's languages table.
+		languages: text("languages", { mode: "json" })
+			.$type<{ language: string; dialect?: string | null; level: string }[]>()
+			.notNull()
+			.default(sql`'[]'`),
+		// citizen | permanent_resident | work_pass_holder | needs_sponsorship (work_eligibility is derived from it).
+		workAuthorizations: text("work_authorizations", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+		drivingLicense: text("driving_license"),
+		// Screening: the master switch, which built-in questions to ask, custom questions, preferred ones.
+		screeningEnabled: integer("screening_enabled", { mode: "boolean" }).notNull().default(false),
+		askMinYearsExperience: integer("ask_min_years_experience", { mode: "boolean" }).notNull().default(true),
+		askMinQualificationTier: integer("ask_min_qualification_tier", { mode: "boolean" }).notNull().default(true),
+		askDrivingLicense: integer("ask_driving_license", { mode: "boolean" }).notNull().default(true),
+		askLanguages: integer("ask_languages", { mode: "boolean" }).notNull().default(true),
+		askWorkAuthorizations: integer("ask_work_authorizations", { mode: "boolean" }).notNull().default(true),
+		customScreeningQuestions: text("custom_screening_questions", { mode: "json" }).$type<unknown[]>().notNull().default(sql`'[]'`),
+		screeningPreferred: text("screening_preferred", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+		// AI skill suggestions not reviewed yet (the dashed chips), kept with a draft.
+		skillSuggestions: text("skill_suggestions", { mode: "json" }).$type<{
+			professionalSkills: string[];
+			softSkills: string[];
+			niceToHaveSkills: string[];
+		} | null>(),
+		startAvailability: text("start_availability"),
+		workingHours: text("working_hours"),
+		// The teammate shown as the posting's contact (name, position and photo only).
+		contactUserId: text("contact_user_id").references(() => user.id, { onDelete: "set null" }),
+		rejectionReason: text("rejection_reason"),
+		flagReason: text("flag_reason"),
+		flaggedAt: text("flagged_at"),
 	},
 	(table) => [
 		index("job_organizationId_idx").on(table.organizationId),

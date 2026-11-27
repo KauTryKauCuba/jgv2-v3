@@ -57,6 +57,20 @@
       "when": 1795704020385,
       "tag": "0007_exotic_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1795731938842,
+      "tag": "0008_outgoing_salo",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1795740167566,
+      "tag": "0009_wonderful_zombie",
+      "breakpoints": true
     }
   ]
 }
