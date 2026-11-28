@@ -16,6 +16,9 @@ import { SuperadminDeletionRequests } from "./superadmin-deletion-requests";
 
 type EmployerRow = Awaited<ReturnType<typeof orpc.admin.listEmployers.call>>[number];
 
+/** The redesign's DEFAULT_COMPANY_LIMIT (packages/api lib/employer/memberships.ts). */
+const DEFAULT_COMPANY_LIMIT = 5;
+
 type SsmStatus = "unverified" | "pending" | "verified" | "rejected";
 const SSM_STATUSES: SsmStatus[] = ["unverified", "pending", "verified", "rejected"];
 
@@ -80,11 +83,8 @@ function ResponsivenessBadgeWithRate({ responsiveness }: { responsiveness: Emplo
  * The redesign's SuperadminEmployersView: every company on the platform,
  * how quickly each replies to applicants, and their SSM documents to verify
  * or reject (admin.listEmployers / admin.updateEmployerSsm).
- *
- * Not in v3 yet: the owner's company limit ("Owner has 2 of 5 companies" and
- * its "Edit limit" dialog) — there's no "Add a company" in v3, so
- * admin.listEmployers sends ownerCompanyLimit: null and the control stays
- * hidden rather than faked.
+ * Also the owner's company limit ("Owner has 2 of 5 companies" and its
+ * "Edit limit" dialog → admin.setCompanyLimit).
  */
 export function SuperadminEmployersView() {
   const { t, i18n } = useTranslation("common");
@@ -98,6 +98,25 @@ export function SuperadminEmployersView() {
   const [rejectReason, setRejectReason] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const limitMutation = useMutation(orpc.admin.setCompanyLimit.mutationOptions({ meta: { suppressErrorToast: true } }));
+  const [editingLimit, setEditingLimit] = useState<EmployerRow | null>(null);
+  const [limitInput, setLimitInput] = useState("");
+  const [limitError, setLimitError] = useState<string | null>(null);
+  const limitSaving = limitMutation.isPending;
+
+  async function saveCompanyLimit(userId: string, limit: number | null) {
+    setLimitError(null);
+    try {
+      const data = await limitMutation.mutateAsync({ userId, limit });
+      // Every company this person registered shows the same count.
+      queryClient.setQueryData<EmployerRow[]>(orpc.admin.listEmployers.queryKey(), (prev) =>
+        prev?.map((e) => (e.userId === userId ? { ...e, ownerCompanyLimit: data.companyLimit } : e)),
+      );
+      setEditingLimit(null);
+    } catch (err) {
+      setLimitError(err instanceof Error ? err.message : t("superadmin.employers.limitError"));
+    }
+  }
 
   const rows = useMemo(() => listQuery.data ?? [], [listQuery.data]);
   const searchTerm = search.trim().toLowerCase();
@@ -251,8 +270,28 @@ export function SuperadminEmployersView() {
                               {ssmStatus === "verified" && <VerifiedBadgeIcon className="h-[10px] w-[10px]" />}
                               {t(`superadmin.employers.ssmStatus.${ssmStatus}`)}
                             </span>
-                            {/* The owner's company limit would go here — hidden while
-                                ownerCompanyLimit is null (no "Add a company" in v3). */}
+                            {employer.ownerCompanyLimit && (
+                              <span className="inline-flex items-center gap-[6px] rounded-full bg-[#F1F4F8] py-[3px] pl-[9px] pr-[4px] text-xs text-[#4B5468]">
+                                {t("superadmin.employers.ownerHas", {
+                                  used: employer.ownerCompanyLimit.used,
+                                  limit: employer.ownerCompanyLimit.limit,
+                                })}
+                                {employer.ownerCompanyLimit.custom && (
+                                  <span className="text-[#7C5CD1]">{t("superadmin.employers.customLimit")}</span>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setLimitError(null);
+                                    setLimitInput(String(employer.ownerCompanyLimit?.limit ?? DEFAULT_COMPANY_LIMIT));
+                                    setEditingLimit(employer);
+                                  }}
+                                  className="rounded-full bg-white px-[8px] py-[1px] text-brand-teal-dark hover:bg-brand-teal-soft"
+                                >
+                                  {t("superadmin.employers.editLimit")}
+                                </button>
+                              </span>
+                            )}
                             {employer.ssmDocumentUrl && (ssmStatus === "pending" || ssmStatus === "rejected") && (
                               <button
                                 type="button"
@@ -346,6 +385,53 @@ export function SuperadminEmployersView() {
           >
             {t("superadmin.cancel")}
           </button>
+        </Modal>
+      )}
+      {editingLimit && (
+        <Modal
+          onClose={() => (limitSaving ? undefined : setEditingLimit(null))}
+          ariaLabel={t("superadmin.employers.limitLabel")}
+        >
+          <p className="text-sm font-semibold text-[#141B2E]">{t("superadmin.employers.limitTitle")}</p>
+          <p className="mt-[4px] text-xs leading-[17px] text-[#4B5468]">
+            {t("superadmin.employers.limitBody", {
+              name: editingLimit.contactName,
+              email: editingLimit.email,
+              used: editingLimit.ownerCompanyLimit?.used ?? 0,
+              defaultLimit: DEFAULT_COMPANY_LIMIT,
+            })}
+          </p>
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={limitInput}
+            onChange={(e) => setLimitInput(e.target.value)}
+            aria-label={t("superadmin.employers.limitTitle")}
+            className="mt-[12px] h-[38px] w-full rounded-[12px] border border-black/[0.1] px-[14px] text-sm text-[#141B2E] outline-none focus:border-brand-teal-dark"
+          />
+          {editingLimit.ownerCompanyLimit && Number(limitInput) < editingLimit.ownerCompanyLimit.used && (
+            <p className="mt-[6px] text-xs text-[#A67C00]">{t("superadmin.employers.limitBelow")}</p>
+          )}
+          {limitError && <p className="mt-[6px] text-xs text-red-500">{limitError}</p>}
+          <div className="mt-[14px] flex gap-[8px]">
+            <button
+              type="button"
+              disabled={limitSaving}
+              onClick={() => saveCompanyLimit(editingLimit.userId as string, null)}
+              className="flex h-[40px] flex-1 items-center justify-center rounded-full border border-black/[0.1] text-sm text-[#141B2E] hover:bg-black/[0.03] disabled:opacity-60"
+            >
+              {t("superadmin.employers.limitReset", { defaultLimit: DEFAULT_COMPANY_LIMIT })}
+            </button>
+            <button
+              type="button"
+              disabled={limitSaving || !/^\d+$/.test(limitInput.trim())}
+              onClick={() => saveCompanyLimit(editingLimit.userId as string, Number(limitInput))}
+              className="flex h-[40px] flex-1 items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white hover:opacity-90 disabled:opacity-50"
+            >
+              {t("superadmin.employers.limitSave")}
+            </button>
+          </div>
         </Modal>
       )}
     </SuperadminDashboardShell>

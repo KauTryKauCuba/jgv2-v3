@@ -78,8 +78,18 @@ export function Navbar({
   const draftContext = useDraftName();
   const draftName = draftContext?.draftName.trim();
   const me = meQuery.data;
-  const displayName = draftName || me?.name || session?.user.name || session?.user.email;
-  const displayAvatarUrl = draftContext?.draftAvatarUrl || me?.avatarUrl || session?.user.image || undefined;
+  // On the employer side: the current company's "About you" name and photo,
+  // with that company's logo as the main circle (the redesign's
+  // companyLogoUrl). Mid-onboarding there's no company yet, so it's the
+  // draft's own name and avatar as usual.
+  const employerMe = pageRole === "employer" && !draftContext ? (me?.employer ?? null) : null;
+  const displayName = draftName || employerMe?.name || me?.name || session?.user.name || session?.user.email;
+  const displayAvatarUrl =
+    draftContext?.draftAvatarUrl || employerMe?.avatarUrl || me?.avatarUrl || session?.user.image || undefined;
+  const companyLogoUrl = employerMe?.companyLogoUrl ?? null;
+  const employerSubtitle = employerMe
+    ? [employerMe.position, employerMe.teamRole ? t(`team.roles.${employerMe.teamRole}`) : null].filter(Boolean).join(" · ")
+    : "";
   // During onboarding nothing is saved yet, so the form's live answer decides.
   const showPhoneSeal = draftContext?.draftPhoneVerified || !!me?.phoneVerified;
 
@@ -200,19 +210,43 @@ export function Navbar({
                   aria-label={t("nav.accountMenu")}
                   className="flex h-[38px] items-center gap-[8px] rounded-full px-[6px] text-sm text-[#4B5468] hover:bg-black/[0.03]"
                 >
-                  {/* Wrapped so the "phone verified" seal can sit on the circle's edge. */}
-                  <span className="relative shrink-0">
+                  {/* Wrapped so the "phone verified" seal and the overlapping
+                      company logo/avatar can sit on the circle's edges. With
+                      a company logo, both circles are the same size, the
+                      avatar overlapping the logo's corner by about a third. */}
+                  <span className={`relative shrink-0 ${companyLogoUrl && displayAvatarUrl ? "h-[28px] w-[47px]" : ""}`}>
                     <span className="flex h-[28px] w-[28px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#F1F4F8] text-[#9AA3B2]">
-                      {displayAvatarUrl ? (
-                        <img src={displayAvatarUrl} referrerPolicy="no-referrer" alt="" className="h-full w-full object-cover" />
+                      {companyLogoUrl || displayAvatarUrl ? (
+                        <img
+                          src={companyLogoUrl || displayAvatarUrl || undefined}
+                          referrerPolicy="no-referrer"
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         <UserIcon className="h-[13px] w-[13px]" />
                       )}
                     </span>
-                    {showPhoneSeal && <VerifiedBadge variant="phone" placement="avatar" size={13} tooltip={false} />}
+                    {/* Their own photo, same size as the logo, overlapping it by about a third
+                        — its own relative wrapper so the phone seal below anchors to it, not the logo. */}
+                    {companyLogoUrl && displayAvatarUrl ? (
+                      <span className="absolute top-0 left-[19px] h-[28px] w-[28px] shrink-0">
+                        <span className="relative block h-[28px] w-[28px]">
+                          <span className="flex h-[28px] w-[28px] shrink-0 items-center justify-center overflow-hidden rounded-full border-[1.5px] border-white bg-[#F1F4F8]">
+                            <img src={displayAvatarUrl} referrerPolicy="no-referrer" alt="" className="h-full w-full object-cover" />
+                          </span>
+                          {showPhoneSeal && <VerifiedBadge variant="phone" placement="avatar" size={13} tooltip={false} />}
+                        </span>
+                      </span>
+                    ) : (
+                      showPhoneSeal && <VerifiedBadge variant="phone" placement="avatar" size={13} tooltip={false} />
+                    )}
                   </span>
                   <span className="hidden min-w-0 max-w-[200px] flex-col items-start leading-tight md:flex">
                     <span className="max-w-full truncate whitespace-nowrap">{displayName}</span>
+                    {employerSubtitle && (
+                      <span className="max-w-full truncate whitespace-nowrap text-xs text-[#9AA3B2]">{employerSubtitle}</span>
+                    )}
                   </span>
                   <ChevronDownIcon className="h-[9px] w-[9px] text-[#9AA3B2]" />
                 </button>

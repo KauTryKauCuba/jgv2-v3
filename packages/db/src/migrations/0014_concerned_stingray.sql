@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `sample_data_banner_dismissed_at` text;

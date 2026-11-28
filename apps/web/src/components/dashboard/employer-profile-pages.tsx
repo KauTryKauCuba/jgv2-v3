@@ -8,7 +8,9 @@ import { EmployerMemberProfileForm } from "@/components/team/employer-member-pro
 import { showComingSoon } from "@/lib/coming-soon";
 import { orpc } from "@/utils/orpc";
 import { AiUsageCard } from "./ai-usage-card";
+import { AddCompanyButton } from "./company-switcher";
 import { DeleteAccountCard } from "./delete-account-card";
+import { SampleDataCard } from "./sample-data-card";
 import { EmployerDashboardShell } from "./employer-dashboard-shell";
 
 function useEmployerProfile() {
@@ -27,8 +29,8 @@ function PageMessage({ children, error = false }: { children: React.ReactNode; e
  * The redesign's /employer/company: the onboarding form in edit mode, just
  * the company sections, with its badges. Owners and admins only.
  *
- * Not in v3 yet: "+ Add a company" (comes with the company switcher) and
- * "View profile ↗" (the public company page still shows sample companies).
+ * Not in v3 yet: "View profile ↗" (the public company page still shows
+ * sample companies).
  */
 export function EmployerCompanyProfilePage() {
   const { t } = useTranslation("common");
@@ -48,14 +50,7 @@ export function EmployerCompanyProfilePage() {
       subheading={t("dashboard.company.subheading")}
       headerAction={
         <div className="flex flex-wrap items-center gap-[8px]">
-          {/* TODO(route): /employer/companies/new ("Add a company"). */}
-          <button
-            type="button"
-            onClick={showComingSoon}
-            className="flex h-[38px] items-center justify-center rounded-full border border-brand-teal-dark px-[18px] text-sm text-brand-teal-dark transition-colors hover:bg-brand-teal-soft"
-          >
-            {t("dashboard.company.addCompany")}
-          </button>
+          <AddCompanyButton />
           {/* TODO(api): /companies/<id> in a new tab, once that page reads real companies. */}
           <button
             type="button"
@@ -96,8 +91,8 @@ export function EmployerCompanyProfilePage() {
  * The "Danger zone" card follows v1's account deletion, not the redesign's
  * permanent delete (see delete-account-card.tsx).
  *
- * Not in v3 yet: the "Sample data" card (it fills Manage Job, Team and
- * Interviews, which come next). An invited teammate gets their own About you
+ * The "Sample data" card (the redesign's DummyDataCard) sits under it for
+ * Owners and Admins. An invited teammate gets their own About you
  * (EmployerMemberProfileForm), as in the redesign.
  */
 export function EmployerMyProfilePage() {
@@ -110,6 +105,8 @@ export function EmployerMyProfilePage() {
     <div className="flex flex-col gap-[20px]">
       <AiUsageCard />
       {meQuery.data?.email && <DeleteAccountCard email={meQuery.data.email} />}
+      {/* Sample data fills the company's own jobs/team — Owners and Admins only (the card checks). */}
+      <SampleDataCard key={query.data?.profile.id} />
     </div>
   );
 

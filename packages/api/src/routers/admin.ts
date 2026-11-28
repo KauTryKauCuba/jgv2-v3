@@ -14,6 +14,7 @@ import { z } from "zod";
 import { adminProcedure } from "../index";
 import { reviewAccountDeletionRequest } from "../lib/account/deletion";
 import { estimateCostUsd } from "../lib/ai/cost";
+import { loadCompanyLimitInfo, loadCompanyLimitInfoFor, MAX_COMPANY_LIMIT } from "../lib/employer/memberships";
 import { namesByJob, postingFromRow } from "../lib/jobs/posting";
 import { inChunks, loadEmployerResponsiveness } from "../lib/jobs/queries";
 import { fileUrl } from "../lib/uploads";
@@ -221,6 +222,27 @@ export const adminRouter = {
 
 	// The redesign's getEmployersForSuperadmin: every company with its owner,
 	// SSM review state, postings, applications and reply speed.
+	// The redesign's PATCH /api/superadmin/users/[id]/company-limit: how many
+	// companies one account may register — a whole number, or null for the
+	// default. Lowering it below what they have deletes nothing; they just
+	// can't add more until they're under it.
+	setCompanyLimit: adminProcedure
+		.input(z.object({ userId: z.string(), limit: z.number().nullable() }))
+		.handler(async ({ input, context }) => {
+			const db = context.db as AnyDb;
+			const { limit } = input;
+			if (limit !== null && !(Number.isInteger(limit) && limit >= 1 && limit <= MAX_COMPANY_LIMIT)) {
+				throw new ORPCError("BAD_REQUEST", { message: `Enter a whole number from 1 to ${MAX_COMPANY_LIMIT}.` });
+			}
+			const [updated] = (await db
+				.update(user)
+				.set({ companyLimit: limit })
+				.where(eq(user.id, input.userId))
+				.returning({ id: user.id })) as { id: string }[];
+			if (!updated) throw new ORPCError("NOT_FOUND", { message: "Not found." });
+			return { companyLimit: await loadCompanyLimitInfo(db, input.userId) };
+		}),
+
 	listEmployers: adminProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
 		const threeDaysAgo = sqliteTime(Date.now() - 3 * DAY);
@@ -270,6 +292,10 @@ export const adminRouter = {
 				.groupBy(job.organizationId) as Promise<AnyDb[]>,
 			loadEmployerResponsiveness(db, ids),
 		]);
+		const limits = await loadCompanyLimitInfoFor(
+			db,
+			companies.map((c) => c.userId as string | null).filter((id): id is string => !!id),
+		);
 		return companies.map((c) => {
 			const owner = owners.find((o) => o.organizationId === c.id && (!c.userId || o.userId === c.userId));
 			const address = addresses.find((a) => a.organizationId === c.id);
@@ -291,8 +317,8 @@ export const adminRouter = {
 				ssmRejectionReason: c.ssmRejectionReason ?? null,
 				location: address ? `${address.city}, ${address.state}` : null,
 				createdAt: toIso(c.createdAt),
-				// Company limits aren't in v3 ("Add a company" comes later).
-				ownerCompanyLimit: null,
+				// The registrant's company limit ("Owner has 2 of 5 companies").
+				ownerCompanyLimit: c.userId ? (limits.get(c.userId as string) ?? null) : null,
 				jobPostingCount: postingCounts.find((p) => p.organizationId === c.id)?.value ?? 0,
 				applicationCount: stats?.applications ?? 0,
 				waitingLong: Number(stats?.waitingLong ?? 0),

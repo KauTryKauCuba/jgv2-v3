@@ -10,6 +10,8 @@ import { jobRouter } from "./job";
 import { jobseekerRouter } from "./jobseeker";
 import { onboardingRouter } from "./onboarding";
 import { phoneRouter } from "./phone";
+import { adsRouter } from "./ads";
+import { sampleDataRouter } from "./sample-data";
 import { teamRouter } from "./team";
 
 // Every API procedure, grouped by area like v1 (job, application, company, …).
@@ -27,6 +29,8 @@ export const appRouter = {
 	application: applicationRouter,
 	admin: adminRouter,
 	team: teamRouter,
+	ads: adsRouter,
+	sampleData: sampleDataRouter,
 };
 
 export type AppRouter = typeof appRouter;

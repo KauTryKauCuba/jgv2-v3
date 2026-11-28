@@ -124,8 +124,9 @@ export async function buildApplicantExport(
 	userId: string,
 	rowsInOrder: ApplicantRow[],
 	title: string | undefined,
+	activeOrganizationId: string | null,
 ) {
-	const access = await loadEmployerAccess(db, userId);
+	const access = await loadEmployerAccess(db, userId, activeOrganizationId);
 	const fit = new Map(
 		access ? (await computeMatchResults(db, origin, access.organizationId, access.criteria, access.scope)).map((m) => [m.applicationId, m]) : [],
 	);

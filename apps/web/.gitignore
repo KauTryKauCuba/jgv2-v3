@@ -3,3 +3,5 @@ dist
 .env
 .env.*
 !.env.example
+# TanStack Router dev-server temp files
+.tanstack

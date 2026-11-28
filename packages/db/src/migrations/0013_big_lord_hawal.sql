@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `company_limit` integer;

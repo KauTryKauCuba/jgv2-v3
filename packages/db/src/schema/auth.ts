@@ -41,6 +41,13 @@ export const user = sqliteTable("user", {
 	deletedAt: text("deleted_at"),
 	deletionReason: text("deletion_reason"),
 	lastSeenAt: text("last_seen_at"),
+	// v3: the redesign's users.companyLimit — how many companies this account may
+	// register ("Add a company"). Null = the default (5); a superadmin sets it.
+	companyLimit: integer("company_limit"),
+	// v3: the redesign's users.sampleDataBannerDismissedAt — when they closed
+	// the "Get sample data" bar under the employer navbar (it stays closed on
+	// every device). Null = not closed.
+	sampleDataBannerDismissedAt: text("sample_data_banner_dismissed_at"),
 });
 
 export const session = sqliteTable(

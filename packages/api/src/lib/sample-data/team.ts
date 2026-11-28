@@ -1,0 +1,134 @@
+// The redesign's src/lib/dummy-team.ts — the sample teammates — ported as-is.
+// In v3 they're `member` rows (role + access_level per shared/team-roles.ts);
+// joined ones get a placeholder `user` row (no way to sign in: the email
+// domain can never receive mail) so they can sit on interview panels, as in
+// the redesign.
+import type { TeamRole } from "../../shared/team-roles";
+
+export const DUMMY_TEAM_EMAIL_DOMAIN = "dummy-team.jobgiga.test";
+
+// The *displayed* email on the Team page — clean, no employerProfileId —
+// since employerTeamMembers.email only needs to be unique per-company
+// (unique(employerProfileId, email)), which 10 distinct roster names already
+// satisfy on their own.
+export function buildDummyTeamEmail(slug: string) {
+  return `${slug}@${DUMMY_TEAM_EMAIL_DOMAIN}`;
+}
+
+// The *login* email for an "active" dummy teammate's real `users` row —
+// users.email is globally unique across the whole app, so if two different
+// employers each click "Get dummy data" on their own company, both trying to
+// create "aisyah.rahman@dummy-team.jobgiga.test" would collide. The
+// employerProfileId is embedded here (invisible to the Team page, since it
+// only reads employerTeamMembers.email) purely to keep that global uniqueness.
+export function buildDummyTeamLoginEmail(slug: string, employerProfileId: string) {
+  return `${slug}.${employerProfileId}@${DUMMY_TEAM_EMAIL_DOMAIN}`;
+}
+
+// "Zarina Yusof" -> "zarina.yusof" — a readable local-part instead of an
+// opaque "teammate7".
+export function slugifyName(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, ".");
+}
+
+// Same external placeholder-avatar service scripts/seed.ts's personAvatarUrl
+// uses for dummy employers/jobseekers (https://i.pravatar.cc/300?img=N, 70
+// distinct photos) — reused here instead of a second avatar mechanism.
+function dummyTeamAvatarUrl(index: number) {
+  return `https://i.pravatar.cc/300?img=${(index % 70) + 1}`;
+}
+
+// A 10-person roster shared by both dummy-team sources (the "Get dummy data"
+// button's own-company route, and the two fixed ParcelTracker/WHALE
+// companies in dummy-companies.ts) — HR/hiring-flavored positions (same
+// POSITIONS taxonomy from src/lib/positions.ts) and a realistic active/
+// pending mix, rather than every company looking identically fully-joined.
+// Pending entries have no avatar — they don't have an account yet, same as a
+// real not-yet-accepted invite.
+export const DUMMY_TEAM_ROSTER: {
+  name: string;
+  position: string;
+  status: "active" | "pending";
+  // Team role — Admin when unset. A couple of Hiring managers and Panel
+  // members so every Team tab has someone in it.
+  role?: TeamRole;
+  avatarUrl: string | null;
+  // Only meaningful (and only set) for "active" rows — a pending invite
+  // hasn't gone through the "About you" welcome step yet, so it has no
+  // hiring role or phone, same as a real not-yet-accepted invite.
+  hiringRole?: string;
+  phone?: string;
+  // Sample job postings (DUMMY_JOB_POSTINGS titles) this teammate works on:
+  // a Hiring manager is assigned to them, and anyone active sits on their
+  // sample interview panels (with whoever added the sample data).
+  jobTitles?: string[];
+}[] = [
+  {
+    name: "Aisyah Rahman",
+    position: "Talent Acquisition Manager",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(20),
+    hiringRole: "Talent Acquisition / Recruiter",
+    phone: "+60123456001",
+    jobTitles: ["Registered Nurse", "Temporary Event Crew"],
+  },
+  {
+    name: "Farid Hassan",
+    position: "HR Manager",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(21),
+    hiringRole: "HR Manager",
+    phone: "+60123456002",
+  },
+  {
+    name: "Nurul Huda",
+    position: "HR Executive",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(22),
+    hiringRole: "HR Executive",
+    phone: "+60123456003",
+  },
+  {
+    name: "Kevin Tan",
+    position: "Engineering Manager",
+    role: "hiring_manager",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(23),
+    hiringRole: "Hiring Manager",
+    phone: "+60123456004",
+    jobTitles: ["Frontend Engineer", "Backend Engineer", "Freelance UI/UX Designer"],
+  },
+  {
+    name: "Priya Ramesh",
+    position: "Senior Software Engineer",
+    role: "panel",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(24),
+    hiringRole: "Other",
+    phone: "+60123456005",
+    jobTitles: ["Frontend Engineer", "Backend Engineer"],
+  },
+  {
+    name: "Daniel Lee",
+    position: "People Operations Manager",
+    status: "active",
+    avatarUrl: dummyTeamAvatarUrl(25),
+    hiringRole: "Director / C-level",
+    phone: "+60123456006",
+  },
+  { name: "Zarina Yusof", position: "HR Director", status: "pending", avatarUrl: null },
+  {
+    name: "Amirul Hakim",
+    position: "Sales Manager",
+    role: "hiring_manager",
+    status: "pending",
+    avatarUrl: null,
+    jobTitles: ["Store Supervisor", "Telesales Executive"],
+  },
+  { name: "Chong Mei Yee", position: "HR Officer", status: "pending", avatarUrl: null },
+  { name: "Haziq Rizal", position: "Operations Manager", role: "panel", status: "pending", avatarUrl: null },
+];

@@ -1,3 +1,4 @@
+import { adRequests } from "@jobgiga-app/db/schema/ads";
 import { member, organization } from "@jobgiga-app/db/schema/auth";
 import { employerOnboardingDraft } from "@jobgiga-app/db/schema/onboarding";
 import { and, eq } from "drizzle-orm";
@@ -45,4 +46,39 @@ export async function canReadPrivateFile(
 	} catch {
 		return false;
 	}
+}
+
+// Ad media (the redesign's /api/company-ads/[id]/media rule): an approved ad
+// is public, since it shows on the landing pages to visitors who aren't signed
+// in. A pending or rejected one is only for its company's team and admins.
+const AD_PREFIXES = ["company-ads/", "job-ads/"];
+
+export function isAdMediaKey(key: string) {
+	return AD_PREFIXES.some((prefix) => key.startsWith(prefix));
+}
+
+/** Company logos are public too — the landing pages' ads and companies show them to everyone. */
+export function isPublicFileKey(key: string) {
+	return key.startsWith("logos/");
+}
+
+/** The ad this file belongs to, if any: whether it's approved, and its company. */
+export async function adForMediaKey(db: AnyDb, key: string): Promise<{ approved: boolean; companyId: string } | null> {
+	const [row] = await db
+		.select({ status: adRequests.status, companyId: adRequests.companyId })
+		.from(adRequests)
+		.where(eq(adRequests.mediaKey, key))
+		.limit(1);
+	return row ? { approved: row.status === "approved", companyId: row.companyId } : null;
+}
+
+/** An unreviewed ad's media: its company's active members, or an admin. */
+export async function canSeeUnreviewedAd(db: AnyDb, user: { id: string; role?: string | null }, companyId: string) {
+	if (user.role === "admin") return true;
+	const [row] = await db
+		.select({ id: member.id })
+		.from(member)
+		.where(and(eq(member.userId, user.id), eq(member.organizationId, companyId), eq(member.status, "active")))
+		.limit(1);
+	return !!row;
 }

@@ -1804,6 +1804,23 @@
       "heading": "My Profile",
       "subheading": "Your contact details on this account."
     },
+    "sampleData": {
+      "title": "Sample data",
+      "on": "On",
+      "bodyOn": "Sample job postings, applicants, interviews and teammates are in your account. Remove them all in one go when you're done exploring.",
+      "bodyOff": "Fill your account with sample job postings, applicants, interviews and teammates to try every feature. Your real data isn't touched.",
+      "add": "Add sample data",
+      "remove": "Remove sample data",
+      "adding": "Adding…",
+      "removing": "Removing…",
+      "error": "Couldn't update the sample data."
+    },
+    "sampleDataBar": {
+      "title": "Want to see JobGiga in action?",
+      "body": "Add sample job postings, applicants, interviews and teammates to explore every feature — remove them anytime.",
+      "cta": "Get sample data",
+      "close": "Close this notice"
+    },
     "aiUsage": {
       "title": "AI usage",
       "empty": "No AI features used yet — company lookup, job posting suggestions, and match scoring will show up here once you use them.",
@@ -2362,7 +2379,17 @@
       "reasonLabel": "Reason (only needed to reject)",
       "reasonPlaceholder": "e.g. Document is blurry, or the company name doesn't match.",
       "verify": "Verify",
-      "ssmActionError": "Couldn't update this document."
+      "ssmActionError": "Couldn't update this document.",
+      "ownerHas": "Owner has {{used}} of {{limit}} companies",
+      "customLimit": "· custom",
+      "editLimit": "Edit limit",
+      "limitLabel": "Edit company limit",
+      "limitTitle": "Company limit",
+      "limitBody": "How many companies {{name}} ({{email}}) can register. They have {{used}} now. The default is {{defaultLimit}}.",
+      "limitBelow": "That’s below what they already have — nothing is removed, they just can’t add more.",
+      "limitReset": "Reset to {{defaultLimit}}",
+      "limitSave": "Save",
+      "limitError": "Couldn’t update the limit."
     },
     "deletions": {
       "title": "Account deletion requests",
@@ -2380,6 +2407,85 @@
       "confirmReject": "Decline request",
       "approvedToast": "Account deleted.",
       "rejectedToast": "Request declined."
+    },
+    "ads": {
+      "company": {
+        "subheading_one": "The employer landing page has {{slots}} ad slots. Each booking runs {{count}} day and is reviewed here before it starts.",
+        "subheading_other": "The employer landing page has {{slots}} ad slots. Each booking runs {{count}} days and is reviewed here before it starts.",
+        "empty": {
+          "upcoming": "No approved ads waiting to start.",
+          "live": "No ads are live right now."
+        },
+        "confirm": {
+          "reject": "Reject {{company}}'s ad?",
+          "takeDown": "Take down {{company}}'s ad?",
+          "cancel": "Cancel {{company}}'s ad?"
+        },
+        "confirmHint": "Its slot is freed straight away. The employer sees this reason and can edit and resubmit.",
+        "reasonPlaceholder": "e.g. The image is low quality, or the headline is misleading.",
+        "dialogLabel": "Reject advertisement",
+        "errors": {
+          "update": "Couldn't update this ad."
+        }
+      },
+      "job": {
+        "subheading_one": "The jobseeker page has {{slots}} featured job slots above the job search. Each booking runs {{count}} day and is reviewed here before it starts.",
+        "subheading_other": "The jobseeker page has {{slots}} featured job slots above the job search. Each booking runs {{count}} days and is reviewed here before it starts.",
+        "empty": {
+          "upcoming": "No approved job ads waiting to start.",
+          "live": "No job ads are live right now."
+        },
+        "jobClosed": "The job isn't open right now — the ad is hidden until it is.",
+        "confirm": {
+          "reject": "Reject the job ad for {{job}}?",
+          "takeDown": "Take down the job ad for {{job}}?",
+          "cancel": "Cancel the job ad for {{job}}?"
+        },
+        "confirmHint": "Its slot is freed straight away. {{company}} sees this reason and can edit and resubmit.",
+        "reasonPlaceholder": "e.g. The artwork is low quality, or doesn't match the job.",
+        "dialogLabel": "Reject job ad",
+        "errors": {
+          "update": "Couldn't update this job ad."
+        }
+      },
+      "slotsToday": "Slots today",
+      "liveCount": "{{live}} of {{total}} live",
+      "nextOpening": "Next opening:",
+      "slotsOpen_one": "{{count}} slot open",
+      "slotsOpen_other": "{{count}} slots open",
+      "slot": "Slot {{n}}",
+      "ends": "Ends {{date}} · {{days}}d",
+      "held": "Held · needs review",
+      "free": "Free",
+      "sampleShows": "Sample ad shows",
+      "tabs": {
+        "pending": "Waiting for review",
+        "upcoming": "Upcoming",
+        "live": "Live",
+        "past": "Past & rejected"
+      },
+      "empty": {
+        "pending": "Nothing waiting for review.",
+        "past": "Nothing here yet."
+      },
+      "phase": {
+        "pending": "Waiting for review",
+        "scheduled": "Scheduled",
+        "live": "Live",
+        "ended": "Ended",
+        "rejected": "Rejected"
+      },
+      "startsToday": "Starts today — approve now or it moves to the next free date.",
+      "startsIn_one": "Starts in {{count}} day — review before then.",
+      "startsIn_other": "Starts in {{count}} days — review before then.",
+      "reason": "Reason: {{reason}}",
+      "approve": "Approve",
+      "actions": {
+        "reject": "Reject",
+        "takeDown": "Take down",
+        "cancel": "Cancel booking"
+      },
+      "keep": "Keep it"
     }
   },
   "applicants": {
@@ -2980,5 +3086,243 @@
     "signInHintSwitch": "After switching, sign in with {{email}} to join — no account yet? One is created when you sign in.",
     "signInNotice": "Sign in with {{email}} to join {{company}}.",
     "error": "Something went wrong. Try again."
+  },
+  "employerAddCompany": {
+    "heading1": "Add another company,",
+    "heading2": "in seconds.",
+    "subheading": "Same as before — type the company name and let AI fill in the details. You’ll be its owner, and can switch between companies anytime ({{used}} of {{limit}} used).",
+    "subheadingAtLimit": "You’ve registered {{used}} companies, your limit.",
+    "atLimit": "You’ve reached your limit of {{limit}} companies. Contact JobGiga if you need to add more.",
+    "backToDashboard": "Back to dashboard"
+  },
+  "advertisement": {
+    "heading": "Advertisement",
+    "subheading": "Promote your company and your job postings on JobGiga.",
+    "loadError": "Couldn't load your advertisements. Please refresh the page.",
+    "tabs": {
+      "company": "Company advertisement",
+      "job": "Job posting advertisement"
+    },
+    "phase": {
+      "pending": "Waiting for review",
+      "scheduled": "Scheduled",
+      "live": "Live now",
+      "ended": "Ended",
+      "rejected": "Needs changes"
+    },
+    "slots": {
+      "inUse": "{{used}} of {{total}} in use",
+      "freeNow": "A slot is free now.",
+      "nextFree": "Next free start:",
+      "noneFree_one": "No free slot in the next {{count}} month.",
+      "noneFree_other": "No free slot in the next {{count}} months."
+    },
+    "chips": {
+      "runs_one": "Each ad runs {{count}} day",
+      "runs_other": "Each ad runs {{count}} days",
+      "bookAhead_one": "Book up to {{count}} month ahead",
+      "bookAhead_other": "Book up to {{count}} months ahead",
+      "reviewed": "Reviewed before it goes live",
+      "free": "Free · first come, first served"
+    },
+    "activeCount": "{{used}} of {{max}} active",
+    "actions": {
+      "edit": "Edit",
+      "editResubmit": "Edit & resubmit",
+      "bookAgain": "Book again",
+      "preview": "Preview"
+    },
+    "remove": {
+      "takeDown": "Take down",
+      "listTitle": "Remove from your list?",
+      "listBody": "This only removes it from your bookings history.",
+      "remove": "Remove",
+      "cancelTitle": "Cancel this booking?",
+      "cancelBody": "Your slot for {{run}} is freed for others.",
+      "cancelBooking": "Cancel booking",
+      "keep": "Keep it"
+    },
+    "note": {
+      "pending": "Your slot for {{run}} is held while we review your ad.",
+      "ended": "Ran {{run}}.",
+      "rejectedWithReason": "Not approved: {{reason}}",
+      "rejected": "Not approved — edit it and submit again."
+    },
+    "form": {
+      "cancel": "Cancel",
+      "editTitle": "Edit booking",
+      "againTitle": "Book again",
+      "editHint": "Changes go back to review before they show.",
+      "selected": "Selected: {{name}}",
+      "uploadMedia": "Upload image or video"
+    },
+    "start": {
+      "title": "When should it start?",
+      "asap": "As soon as possible",
+      "startsOn": "Starts {{date}}",
+      "noneFree_one": "No free slot in the next {{count}} month",
+      "noneFree_other": "No free slot in the next {{count}} months",
+      "pick": "Pick a date",
+      "upTo_one": "Up to {{count}} month ahead",
+      "upTo_other": "Up to {{count}} months ahead",
+      "runs": "Runs",
+      "runsDetail_one": "{{count}} day. Your slot is held while we review your ad.",
+      "runsDetail_other": "{{count}} days. Your slot is held while we review your ad."
+    },
+    "upload": {
+      "uploading": "Uploading… {{percent}}%",
+      "saving": "Saving…"
+    },
+    "submit": {
+      "save": "Save & resubmit for review",
+      "book": "Book & submit for review"
+    },
+    "missingStart": "Choose a start date",
+    "previewTitle": "Preview",
+    "errors": {
+      "fileType": "Choose a JPG, PNG or WebP image, or an MP4 or WebM video.",
+      "videoFormat": "Upload the video as an MP4 or WebM file.",
+      "imageTooLarge": "That image is too large (max 10 MB).",
+      "videoTooLarge": "That video is too large (max 100 MB).",
+      "videoTooLong": "Videos can be up to {{max}} seconds — this one is {{seconds}}s.",
+      "imageRead": "Couldn't read that image — try another file.",
+      "uploadFailed": "Upload failed — check your connection and try again.",
+      "remove": "Couldn't remove that booking. Please try again."
+    },
+    "calendar": {
+      "prev": "Previous month",
+      "next": "Next month",
+      "weekdays": "M,T,W,T,F,S,S",
+      "full_one": "All {{count}} slot is taken for part of this month",
+      "full_other": "All {{count}} slots are taken for part of this month",
+      "overlap": "Overlaps your other booking",
+      "available": "Available",
+      "legendStart": "Start",
+      "legendRun_one": "Your {{count}} day",
+      "legendRun_other": "Your {{count}} days",
+      "legendFull": "Full"
+    },
+    "howItWorks": {
+      "s2Title": "Book a start date",
+      "s2Detail_one": "The earliest free date, or any day up to {{count}} month ahead. {{slots}} slots, free, first come first served.",
+      "s2Detail_other": "The earliest free date, or any day up to {{count}} months ahead. {{slots}} slots, free, first come first served.",
+      "s3Title": "We review it",
+      "s3Detail": "Your slot is held meanwhile. If it needs changes, you'll see why — edit and resubmit. If it isn't reviewed in time, it moves to the next free date."
+    },
+    "company": {
+      "howItWorks": {
+        "title": "How advertising works",
+        "s1Title": "Upload your ad",
+        "s1Detail": "An image, or a video up to {{seconds}} seconds, plus a short headline. Shown at 16:9.",
+        "s4Title_one": "It runs for {{count}} day",
+        "s4Title_other": "It runs for {{count}} days",
+        "s4Detail_one": "Shown on the employer page, then ends on its own. Up to {{count}} booking per company, never overlapping.",
+        "s4Detail_other": "Shown on the employer page, then ends on its own. Up to {{count}} bookings per company, never overlapping."
+      },
+      "slotsLabel": "Ad slots on the employer page today",
+      "bookingsTitle": "Your bookings",
+      "bookTitle": "Book an ad",
+      "bookIntro": "Feature your company on the JobGiga employer page for a month.",
+      "bookNew": "Book a new ad",
+      "limit_one": "You have {{count}} booking — the most at once. You can book again once it ends.",
+      "limit_other": "You have {{count}} bookings — the most at once (one running, one booked next). You can book again once one of them ends.",
+      "form": {
+        "newHint": "Three quick steps — we'll review your ad before it goes live."
+      },
+      "mediaLabel": "Image or video",
+      "mediaCurrent": "Using your current image or video — click to replace",
+      "mediaHint": "JPG, PNG or WebP up to 10 MB, or an MP4 or WebM video up to {{seconds}} seconds (100 MB). Shown at 16:9.",
+      "headlineLabel": "Headline",
+      "headlinePlaceholder": "e.g. Come build the future of logistics with us",
+      "headlineFallback": "Your headline",
+      "missingMedia": "Add an image or video",
+      "missingHeadline": "Add a headline",
+      "previewHint": "How your ad appears on the JobGiga employer page.",
+      "previewEmpty": "Upload an image or video to see your ad here.",
+      "previewOnPage": "Preview on the employer page",
+      "previewOnPageHint": "Your ad is in the middle. Tap the dots or a side card to look around.",
+      "closePreview": "Close preview",
+      "saved": "Booked for {{run}}. We'll review it before it goes live — your slot is held meanwhile.",
+      "errors": {
+        "book": "Couldn't book your ad. Please try again."
+      },
+      "note": {
+        "scheduled": "Approved — goes live on {{start}} and runs until {{end}}.",
+        "live_one": "Showing on the employer page until {{end}} · {{count}} day left.",
+        "live_other": "Showing on the employer page until {{end}} · {{count}} days left."
+      },
+      "remove": {
+        "takeDownTitle": "Take your ad down?",
+        "takeDownBody": "It stops showing right away, and its slot is freed for others."
+      }
+    },
+    "job": {
+      "howItWorks": {
+        "title": "How job ads work",
+        "s1Title": "Pick a job and add artwork",
+        "s1Detail": "One of your live jobs, plus a square (1:1) image or a video up to {{seconds}} seconds.",
+        "s4Title_one": "Featured for {{count}} day",
+        "s4Title_other": "Featured for {{count}} days",
+        "s4Detail_one": "Shown to jobseekers above the job search while the job stays open. Up to {{count}} booking per company, never overlapping.",
+        "s4Detail_other": "Shown to jobseekers above the job search while the job stays open. Up to {{count}} bookings per company, never overlapping."
+      },
+      "slotsLabel": "Featured job slots on the jobs page today",
+      "bookingsTitle": "Your job ad bookings",
+      "jobClosed": "This job isn't open right now, so the ad is hidden. It shows again once the job is live.",
+      "bookTitle": "Feature a job",
+      "noJobs": "You need a live job posting to feature. Once one is approved and open, you can book it here.",
+      "postJob": "Post a job",
+      "bookIntro": "Put one of your jobs in front of every jobseeker, above the job search, for a month.",
+      "bookNew": "Book a job ad",
+      "limit_one": "You have {{count}} job ad booking — the most at once. You can book again once it ends.",
+      "limit_other": "You have {{count}} job ad bookings — the most at once (one running, one booked next). You can book again once one of them ends.",
+      "form": {
+        "newHint": "Three quick steps — we'll review your ad before it's featured."
+      },
+      "jobLabel": "Job to feature",
+      "noLiveJobs": "None of your jobs are live right now — a job ad needs an open job posting.",
+      "chooseJob": "Choose a live job posting",
+      "jobNotOpen": "{{title}} isn't open anymore — choose another live job.",
+      "artworkLabel": "Artwork",
+      "artworkCurrent": "Using your current artwork — click to replace",
+      "artworkHint": "A square (1:1) design works best — e.g. 1080 × 1080. JPG, PNG or WebP up to 10 MB, or an MP4 or WebM video up to {{seconds}} seconds (100 MB).",
+      "missingJob": "Choose a job",
+      "missingMedia": "Add your artwork",
+      "previewHint": "How your job appears in Featured jobs, above the job search.",
+      "previewEmpty": "Upload your artwork to see your job ad here.",
+      "titleFallback": "Your job title",
+      "locationFallback": "Location",
+      "typeFallback": "Job type",
+      "cardPreviewLabel": "Job ad preview",
+      "cardPreviewTitle": "Featured job preview",
+      "cardPreviewHint": "As jobseekers see it above the job search.",
+      "saved": "Booked for {{run}}. We'll review it before it's featured — your slot is held meanwhile.",
+      "errors": {
+        "book": "Couldn't book your job ad. Please try again."
+      },
+      "note": {
+        "scheduled": "Approved — featured from {{start}} until {{end}}.",
+        "live_one": "Featured on the jobs page until {{end}} · {{count}} day left.",
+        "live_other": "Featured on the jobs page until {{end}} · {{count}} days left."
+      },
+      "remove": {
+        "takeDownTitle": "Take your job ad down?",
+        "takeDownBody": "It stops being featured right away, and its slot is freed for others."
+      }
+    }
+  },
+  "companySwitcher": {
+    "company": "Company",
+    "hideDetails": "Hide company details",
+    "showDetails": "Show company details",
+    "owner": "Owner:",
+    "joined": "Joined:",
+    "industry": "Industry:",
+    "size": "Size:",
+    "employees": "{{size}} employees",
+    "change": "Change company",
+    "switchLabel": "Switch company — currently {{company}}",
+    "addCompany": "Add a company",
+    "atLimit": "You’ve reached your limit of {{limit}} companies. Contact JobGiga to add more."
   }
 }

@@ -20,6 +20,7 @@ import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies/$companyId'
 import { Route as EmployerIndexRouteImport } from './routes/employer/index'
 import { Route as EmployerAboutRouteImport } from './routes/employer/about'
+import { Route as EmployerAdvertisementRouteImport } from './routes/employer/advertisement'
 import { Route as EmployerApplicantsRouteImport } from './routes/employer/applicants'
 import { Route as EmployerCompanyRouteImport } from './routes/employer/company'
 import { Route as EmployerDashboardRouteImport } from './routes/employer/dashboard'
@@ -42,9 +43,12 @@ import { Route as JobseekerReleaseNotesRouteImport } from './routes/jobseeker/re
 import { Route as JobseekerSecurityRouteImport } from './routes/jobseeker/security'
 import { Route as JobseekerTermsRouteImport } from './routes/jobseeker/terms'
 import { Route as SuperadminIndexRouteImport } from './routes/superadmin/index'
+import { Route as SuperadminCompanyAdsRouteImport } from './routes/superadmin/company-ads'
 import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/dashboard'
 import { Route as SuperadminEmployersRouteImport } from './routes/superadmin/employers'
+import { Route as SuperadminJobAdsRouteImport } from './routes/superadmin/job-ads'
 import { Route as SuperadminJobPostingsRouteImport } from './routes/superadmin/job-postings'
+import { Route as EmployerCompaniesNewRouteImport } from './routes/employer/companies/new'
 import { Route as EmployerJobsIndexRouteImport } from './routes/employer/jobs/index'
 import { Route as EmployerJobsSlugRouteImport } from './routes/employer/jobs/$slug'
 import { Route as EmployerJobsPostajobRouteImport } from './routes/employer/jobs/postajob'
@@ -102,6 +106,11 @@ const EmployerIndexRoute = EmployerIndexRouteImport.update({
 const EmployerAboutRoute = EmployerAboutRouteImport.update({
   id: '/employer/about',
   path: '/employer/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerAdvertisementRoute = EmployerAdvertisementRouteImport.update({
+  id: '/employer/advertisement',
+  path: '/employer/advertisement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployerApplicantsRoute = EmployerApplicantsRouteImport.update({
@@ -214,6 +223,11 @@ const SuperadminIndexRoute = SuperadminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
+const SuperadminCompanyAdsRoute = SuperadminCompanyAdsRouteImport.update({
+  id: '/company-ads',
+  path: '/company-ads',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
 const SuperadminDashboardRoute = SuperadminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -224,10 +238,20 @@ const SuperadminEmployersRoute = SuperadminEmployersRouteImport.update({
   path: '/employers',
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
+const SuperadminJobAdsRoute = SuperadminJobAdsRouteImport.update({
+  id: '/job-ads',
+  path: '/job-ads',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
 const SuperadminJobPostingsRoute = SuperadminJobPostingsRouteImport.update({
   id: '/job-postings',
   path: '/job-postings',
   getParentRoute: () => SuperadminRouteRoute,
+} as any)
+const EmployerCompaniesNewRoute = EmployerCompaniesNewRouteImport.update({
+  id: '/employer/companies/new',
+  path: '/employer/companies/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EmployerJobsIndexRoute = EmployerJobsIndexRouteImport.update({
   id: '/employer/jobs/',
@@ -255,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/advertisement': typeof EmployerAdvertisementRoute
   '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
@@ -275,13 +300,16 @@ export interface FileRoutesByFullPath {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/company-ads': typeof SuperadminCompanyAdsRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-ads': typeof SuperadminJobAdsRoute
   '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
   '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/companies/new': typeof EmployerCompaniesNewRoute
   '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs/': typeof EmployerJobsIndexRoute
@@ -295,6 +323,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/advertisement': typeof EmployerAdvertisementRoute
   '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
@@ -315,13 +344,16 @@ export interface FileRoutesByTo {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/company-ads': typeof SuperadminCompanyAdsRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-ads': typeof SuperadminJobAdsRoute
   '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies': typeof CompaniesIndexRoute
   '/employer': typeof EmployerIndexRoute
   '/jobseeker': typeof JobseekerIndexRoute
   '/superadmin': typeof SuperadminIndexRoute
+  '/employer/companies/new': typeof EmployerCompaniesNewRoute
   '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs': typeof EmployerJobsIndexRoute
@@ -337,6 +369,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/advertisement': typeof EmployerAdvertisementRoute
   '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
@@ -357,13 +390,16 @@ export interface FileRoutesById {
   '/jobseeker/release-notes': typeof JobseekerReleaseNotesRoute
   '/jobseeker/security': typeof JobseekerSecurityRoute
   '/jobseeker/terms': typeof JobseekerTermsRoute
+  '/superadmin/company-ads': typeof SuperadminCompanyAdsRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/employers': typeof SuperadminEmployersRoute
+  '/superadmin/job-ads': typeof SuperadminJobAdsRoute
   '/superadmin/job-postings': typeof SuperadminJobPostingsRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
   '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/companies/new': typeof EmployerCompaniesNewRoute
   '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs/': typeof EmployerJobsIndexRoute
@@ -380,6 +416,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/advertisement'
     | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
@@ -400,13 +437,16 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/company-ads'
     | '/superadmin/dashboard'
     | '/superadmin/employers'
+    | '/superadmin/job-ads'
     | '/superadmin/job-postings'
     | '/companies/'
     | '/employer/'
     | '/jobseeker/'
     | '/superadmin/'
+    | '/employer/companies/new'
     | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs/'
@@ -420,6 +460,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/advertisement'
     | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
@@ -440,13 +481,16 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/company-ads'
     | '/superadmin/dashboard'
     | '/superadmin/employers'
+    | '/superadmin/job-ads'
     | '/superadmin/job-postings'
     | '/companies'
     | '/employer'
     | '/jobseeker'
     | '/superadmin'
+    | '/employer/companies/new'
     | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs'
@@ -461,6 +505,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/advertisement'
     | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
@@ -481,13 +526,16 @@ export interface FileRouteTypes {
     | '/jobseeker/release-notes'
     | '/jobseeker/security'
     | '/jobseeker/terms'
+    | '/superadmin/company-ads'
     | '/superadmin/dashboard'
     | '/superadmin/employers'
+    | '/superadmin/job-ads'
     | '/superadmin/job-postings'
     | '/companies/'
     | '/employer/'
     | '/jobseeker/'
     | '/superadmin/'
+    | '/employer/companies/new'
     | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs/'
@@ -503,6 +551,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   EmployerAboutRoute: typeof EmployerAboutRoute
+  EmployerAdvertisementRoute: typeof EmployerAdvertisementRoute
   EmployerApplicantsRoute: typeof EmployerApplicantsRoute
   EmployerCompanyRoute: typeof EmployerCompanyRoute
   EmployerDashboardRoute: typeof EmployerDashboardRoute
@@ -526,6 +575,7 @@ export interface RootRouteChildren {
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   EmployerIndexRoute: typeof EmployerIndexRoute
   JobseekerIndexRoute: typeof JobseekerIndexRoute
+  EmployerCompaniesNewRoute: typeof EmployerCompaniesNewRoute
   EmployerJobsSlugRoute: typeof EmployerJobsSlugRoute
   EmployerJobsPostajobRoute: typeof EmployerJobsPostajobRoute
   EmployerJobsIndexRoute: typeof EmployerJobsIndexRoute
@@ -608,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/employer/about'
       fullPath: '/employer/about'
       preLoaderRoute: typeof EmployerAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/advertisement': {
+      id: '/employer/advertisement'
+      path: '/employer/advertisement'
+      fullPath: '/employer/advertisement'
+      preLoaderRoute: typeof EmployerAdvertisementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employer/applicants': {
@@ -764,6 +821,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperadminIndexRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
+    '/superadmin/company-ads': {
+      id: '/superadmin/company-ads'
+      path: '/company-ads'
+      fullPath: '/superadmin/company-ads'
+      preLoaderRoute: typeof SuperadminCompanyAdsRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
     '/superadmin/dashboard': {
       id: '/superadmin/dashboard'
       path: '/dashboard'
@@ -778,12 +842,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperadminEmployersRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
+    '/superadmin/job-ads': {
+      id: '/superadmin/job-ads'
+      path: '/job-ads'
+      fullPath: '/superadmin/job-ads'
+      preLoaderRoute: typeof SuperadminJobAdsRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
     '/superadmin/job-postings': {
       id: '/superadmin/job-postings'
       path: '/job-postings'
       fullPath: '/superadmin/job-postings'
       preLoaderRoute: typeof SuperadminJobPostingsRouteImport
       parentRoute: typeof SuperadminRouteRoute
+    }
+    '/employer/companies/new': {
+      id: '/employer/companies/new'
+      path: '/employer/companies/new'
+      fullPath: '/employer/companies/new'
+      preLoaderRoute: typeof EmployerCompaniesNewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/employer/jobs/': {
       id: '/employer/jobs/'
@@ -810,15 +888,19 @@ declare module '@tanstack/react-router' {
 }
 
 interface SuperadminRouteRouteChildren {
+  SuperadminCompanyAdsRoute: typeof SuperadminCompanyAdsRoute
   SuperadminDashboardRoute: typeof SuperadminDashboardRoute
   SuperadminEmployersRoute: typeof SuperadminEmployersRoute
+  SuperadminJobAdsRoute: typeof SuperadminJobAdsRoute
   SuperadminJobPostingsRoute: typeof SuperadminJobPostingsRoute
   SuperadminIndexRoute: typeof SuperadminIndexRoute
 }
 
 const SuperadminRouteRouteChildren: SuperadminRouteRouteChildren = {
+  SuperadminCompanyAdsRoute: SuperadminCompanyAdsRoute,
   SuperadminDashboardRoute: SuperadminDashboardRoute,
   SuperadminEmployersRoute: SuperadminEmployersRoute,
+  SuperadminJobAdsRoute: SuperadminJobAdsRoute,
   SuperadminJobPostingsRoute: SuperadminJobPostingsRoute,
   SuperadminIndexRoute: SuperadminIndexRoute,
 }
@@ -837,6 +919,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   EmployerAboutRoute: EmployerAboutRoute,
+  EmployerAdvertisementRoute: EmployerAdvertisementRoute,
   EmployerApplicantsRoute: EmployerApplicantsRoute,
   EmployerCompanyRoute: EmployerCompanyRoute,
   EmployerDashboardRoute: EmployerDashboardRoute,
@@ -860,6 +943,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompaniesIndexRoute: CompaniesIndexRoute,
   EmployerIndexRoute: EmployerIndexRoute,
   JobseekerIndexRoute: JobseekerIndexRoute,
+  EmployerCompaniesNewRoute: EmployerCompaniesNewRoute,
   EmployerJobsSlugRoute: EmployerJobsSlugRoute,
   EmployerJobsPostajobRoute: EmployerJobsPostajobRoute,
   EmployerJobsIndexRoute: EmployerJobsIndexRoute,

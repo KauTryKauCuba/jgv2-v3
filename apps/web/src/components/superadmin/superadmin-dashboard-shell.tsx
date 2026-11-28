@@ -47,10 +47,8 @@ const NAV_ITEMS = [
   { key: "employers", href: "/superadmin/employers", icon: UsersIcon, ready: true },
   // TODO(route): /superadmin/matching
   { key: "matching", href: "/superadmin/matching", icon: ConnectionsIcon, ready: false },
-  // TODO(route): /superadmin/company-ads
-  { key: "company-ads", href: "/superadmin/company-ads", icon: MegaphoneIcon, ready: false },
-  // TODO(route): /superadmin/job-ads
-  { key: "job-ads", href: "/superadmin/job-ads", icon: ImageIcon, ready: false },
+  { key: "company-ads", href: "/superadmin/company-ads", icon: MegaphoneIcon, ready: true },
+  { key: "job-ads", href: "/superadmin/job-ads", icon: ImageIcon, ready: true },
   // TODO(route): /superadmin/welcome-popup
   { key: "welcome-popup", href: "/superadmin/welcome-popup", icon: StarIcon, ready: false },
   // TODO(route): /superadmin/themes

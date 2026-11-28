@@ -7,15 +7,21 @@ const STAGE_WIDTH = "min(640px, 78vw)";
 
 /**
  * "See what companies on JobGiga are building": each company's approved ad
- * in a one-row carousel with the middle ad enlarged.
- * TODO(api): pass real ads from oRPC; sample ads fill the remaining slots.
+ * (ads.live) in a one-row carousel with the middle ad enlarged. Real ads
+ * come first; sample ads fill the remaining slots.
  */
 export function CompanyAdsSection({
   ads = [],
   className = "shell relative z-[1] -mt-[48px] pb-[112px]",
+  startIndex,
+  autoAdvance,
 }: {
   ads?: (CompanyAdCardData & { id: string })[];
+  // The employer's "Preview on the employer page" renders this same section
+  // in a dialog — different spacing, starting on their ad, not moving.
   className?: string;
+  startIndex?: number;
+  autoAdvance?: boolean;
 }) {
   const { t } = useTranslation("common");
   const samples = sampleCompanyAdFill(
@@ -62,6 +68,8 @@ export function CompanyAdsSection({
         }
         stageWidth={STAGE_WIDTH}
         stageHeight={`calc(${STAGE_WIDTH} * 9 / 16)`}
+        startIndex={startIndex}
+        autoAdvance={autoAdvance}
       />
     </section>
   );

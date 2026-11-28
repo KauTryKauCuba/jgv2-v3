@@ -33,8 +33,12 @@ function bad(message: string): never {
 
 // The signed-in employer's company, for the Manage Job / Post a job calls.
 // `manage`: only owners and admins create, change or delete postings.
-async function companyFor(db: AnyDb, userId: string, opts: { manage: boolean; message?: string }) {
-	const company = await loadCurrentCompany(db, userId);
+async function companyFor(
+	db: AnyDb,
+	userId: string,
+	opts: { manage: boolean; message?: string; activeOrganizationId: string | null },
+) {
+	const company = await loadCurrentCompany(db, userId, opts.activeOrganizationId);
 	if (!company) throw new ORPCError("BAD_REQUEST", { message: "Finish your company profile first." });
 	if (opts.manage && !hasFullAccess(company.accessLevel)) {
 		throw new ORPCError("FORBIDDEN", { message: opts.message ?? "Only an owner or admin can change job postings." });
@@ -158,7 +162,7 @@ export const jobRouter = {
 	// redesign's shape with applicant and view counts.
 	listOrgJobs: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const access = await loadEmployerAccess(db, context.session.user.id);
+		const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 		if (!access) return { postings: [] };
 		const rows = (await db
 			.select()
@@ -172,7 +176,7 @@ export const jobRouter = {
 	// v1's job.getForEdit: one posting, for reopening a draft or editing.
 	getForEdit: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const company = await companyFor(db, context.session.user.id, { manage: false });
+		const company = await companyFor(db, context.session.user.id, { activeOrganizationId: context.activeOrganizationId, manage: false });
 		const [row] = await db
 			.select()
 			.from(job)
@@ -188,7 +192,7 @@ export const jobRouter = {
 	create: protectedProcedure.input(z.record(z.string(), z.unknown())).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
 		const userId = context.session.user.id;
-		const company = await companyFor(db, userId, { manage: true, message: "Only an owner or admin can post jobs." });
+		const company = await companyFor(db, userId, { activeOrganizationId: context.activeOrganizationId, manage: true, message: "Only an owner or admin can post jobs." });
 		const parsed = parsePostingBody(input, { mode: "create" });
 		if (!parsed.ok) bad(parsed.error);
 		const managerIds = parseHiringManagerIds(input.hiringManagerIds);
@@ -236,7 +240,7 @@ export const jobRouter = {
 		.input(z.object({ id: z.string() }).catchall(z.unknown()))
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const company = await companyFor(db, context.session.user.id, { manage: true });
+			const company = await companyFor(db, context.session.user.id, { activeOrganizationId: context.activeOrganizationId, manage: true });
 			const [existing] = await db
 				.select()
 				.from(job)
@@ -280,7 +284,7 @@ export const jobRouter = {
 	// v1's job.delete: removes the posting (its applications go with it).
 	delete: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const company = await companyFor(db, context.session.user.id, { manage: true });
+		const company = await companyFor(db, context.session.user.id, { activeOrganizationId: context.activeOrganizationId, manage: true });
 		await db.delete(job).where(and(eq(job.id, input.id), eq(job.organizationId, company.organizationId)));
 		return { ok: true as const };
 	}),

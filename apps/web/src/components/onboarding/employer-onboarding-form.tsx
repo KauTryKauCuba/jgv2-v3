@@ -1703,6 +1703,10 @@ export function EmployerOnboardingForm({
         // — the modal's own button takes them to the dashboard, which loads
         // fresh anyway. Re-rendering this page now that a company exists
         // would otherwise redirect it away before the modal is ever seen.
+        // "Add a company": the new company is now the selected one, so
+        // nothing cached for the previous company may show (the redesign's
+        // dashboard reloads from the server on the next page).
+        if (createNew) void queryClient.resetQueries();
         setShowFinishSuccess(true);
       }
       return true;

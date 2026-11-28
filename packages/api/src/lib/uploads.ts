@@ -16,7 +16,9 @@ export type UploadCategory =
 	| "banners"
 	| "gallery"
 	| "leaders"
-	| "ssm-documents";
+	| "ssm-documents"
+	| "company-ads"
+	| "job-ads";
 
 const EXTENSION_BY_MIME: Record<string, string> = {
 	"image/png": "png",
@@ -26,6 +28,9 @@ const EXTENSION_BY_MIME: Record<string, string> = {
 	"image/gif": "gif",
 	"image/svg+xml": "svg",
 	"application/pdf": "pdf",
+	// Ad videos, stored as uploaded (no ffmpeg in the API — the user's choice).
+	"video/mp4": "mp4",
+	"video/webm": "webm",
 	"application/msword": "doc",
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
 };

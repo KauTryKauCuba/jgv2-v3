@@ -1,3 +1,5 @@
+import { session as sessionTable } from "@jobgiga-app/db/schema/auth";
+import { eq } from "drizzle-orm";
 import type { Context as HonoContext } from "hono";
 import type { Storage } from "./lib/storage/types";
 
@@ -38,6 +40,20 @@ export type CreateContextOptions = {
 // ../index.ts) rejects when this is null.
 export async function createContext({ context, db, ai, auth, storage, phone }: CreateContextOptions) {
 	const session = auth ? await auth.api.getSession({ headers: context.req.raw.headers }) : null;
+	// v1's session.active_organization_id: the company this session has picked
+	// in the company switcher (null = the person's first company). Read
+	// straight from the row — the organization plugin that would expose it is
+	// off (see packages/auth).
+	let activeOrganizationId: string | null = null;
+	if (session && db) {
+		// biome-ignore lint: db is driver-specific (D1 vs bun-sqlite).
+		const [row] = await (db as any)
+			.select({ activeOrganizationId: sessionTable.activeOrganizationId })
+			.from(sessionTable)
+			.where(eq(sessionTable.id, session.session.id))
+			.limit(1);
+		activeOrganizationId = (row?.activeOrganizationId as string | null) ?? null;
+	}
 	return {
 		headers: context.req.raw.headers,
 		// This API's own origin (e.g. http://localhost:4401) — for building
@@ -46,6 +62,7 @@ export async function createContext({ context, db, ai, auth, storage, phone }: C
 		db,
 		ai: ai ?? { deepseekKey: null, mimoKey: null, perplexityKey: null },
 		session,
+		activeOrganizationId,
 		storage,
 		phone: phone ?? null,
 	};

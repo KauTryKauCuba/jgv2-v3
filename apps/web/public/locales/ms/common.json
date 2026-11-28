@@ -1786,6 +1786,23 @@
       "heading": "Profil Saya",
       "subheading": "Butiran hubungan anda pada akaun ini."
     },
+    "sampleData": {
+      "title": "Data contoh",
+      "on": "Aktif",
+      "bodyOn": "Iklan kerja, pemohon, temu duga dan rakan sepasukan contoh ada dalam akaun anda. Buang semuanya sekali gus apabila anda selesai meneroka.",
+      "bodyOff": "Isi akaun anda dengan iklan kerja, pemohon, temu duga dan rakan sepasukan contoh untuk mencuba setiap ciri. Data sebenar anda tidak disentuh.",
+      "add": "Tambah data contoh",
+      "remove": "Buang data contoh",
+      "adding": "Menambah…",
+      "removing": "Membuang…",
+      "error": "Data contoh tidak dapat dikemas kini."
+    },
+    "sampleDataBar": {
+      "title": "Mahu lihat JobGiga beraksi?",
+      "body": "Tambah iklan kerja, pemohon, temu duga dan rakan sepasukan contoh untuk meneroka setiap ciri — buang bila-bila masa.",
+      "cta": "Dapatkan data contoh",
+      "close": "Tutup notis ini"
+    },
     "aiUsage": {
       "title": "Penggunaan AI",
       "empty": "Belum ada ciri AI digunakan — carian syarikat, cadangan iklan kerja dan pemarkahan padanan akan dipaparkan di sini sebaik sahaja anda menggunakannya.",
@@ -2328,7 +2345,17 @@
       "reasonLabel": "Sebab (hanya diperlukan untuk menolak)",
       "reasonPlaceholder": "cth. Dokumen kabur, atau nama syarikat tidak sepadan.",
       "verify": "Sahkan",
-      "ssmActionError": "Tidak dapat mengemas kini dokumen ini."
+      "ssmActionError": "Tidak dapat mengemas kini dokumen ini.",
+      "ownerHas": "Pemilik ada {{used}} daripada {{limit}} syarikat",
+      "customLimit": "· tersuai",
+      "editLimit": "Ubah had",
+      "limitLabel": "Ubah had syarikat",
+      "limitTitle": "Had syarikat",
+      "limitBody": "Berapa banyak syarikat yang boleh didaftarkan oleh {{name}} ({{email}}). Mereka ada {{used}} sekarang. Lalainya {{defaultLimit}}.",
+      "limitBelow": "Itu kurang daripada yang mereka sudah ada — tiada apa yang dibuang, cuma mereka tidak boleh menambah lagi.",
+      "limitReset": "Set semula kepada {{defaultLimit}}",
+      "limitSave": "Simpan",
+      "limitError": "Tidak dapat mengemas kini had."
     },
     "deletions": {
       "title": "Permintaan padam akaun",
@@ -2346,6 +2373,81 @@
       "confirmReject": "Tolak permintaan",
       "approvedToast": "Akaun dipadam.",
       "rejectedToast": "Permintaan ditolak."
+    },
+    "ads": {
+      "company": {
+        "subheading_other": "Halaman utama majikan mempunyai {{slots}} slot iklan. Setiap tempahan disiarkan selama {{count}} hari dan disemak di sini sebelum bermula.",
+        "empty": {
+          "upcoming": "Tiada iklan diluluskan yang menunggu untuk bermula.",
+          "live": "Tiada iklan yang disiarkan sekarang."
+        },
+        "confirm": {
+          "reject": "Tolak iklan {{company}}?",
+          "takeDown": "Turunkan iklan {{company}}?",
+          "cancel": "Batalkan iklan {{company}}?"
+        },
+        "confirmHint": "Slotnya dibuka serta-merta. Majikan akan melihat sebab ini dan boleh mengubah serta menghantar semula.",
+        "reasonPlaceholder": "cth. Imej berkualiti rendah, atau tajuknya mengelirukan.",
+        "dialogLabel": "Tolak iklan",
+        "errors": {
+          "update": "Tidak dapat mengemas kini iklan ini."
+        }
+      },
+      "job": {
+        "subheading_other": "Halaman pencari kerja mempunyai {{slots}} slot jawatan pilihan di atas carian pekerjaan. Setiap tempahan disiarkan selama {{count}} hari dan disemak di sini sebelum bermula.",
+        "empty": {
+          "upcoming": "Tiada iklan jawatan diluluskan yang menunggu untuk bermula.",
+          "live": "Tiada iklan jawatan yang disiarkan sekarang."
+        },
+        "jobClosed": "Jawatan itu tidak dibuka sekarang — iklannya disembunyikan sehingga ia dibuka.",
+        "confirm": {
+          "reject": "Tolak iklan jawatan untuk {{job}}?",
+          "takeDown": "Turunkan iklan jawatan untuk {{job}}?",
+          "cancel": "Batalkan iklan jawatan untuk {{job}}?"
+        },
+        "confirmHint": "Slotnya dibuka serta-merta. {{company}} akan melihat sebab ini dan boleh mengubah serta menghantar semula.",
+        "reasonPlaceholder": "cth. Karya seni berkualiti rendah, atau tidak sepadan dengan jawatan.",
+        "dialogLabel": "Tolak iklan jawatan",
+        "errors": {
+          "update": "Tidak dapat mengemas kini iklan jawatan ini."
+        }
+      },
+      "slotsToday": "Slot hari ini",
+      "liveCount": "{{live}} daripada {{total}} disiarkan",
+      "nextOpening": "Slot dibuka seterusnya:",
+      "slotsOpen_other": "{{count}} slot kosong",
+      "slot": "Slot {{n}}",
+      "ends": "Tamat {{date}} · {{days}}h",
+      "held": "Ditahan · perlu disemak",
+      "free": "Kosong",
+      "sampleShows": "Iklan contoh dipaparkan",
+      "tabs": {
+        "pending": "Menunggu semakan",
+        "upcoming": "Akan datang",
+        "live": "Disiarkan",
+        "past": "Lepas & ditolak"
+      },
+      "empty": {
+        "pending": "Tiada yang menunggu semakan.",
+        "past": "Belum ada apa-apa di sini."
+      },
+      "phase": {
+        "pending": "Menunggu semakan",
+        "scheduled": "Dijadualkan",
+        "live": "Disiarkan",
+        "ended": "Tamat",
+        "rejected": "Ditolak"
+      },
+      "startsToday": "Bermula hari ini — luluskan sekarang atau ia dipindahkan ke tarikh kosong seterusnya.",
+      "startsIn_other": "Bermula dalam {{count}} hari — semak sebelum itu.",
+      "reason": "Sebab: {{reason}}",
+      "approve": "Luluskan",
+      "actions": {
+        "reject": "Tolak",
+        "takeDown": "Turunkan",
+        "cancel": "Batalkan tempahan"
+      },
+      "keep": "Kekalkan"
     }
   },
   "applicants": {
@@ -2921,5 +3023,226 @@
     "signInHintSwitch": "Selepas bertukar, log masuk dengan {{email}} untuk menyertai — belum ada akaun? Akaun akan dicipta apabila anda log masuk.",
     "signInNotice": "Log masuk dengan {{email}} untuk menyertai {{company}}.",
     "error": "Berlaku ralat. Cuba lagi."
+  },
+  "employerAddCompany": {
+    "heading1": "Tambah syarikat lain,",
+    "heading2": "dalam beberapa saat.",
+    "subheading": "Sama seperti sebelum ini — taip nama syarikat dan biar AI mengisi butirannya. Anda akan menjadi pemiliknya, dan boleh bertukar antara syarikat bila-bila masa ({{used}} daripada {{limit}} digunakan).",
+    "subheadingAtLimit": "Anda telah mendaftarkan {{used}} syarikat, iaitu had anda.",
+    "atLimit": "Anda telah mencapai had {{limit}} syarikat. Hubungi JobGiga jika anda perlu menambah lagi.",
+    "backToDashboard": "Kembali ke papan pemuka"
+  },
+  "advertisement": {
+    "heading": "Pengiklanan",
+    "subheading": "Promosikan syarikat dan iklan jawatan anda di JobGiga.",
+    "loadError": "Tidak dapat memuatkan iklan anda. Sila muat semula halaman.",
+    "tabs": {
+      "company": "Iklan syarikat",
+      "job": "Iklan jawatan kosong"
+    },
+    "phase": {
+      "pending": "Menunggu semakan",
+      "scheduled": "Dijadualkan",
+      "live": "Sedang disiarkan",
+      "ended": "Tamat",
+      "rejected": "Perlu diubah"
+    },
+    "slots": {
+      "inUse": "{{used}} daripada {{total}} digunakan",
+      "freeNow": "Ada slot kosong sekarang.",
+      "nextFree": "Tarikh mula kosong seterusnya:",
+      "noneFree_other": "Tiada slot kosong dalam {{count}} bulan akan datang."
+    },
+    "chips": {
+      "runs_other": "Setiap iklan disiarkan selama {{count}} hari",
+      "bookAhead_other": "Tempah sehingga {{count}} bulan lebih awal",
+      "reviewed": "Disemak sebelum disiarkan",
+      "free": "Percuma · siapa cepat dia dapat"
+    },
+    "activeCount": "{{used}} daripada {{max}} aktif",
+    "actions": {
+      "edit": "Ubah",
+      "editResubmit": "Ubah & hantar semula",
+      "bookAgain": "Tempah semula",
+      "preview": "Pratonton"
+    },
+    "remove": {
+      "takeDown": "Turunkan",
+      "listTitle": "Buang daripada senarai anda?",
+      "listBody": "Ini hanya membuangnya daripada sejarah tempahan anda.",
+      "remove": "Buang",
+      "cancelTitle": "Batalkan tempahan ini?",
+      "cancelBody": "Slot anda untuk {{run}} akan dibuka kepada orang lain.",
+      "cancelBooking": "Batalkan tempahan",
+      "keep": "Kekalkan"
+    },
+    "note": {
+      "pending": "Slot anda untuk {{run}} ditahan sementara kami menyemak iklan anda.",
+      "ended": "Disiarkan {{run}}.",
+      "rejectedWithReason": "Tidak diluluskan: {{reason}}",
+      "rejected": "Tidak diluluskan — ubah dan hantar semula."
+    },
+    "form": {
+      "cancel": "Batal",
+      "editTitle": "Ubah tempahan",
+      "againTitle": "Tempah semula",
+      "editHint": "Perubahan akan disemak semula sebelum dipaparkan.",
+      "selected": "Dipilih: {{name}}",
+      "uploadMedia": "Muat naik imej atau video"
+    },
+    "start": {
+      "title": "Bila iklan patut bermula?",
+      "asap": "Secepat mungkin",
+      "startsOn": "Bermula {{date}}",
+      "noneFree_other": "Tiada slot kosong dalam {{count}} bulan akan datang",
+      "pick": "Pilih tarikh",
+      "upTo_other": "Sehingga {{count}} bulan lebih awal",
+      "runs": "Disiarkan",
+      "runsDetail_other": "{{count}} hari. Slot anda ditahan sementara kami menyemak iklan anda."
+    },
+    "upload": {
+      "uploading": "Memuat naik… {{percent}}%",
+      "saving": "Menyimpan…"
+    },
+    "submit": {
+      "save": "Simpan & hantar semula untuk semakan",
+      "book": "Tempah & hantar untuk semakan"
+    },
+    "missingStart": "Pilih tarikh mula",
+    "previewTitle": "Pratonton",
+    "errors": {
+      "fileType": "Pilih imej JPG, PNG atau WebP, atau video MP4 atau WebM.",
+      "videoFormat": "Muat naik video sebagai fail MP4 atau WebM.",
+      "imageTooLarge": "Imej itu terlalu besar (maksimum 10 MB).",
+      "videoTooLarge": "Video itu terlalu besar (maksimum 100 MB).",
+      "videoTooLong": "Video boleh sehingga {{max}} saat — video ini {{seconds}} saat.",
+      "imageRead": "Tidak dapat membaca imej itu — cuba fail lain.",
+      "uploadFailed": "Muat naik gagal — semak sambungan anda dan cuba lagi.",
+      "remove": "Tidak dapat membuang tempahan itu. Sila cuba lagi."
+    },
+    "calendar": {
+      "prev": "Bulan sebelumnya",
+      "next": "Bulan seterusnya",
+      "weekdays": "I,S,R,K,J,S,A",
+      "full_other": "Kesemua {{count}} slot telah penuh untuk sebahagian bulan ini",
+      "overlap": "Bertindih dengan tempahan anda yang lain",
+      "available": "Tersedia",
+      "legendStart": "Mula",
+      "legendRun_other": "{{count}} hari anda",
+      "legendFull": "Penuh"
+    },
+    "howItWorks": {
+      "s2Title": "Tempah tarikh mula",
+      "s2Detail_other": "Tarikh kosong terawal, atau mana-mana hari sehingga {{count}} bulan lebih awal. {{slots}} slot, percuma, siapa cepat dia dapat.",
+      "s3Title": "Kami menyemaknya",
+      "s3Detail": "Slot anda ditahan sementara itu. Jika ia perlu diubah, anda akan melihat sebabnya — ubah dan hantar semula. Jika ia tidak disemak tepat pada masanya, ia dipindahkan ke tarikh kosong seterusnya."
+    },
+    "company": {
+      "howItWorks": {
+        "title": "Cara pengiklanan berfungsi",
+        "s1Title": "Muat naik iklan anda",
+        "s1Detail": "Imej, atau video sehingga {{seconds}} saat, berserta tajuk ringkas. Dipaparkan pada nisbah 16:9.",
+        "s4Title_other": "Disiarkan selama {{count}} hari",
+        "s4Detail_other": "Dipaparkan di halaman majikan, kemudian tamat dengan sendirinya. Sehingga {{count}} tempahan bagi setiap syarikat, tanpa bertindih."
+      },
+      "slotsLabel": "Slot iklan di halaman majikan hari ini",
+      "bookingsTitle": "Tempahan anda",
+      "bookTitle": "Tempah iklan",
+      "bookIntro": "Tampilkan syarikat anda di halaman majikan JobGiga selama sebulan.",
+      "bookNew": "Tempah iklan baharu",
+      "limit_other": "Anda mempunyai {{count}} tempahan — had maksimum pada satu masa (satu sedang disiarkan, satu ditempah seterusnya). Anda boleh menempah semula apabila salah satunya tamat.",
+      "form": {
+        "newHint": "Tiga langkah mudah — kami akan menyemak iklan anda sebelum ia disiarkan."
+      },
+      "mediaLabel": "Imej atau video",
+      "mediaCurrent": "Menggunakan imej atau video semasa anda — klik untuk menggantikannya",
+      "mediaHint": "JPG, PNG atau WebP sehingga 10 MB, atau video MP4 atau WebM sehingga {{seconds}} saat (100 MB). Dipaparkan pada nisbah 16:9.",
+      "headlineLabel": "Tajuk",
+      "headlinePlaceholder": "cth. Mari bina masa depan logistik bersama kami",
+      "headlineFallback": "Tajuk anda",
+      "missingMedia": "Tambah imej atau video",
+      "missingHeadline": "Tambah tajuk",
+      "previewHint": "Cara iklan anda dipaparkan di halaman majikan JobGiga.",
+      "previewEmpty": "Muat naik imej atau video untuk melihat iklan anda di sini.",
+      "previewOnPage": "Pratonton di halaman majikan",
+      "previewOnPageHint": "Iklan anda berada di tengah. Ketik titik atau kad di sisi untuk melihat sekeliling.",
+      "closePreview": "Tutup pratonton",
+      "saved": "Ditempah untuk {{run}}. Kami akan menyemaknya sebelum ia disiarkan — slot anda ditahan sementara itu.",
+      "errors": {
+        "book": "Tidak dapat menempah iklan anda. Sila cuba lagi."
+      },
+      "note": {
+        "scheduled": "Diluluskan — disiarkan pada {{start}} hingga {{end}}.",
+        "live_other": "Dipaparkan di halaman majikan hingga {{end}} · tinggal {{count}} hari."
+      },
+      "remove": {
+        "takeDownTitle": "Turunkan iklan anda?",
+        "takeDownBody": "Ia berhenti dipaparkan serta-merta, dan slotnya dibuka kepada orang lain."
+      }
+    },
+    "job": {
+      "howItWorks": {
+        "title": "Cara iklan jawatan berfungsi",
+        "s1Title": "Pilih jawatan dan tambah karya seni",
+        "s1Detail": "Salah satu jawatan aktif anda, berserta imej segi empat sama (1:1) atau video sehingga {{seconds}} saat.",
+        "s4Title_other": "Ditampilkan selama {{count}} hari",
+        "s4Detail_other": "Dipaparkan kepada pencari kerja di atas carian pekerjaan selagi jawatan itu dibuka. Sehingga {{count}} tempahan bagi setiap syarikat, tanpa bertindih."
+      },
+      "slotsLabel": "Slot jawatan pilihan di halaman pekerjaan hari ini",
+      "bookingsTitle": "Tempahan iklan jawatan anda",
+      "jobClosed": "Jawatan ini tidak dibuka sekarang, jadi iklannya disembunyikan. Ia dipaparkan semula apabila jawatan itu aktif.",
+      "bookTitle": "Tampilkan jawatan",
+      "noJobs": "Anda memerlukan iklan jawatan yang aktif untuk ditampilkan. Setelah ia diluluskan dan dibuka, anda boleh menempahnya di sini.",
+      "postJob": "Siarkan jawatan",
+      "bookIntro": "Letakkan salah satu jawatan anda di hadapan setiap pencari kerja, di atas carian pekerjaan, selama sebulan.",
+      "bookNew": "Tempah iklan jawatan",
+      "limit_other": "Anda mempunyai {{count}} tempahan iklan jawatan — had maksimum pada satu masa (satu sedang disiarkan, satu ditempah seterusnya). Anda boleh menempah semula apabila salah satunya tamat.",
+      "form": {
+        "newHint": "Tiga langkah mudah — kami akan menyemak iklan anda sebelum ia ditampilkan."
+      },
+      "jobLabel": "Jawatan untuk ditampilkan",
+      "noLiveJobs": "Tiada jawatan anda yang aktif sekarang — iklan jawatan memerlukan iklan jawatan yang dibuka.",
+      "chooseJob": "Pilih iklan jawatan yang aktif",
+      "jobNotOpen": "{{title}} tidak dibuka lagi — pilih jawatan aktif yang lain.",
+      "artworkLabel": "Karya seni",
+      "artworkCurrent": "Menggunakan karya seni semasa anda — klik untuk menggantikannya",
+      "artworkHint": "Reka bentuk segi empat sama (1:1) paling sesuai — cth. 1080 × 1080. JPG, PNG atau WebP sehingga 10 MB, atau video MP4 atau WebM sehingga {{seconds}} saat (100 MB).",
+      "missingJob": "Pilih jawatan",
+      "missingMedia": "Tambah karya seni anda",
+      "previewHint": "Cara jawatan anda dipaparkan dalam Jawatan pilihan, di atas carian pekerjaan.",
+      "previewEmpty": "Muat naik karya seni anda untuk melihat iklan jawatan anda di sini.",
+      "titleFallback": "Nama jawatan anda",
+      "locationFallback": "Lokasi",
+      "typeFallback": "Jenis pekerjaan",
+      "cardPreviewLabel": "Pratonton iklan jawatan",
+      "cardPreviewTitle": "Pratonton jawatan pilihan",
+      "cardPreviewHint": "Seperti yang dilihat oleh pencari kerja di atas carian pekerjaan.",
+      "saved": "Ditempah untuk {{run}}. Kami akan menyemaknya sebelum ia ditampilkan — slot anda ditahan sementara itu.",
+      "errors": {
+        "book": "Tidak dapat menempah iklan jawatan anda. Sila cuba lagi."
+      },
+      "note": {
+        "scheduled": "Diluluskan — ditampilkan dari {{start}} hingga {{end}}.",
+        "live_other": "Ditampilkan di halaman pekerjaan hingga {{end}} · tinggal {{count}} hari."
+      },
+      "remove": {
+        "takeDownTitle": "Turunkan iklan jawatan anda?",
+        "takeDownBody": "Ia berhenti ditampilkan serta-merta, dan slotnya dibuka kepada orang lain."
+      }
+    }
+  },
+  "companySwitcher": {
+    "company": "Syarikat",
+    "hideDetails": "Sembunyikan butiran syarikat",
+    "showDetails": "Tunjukkan butiran syarikat",
+    "owner": "Pemilik:",
+    "joined": "Menyertai:",
+    "industry": "Industri:",
+    "size": "Saiz:",
+    "employees": "{{size}} pekerja",
+    "change": "Tukar syarikat",
+    "switchLabel": "Tukar syarikat — kini {{company}}",
+    "addCompany": "Tambah syarikat",
+    "atLimit": "Anda telah mencapai had {{limit}} syarikat. Hubungi JobGiga untuk menambah lagi."
   }
 }

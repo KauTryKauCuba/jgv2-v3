@@ -5,6 +5,7 @@ import { CANDIDATE_RESPONSE, INTERVIEW_RESULT, interviewPanel, interviews } from
 import { application, applicationStages, job } from "@jobgiga-app/db/schema/jobs";
 import { states } from "@jobgiga-app/db/schema/states";
 import { and, asc, eq, inArray, ne } from "drizzle-orm";
+import { currentOrganizationId } from "./memberships";
 import {
 	type PipelineStatus,
 	toInterviewMode,
@@ -41,7 +42,14 @@ type AnyDb = any;
  * it. v1's roles: "hr manager" and "hr staff" manage; a "panelist" (or
  * access level "panel") only sits on interviews.
  */
-export async function loadEmployerAccess(db: AnyDb, userId: string) {
+/**
+ * The signed-in employer's current company and their role in it. Pass the
+ * session's `activeOrganizationId` (oRPC context) so the company switcher's
+ * choice applies; without it, their first company (see memberships.ts).
+ */
+export async function loadEmployerAccess(db: AnyDb, userId: string, activeOrganizationId?: string | null) {
+	const organizationId = await currentOrganizationId(db, userId, activeOrganizationId);
+	if (!organizationId) return null;
 	const [row] = await db
 		.select({
 			memberId: member.id,
@@ -53,8 +61,7 @@ export async function loadEmployerAccess(db: AnyDb, userId: string) {
 		})
 		.from(member)
 		.innerJoin(organization, eq(organization.id, member.organizationId))
-		.where(and(eq(member.userId, userId), eq(member.status, "active")))
-		.orderBy(asc(member.createdAt))
+		.where(and(eq(member.userId, userId), eq(member.status, "active"), eq(member.organizationId, organizationId)))
 		.limit(1);
 	if (!row) return null;
 	// The redesign's roles (see shared/team-roles.ts). A Panel member only

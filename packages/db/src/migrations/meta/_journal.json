@@ -85,6 +85,27 @@
       "when": 1795840717244,
       "tag": "0011_cute_hitman",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1795860682981,
+      "tag": "0012_far_crusher_hogan",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1795861249887,
+      "tag": "0013_big_lord_hawal",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1795862153335,
+      "tag": "0014_concerned_stingray",
+      "breakpoints": true
     }
   ]
 }

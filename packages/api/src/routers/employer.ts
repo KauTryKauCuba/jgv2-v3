@@ -1,11 +1,13 @@
 import { member, organization, organizationAddress, organizationBadge, user } from "@jobgiga-app/db/schema/auth";
 import { employerOnboardingDraft } from "@jobgiga-app/db/schema/onboarding";
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../index";
 import { lookupCompany } from "../lib/employer/company-lookup";
 import { hasFullAccess, loadCurrentCompany } from "../lib/employer/access";
+import { loadCompanyLimitInfo, loadMemberships, pickMembership, setActiveCompanyQuery } from "../lib/employer/memberships";
+import { toTeamRole } from "../shared/team-roles";
 import { getSalaryInsight, suggestJobPosting, suggestPostingSkills, suggestSalary } from "../lib/employer/job-ai";
 import { buildDashboardData, computeMatchResults, loadEmployerAccess } from "../lib/employer/dashboard";
 import { loadHiringManagerOptions } from "../lib/employer/scope";
@@ -422,11 +424,19 @@ export const employerRouter = {
 
 		// No company yet: onboarding creates one. Already in one: Company
 		// Profile / My Profile edit it (the redesign's POST /api/employer/profile).
-		// "Add a company" (createNew) comes with the company switcher.
-		const current = await loadCurrentCompany(db, userId);
-		if (current && input.createNew === true) {
-			throw new ORPCError("CONFLICT", { message: "Adding another company isn't available yet." });
+		// `createNew` registers an additional company ("Add a company") instead
+		// of editing the current one — checked against this account's company
+		// limit before anything (uploads included) is saved.
+		const creating = input.createNew === true;
+		if (creating) {
+			const { canAdd, limit } = await loadCompanyLimitInfo(db, userId);
+			if (!canAdd) {
+				throw new ORPCError("FORBIDDEN", {
+					message: `You've reached your limit of ${limit} companies. Contact JobGiga to add more.`,
+				});
+			}
 		}
+		const current = creating ? null : await loadCurrentCompany(db, userId, context.activeOrganizationId);
 		if (current && !hasFullAccess(current.accessLevel)) {
 			throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can edit the company profile." });
 		}
@@ -670,6 +680,8 @@ export const employerRouter = {
 				db.insert(organizationBadge).values({ id: crypto.randomUUID(), organizationId, badgeKey }).onConflictDoNothing(),
 			),
 			db.delete(employerOnboardingDraft).where(eq(employerOnboardingDraft.userId, userId)),
+			// A brand-new company becomes the one the dashboard shows from now on.
+			...(current ? [] : [setActiveCompanyQuery(db, context.session.session.id, organizationId)]),
 		]);
 
 		return {
@@ -684,10 +696,105 @@ export const employerRouter = {
 	// Company Profile and My Profile (the redesign's getEmployerProfileForUser
 	// + getEmployerAddresses + getEarnedBadges): the saved company and the
 	// signer-in's own "About you", in the shape the form edits.
+	// ── Company switcher (the redesign's GET /api/employer/companies) ─────────
+	// Every company this employer belongs to, which one is current, and the
+	// account's company limit for "+ Add a company".
+	companies: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const [memberships, limitInfo] = await Promise.all([loadMemberships(db, userId), loadCompanyLimitInfo(db, userId)]);
+		const current = pickMembership(memberships, context.activeOrganizationId);
+		const ids = memberships.map((m) => m.organizationId);
+		const orgs = ids.length
+			? ((await db
+					.select({
+						id: organization.id,
+						displayName: organization.displayName,
+						legalName: organization.legalName,
+						logo: organization.companyLogo,
+						industry: organization.industry,
+						companySize: organization.companySize,
+						createdByUserId: organization.createdByUserId,
+					})
+					.from(organization)
+					.where(inArray(organization.id, ids))) as AnyDb[])
+			: [];
+		// The registrant's name from their own membership row, for "Owner: …".
+		const owners = ids.length
+			? ((await db
+					.select({ organizationId: member.organizationId, userId: member.userId, name: member.name })
+					.from(member)
+					.where(inArray(member.organizationId, ids))) as AnyDb[])
+			: [];
+		const byId = new Map(orgs.map((o) => [o.id as string, o]));
+		return {
+			companies: memberships.map((m) => {
+				const org = byId.get(m.organizationId);
+				const owner = owners.find((o) => o.organizationId === m.organizationId && o.userId === org?.createdByUserId);
+				return {
+					id: m.organizationId,
+					companyName: ((org?.displayName as string | null) || (org?.legalName as string | null)) ?? "",
+					logoUrl: fileUrl(context.origin, org?.logo),
+					role: toTeamRole(m.role, m.accessLevel),
+					ownerName: (owner?.name as string | null) ?? "",
+					industry: (org?.industry as string | null) ?? "",
+					companySize: (org?.companySize as string | null) ?? "",
+					joinedAt: toIso(m.joinedAt),
+				};
+			}),
+			currentId: current?.organizationId ?? null,
+			companyLimit: { used: limitInfo.used, limit: limitInfo.limit, canAdd: limitInfo.canAdd },
+		};
+	}),
+
+	// "Add a company" (the redesign's /employer/companies/new page data): the
+	// account's company limit, and "About you" prefilled from a company they
+	// registered — the current one if they registered it, else their first —
+	// or from the account itself.
+	addCompanyContext: protectedProcedure.handler(async ({ context }) => {
+		const db = context.db as AnyDb;
+		const userId = context.session.user.id;
+		const [memberships, limitInfo] = await Promise.all([loadMemberships(db, userId), loadCompanyLimitInfo(db, userId)]);
+		const current = pickMembership(memberships, context.activeOrganizationId);
+		const owned = memberships.filter((m) => m.createdByUserId === userId);
+		const source = current && current.createdByUserId === userId ? current : owned[0];
+		const [me] = source
+			? ((await db.select().from(member).where(eq(member.id, source.memberId)).limit(1)) as AnyDb[])
+			: [];
+		const aboutYou = me
+			? {
+					avatarUrl: fileUrl(context.origin, me.avatarKey) ?? context.session.user.image ?? null,
+					contactName: (me.name as string | null) ?? context.session.user.name ?? "",
+					contactRole: (me.contactRole as string | null) ?? "",
+					contactPosition: (me.positionTitle as string | null) ?? "",
+					contactPhone: (me.phoneNumber as string | null) ?? "",
+					contactEmail: (me.email as string | null) ?? context.session.user.email,
+				}
+			: {
+					avatarUrl: context.session.user.image ?? null,
+					contactName: context.session.user.name ?? "",
+					contactEmail: context.session.user.email,
+				};
+		return { hasCompany: memberships.length > 0, limit: limitInfo, aboutYou };
+	}),
+
+	// The redesign's POST /api/employer/switch-company: the only way the
+	// session's company changes. Membership is checked here, never trusted
+	// from the browser.
+	switchCompany: protectedProcedure.input(z.object({ organizationId: z.string() })).handler(async ({ input, context }) => {
+		const db = context.db as AnyDb;
+		const memberships = await loadMemberships(db, context.session.user.id);
+		if (!memberships.some((m) => m.organizationId === input.organizationId)) {
+			throw new ORPCError("FORBIDDEN", { message: "You don't have access to that company." });
+		}
+		await setActiveCompanyQuery(db, context.session.session.id, input.organizationId);
+		return { ok: true };
+	}),
+
 	getProfile: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
 		const userId = context.session.user.id;
-		const current = await loadCurrentCompany(db, userId);
+		const current = await loadCurrentCompany(db, userId, context.activeOrganizationId);
 		if (!current) throw new ORPCError("NOT_FOUND", { message: "Finish onboarding first." });
 		const [[org], [me], addresses, badges, [account]] = await Promise.all([
 			db.select().from(organization).where(eq(organization.id, current.organizationId)).limit(1),
@@ -775,7 +882,7 @@ export const employerRouter = {
 	// application and interviews tables, plus the Smart Match settings.
 	dashboard: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const access = await loadEmployerAccess(db, context.session.user.id);
+		const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 		if (!access) throw new ORPCError("FORBIDDEN", { message: "Not signed in as an employer." });
 		return {
 			data: await buildDashboardData(db, context.origin, access.organizationId, access.scope),
@@ -793,7 +900,7 @@ export const employerRouter = {
 	// applicant, scored (Top Matches, and the score badges on Recent applicants).
 	topMatches: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const access = await loadEmployerAccess(db, context.session.user.id);
+		const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 		if (!access) return { results: [] };
 		return { results: await computeMatchResults(db, context.origin, access.organizationId, access.criteria, access.scope) };
 	}),
@@ -809,7 +916,7 @@ export const employerRouter = {
 		)
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const access = await loadEmployerAccess(db, context.session.user.id);
+			const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 			if (!access?.fullAccess) {
 				throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can change match settings." });
 			}
@@ -876,7 +983,7 @@ export const employerRouter = {
 	// company benefits (pre-filled), and who can be shown as the contact.
 	postJobContext: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const current = await loadCurrentCompany(db, context.session.user.id);
+		const current = await loadCurrentCompany(db, context.session.user.id, context.activeOrganizationId);
 		if (!current) throw new ORPCError("NOT_FOUND", { message: "Finish onboarding first." });
 		const [[org], addresses, members] = await Promise.all([
 			db.select().from(organization).where(eq(organization.id, current.organizationId)).limit(1),

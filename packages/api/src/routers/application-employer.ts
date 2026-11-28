@@ -77,8 +77,8 @@ function notFound(): never {
 const sqliteNow = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 
 /** The caller's company. A panelist works from Interviews, as in the redesign. */
-async function requireCompany(db: AnyDb, userId: string) {
-	const access = await loadEmployerAccess(db, userId);
+async function requireCompany(db: AnyDb, userId: string, activeOrganizationId: string | null) {
+	const access = await loadEmployerAccess(db, userId, activeOrganizationId);
 	if (!access) notFound();
 	return access;
 }
@@ -150,7 +150,7 @@ export const applicationEmployerProcedures = {
 	listInterviews: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
 		const userId = context.session.user.id;
-		const access = await requireCompany(db, userId);
+		const access = await requireCompany(db, userId, context.activeOrganizationId);
 		const [rows, addresses, teamMembers] = await Promise.all([
 			loadApplicantRows(db, context.origin, access.organizationId, { scope: access.scope }),
 			loadAddresses(db, access.organizationId),
@@ -167,7 +167,7 @@ export const applicationEmployerProcedures = {
 	// The redesign's /employer/applicants page data.
 	listForEmployer: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const access = await requireCompany(db, context.session.user.id);
+		const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 		if (!access.canManage) throw new ORPCError("FORBIDDEN", { message: "Panel members see their candidates from Interviews." });
 		const [applications, addresses, teamMembers, responsiveness] = await Promise.all([
 			loadApplicantRows(db, context.origin, access.organizationId, { scope: access.scope }),
@@ -192,7 +192,7 @@ export const applicationEmployerProcedures = {
 	// closed, flagged) posting with its own applicants.
 	postingPage: protectedProcedure.input(z.object({ slug: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const access = await requireCompany(db, context.session.user.id);
+		const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 		if (!access.canManage) throw new ORPCError("FORBIDDEN", { message: "Panel members see their candidates from Interviews." });
 		const [row] = (await db
 			.select()
@@ -257,7 +257,7 @@ export const applicationEmployerProcedures = {
 	// list's shape, with what its profile window needs alongside.
 	getForEmployer: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const access = await requireCompany(db, context.session.user.id);
+		const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 		const own = await loadOwnApplication(db, access.organizationId, input.id);
 		await assertCanView(db, access, own.jobId, input.id);
 		const [[applicant], addresses, teamMembers, matches] = await Promise.all([
@@ -274,7 +274,7 @@ export const applicationEmployerProcedures = {
 	// The redesign's GET /api/employer/applications/<id>/profile.
 	applicantProfile: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const access = await requireCompany(db, context.session.user.id);
+		const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 		const app = await loadOwnApplication(db, access.organizationId, input.id);
 		await assertCanView(db, access, app.jobId, input.id);
 		const profile = await loadApplicantProfile(db, context.origin, app.userId);
@@ -299,7 +299,7 @@ export const applicationEmployerProcedures = {
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
 			const userId = context.session.user.id;
-			const access = await requireCompany(db, userId);
+			const access = await requireCompany(db, userId, context.activeOrganizationId);
 			const settable: string[] = input.undo ? [...SETTABLE_STATUSES, "evaluated"] : [...SETTABLE_STATUSES];
 			if (!settable.includes(input.status)) bad("Invalid status.");
 			const status = input.status as PipelineStatus;
@@ -516,7 +516,7 @@ export const applicationEmployerProcedures = {
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
 			const userId = context.session.user.id;
-			const access = await requireCompany(db, userId);
+			const access = await requireCompany(db, userId, context.activeOrganizationId);
 			const scores: Record<string, number> = {};
 			for (const [key, raw] of Object.entries(input.scores)) {
 				if (!(EVALUATION_CRITERIA as readonly string[]).includes(key) || !Number.isInteger(raw) || raw < 1 || raw > 5) {
@@ -580,7 +580,7 @@ export const applicationEmployerProcedures = {
 	// Owner closes the evaluation without waiting for the rest of the panel.
 	completeEvaluation: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const access = await requireCompany(db, context.session.user.id);
+		const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 		const app = await loadOwnApplication(db, access.organizationId, input.id);
 		if (access.accessLevel !== "owner") {
 			throw new ORPCError("FORBIDDEN", { message: "Only an Owner can complete an evaluation early." });
@@ -613,7 +613,7 @@ export const applicationEmployerProcedures = {
 		.input(z.object({ applicationIds: z.array(z.string()), title: z.string().optional() }))
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const access = await requireCompany(db, context.session.user.id);
+			const access = await requireCompany(db, context.session.user.id, context.activeOrganizationId);
 			const ids = input.applicationIds;
 			if (ids.length === 0) bad("There are no applicants to export.");
 			if (ids.length > EXPORT_MAX_APPLICATIONS) {
@@ -632,6 +632,7 @@ export const applicationEmployerProcedures = {
 				context.session.user.id,
 				ordered,
 				input.title?.slice(0, 80),
+				context.activeOrganizationId,
 			);
 			return new File([new Uint8Array(bytes)], fileName, {
 				type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

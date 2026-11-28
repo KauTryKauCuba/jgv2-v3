@@ -71,8 +71,8 @@ function webOriginOf(headers: Headers) {
 }
 
 /** The redesign's requireTeamAccess: Owners and Admins only. */
-async function requireTeamAccess(db: AnyDb, userId: string) {
-	const access = await loadEmployerAccess(db, userId);
+async function requireTeamAccess(db: AnyDb, userId: string, activeOrganizationId: string | null) {
+	const access = await loadEmployerAccess(db, userId, activeOrganizationId);
 	if (!access) throw new ORPCError("UNAUTHORIZED", { message: "Not signed in as an employer." });
 	if (!access.fullAccess) throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can manage the team." });
 	const [org] = (await db
@@ -260,7 +260,7 @@ export const teamRouter = {
 	// The redesign's GET /api/employer/team plus the Team page's own data.
 	list: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const auth = await requireTeamAccess(db, context.session.user.id);
+		const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 		const [members, activity, jobAssignments, postings] = await Promise.all([
 			loadTeam(db, context.origin, auth.organizationId, auth.registrantUserId),
 			loadActivity(db, auth.organizationId),
@@ -300,7 +300,7 @@ export const teamRouter = {
 		)
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const auth = await requireTeamAccess(db, context.session.user.id);
+			const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 			if (!input.email.trim().includes("@")) bad("Enter a valid email.");
 			const email = input.email.trim().toLowerCase();
 			const role = input.role ?? "admin";
@@ -395,7 +395,7 @@ export const teamRouter = {
 	// The redesign's PATCH /api/employer/team/<id>: change someone's role.
 	changeRole: protectedProcedure.input(z.object({ id: z.string(), role: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const auth = await requireTeamAccess(db, context.session.user.id);
+		const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 		if (!isTeamRole(input.role)) bad("Invalid role.");
 		const role = input.role;
 		const target = await loadMember(db, auth.organizationId, input.id);
@@ -438,7 +438,7 @@ export const teamRouter = {
 	// cancel their invite). v1's soft removal: the membership is marked deleted.
 	remove: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const auth = await requireTeamAccess(db, context.session.user.id);
+		const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 		const target = await loadMember(db, auth.organizationId, input.id);
 		if (target.teamRole === "owner" && auth.teamRole !== "owner") {
 			throw new ORPCError("FORBIDDEN", { message: "Only an owner can remove an owner." });
@@ -474,7 +474,7 @@ export const teamRouter = {
 	// The redesign's POST /api/employer/team/<id>/resend: a fresh link and a fresh 7 days.
 	resendInvite: protectedProcedure.input(z.object({ id: z.string() })).handler(async ({ input, context }) => {
 		const db = context.db as AnyDb;
-		const auth = await requireTeamAccess(db, context.session.user.id);
+		const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 		const target = await loadMember(db, auth.organizationId, input.id);
 		if (target.status !== "pending" || !target.invitationId) bad("That person has already joined.");
 		const invite = await newInviteToken();
@@ -502,7 +502,7 @@ export const teamRouter = {
 		.input(z.object({ id: z.string(), jobPostingIds: z.array(z.string()) }))
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const auth = await requireTeamAccess(db, context.session.user.id);
+			const auth = await requireTeamAccess(db, context.session.user.id, context.activeOrganizationId);
 			const target = await loadMember(db, auth.organizationId, input.id);
 			if (target.teamRole !== "hiring_manager") bad("Only a Hiring manager is assigned to specific jobs.");
 			const result = await setMemberJobAssignments(db, {
@@ -581,7 +581,7 @@ export const teamRouter = {
 	myMembership: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
 		const userId = context.session.user.id;
-		const access = await loadEmployerAccess(db, userId);
+		const access = await loadEmployerAccess(db, userId, context.activeOrganizationId);
 		if (!access) notFound();
 		const [[row], [org], [account], addresses] = await Promise.all([
 			db
@@ -667,7 +667,7 @@ export const teamRouter = {
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
 			const userId = context.session.user.id;
-			const access = await loadEmployerAccess(db, userId);
+			const access = await loadEmployerAccess(db, userId, context.activeOrganizationId);
 			if (!access) throw new ORPCError("NOT_FOUND", { message: "No company found." });
 			const [org] = (await db
 				.select({ createdByUserId: organization.createdByUserId })
@@ -724,7 +724,7 @@ export const teamRouter = {
 	// reviews an Owner's — that's on the superadmin panel.
 	listDeletionRequests: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const access = await loadEmployerAccess(db, context.session.user.id);
+		const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 		if (!access) return { requests: [] };
 		const [me] = (await db.select({ role: member.role }).from(member).where(eq(member.id, access.memberId)).limit(1)) as AnyDb[];
 		const rows = (await db
@@ -766,7 +766,7 @@ export const teamRouter = {
 		.input(z.object({ requestId: z.string(), action: z.enum(["approve", "reject"]), rejectionReason: z.string().max(500).optional() }))
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
-			const access = await loadEmployerAccess(db, context.session.user.id);
+			const access = await loadEmployerAccess(db, context.session.user.id, context.activeOrganizationId);
 			if (!access) notFound();
 			const [me] = (await db.select({ role: member.role }).from(member).where(eq(member.id, access.memberId)).limit(1)) as AnyDb[];
 			return reviewAccountDeletionRequest(db, {

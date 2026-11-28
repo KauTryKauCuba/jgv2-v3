@@ -13,14 +13,24 @@ import { JobPostingDetails, PostingCard } from "./job-posting-details";
 const K = "landing.jobseeker.jobs";
 const ALL = "all";
 
-/** A live job ad from the API; its job details come from the matching posting. */
+/**
+ * A live job ad from the API (ads.live). Its job details come from the
+ * matching posting when it's listed here; otherwise from the ad itself.
+ */
 export type LiveJobAd = {
   id: string;
-  jobPostingId: string;
+  jobPostingId: string | null;
   mediaType: "image" | "video";
   mediaUrl: string;
   companyVerified: boolean;
+  jobTitle: string;
+  jobLocation: string;
+  jobEmploymentType: string;
+  companyName: string;
+  companyLogoUrl: string | null;
 };
+
+const EMPLOYMENT_TYPES = new Set(["full_time", "part_time", "contract", "internship", "freelance", "temporary"]);
 
 const filterPillClass =
   "flex h-[30px] shrink-0 items-center justify-center whitespace-nowrap rounded-full px-[14px] text-sm transition-colors";
@@ -29,7 +39,8 @@ const filterPillClass =
  * "Jobs posted on JobGiga": cards that fade down out of the ribbon, featured
  * job ads, then a sticky search and filter bar over a job list and a details
  * panel. Sample listings fill the list until there are 6 real postings.
- * TODO(api): pass real postings and ads from oRPC. Apply, Save, Report and
+ * Featured jobs take real ads (ads.live) first; sample ads fill the rest.
+ * TODO(api): pass real postings from oRPC. Apply, Save, Report and
  * the screening questions come back with login (only a signed-in jobseeker
  * sees them on a real posting).
  */
@@ -84,23 +95,44 @@ export function JobPostingHighlights({
     }
   }
 
-  // Real ads take their details from the listed posting (skipped if it isn't
-  // listed); sample ads fill the remaining slots and open their sample listing.
+  // Real ads take their details from the listed posting, and open it below.
+  // v3's list is still sample listings, so a real ad's posting usually isn't
+  // there: unlike the redesign (which skipped those), it shows with the ad's
+  // own job details and isn't selectable — there's no public job page yet.
+  // Sample ads fill the remaining slots and open their sample listing.
   const featuredAds = useMemo<FeaturedJobAd[]>(() => {
     const byId = new Map(allPostings.map((p) => [p.id, p]));
-    const real = jobAds.flatMap((ad) => {
-      const posting = byId.get(ad.jobPostingId);
-      if (!posting) return [];
-      return [
-        {
-          ...ad,
+    const real = jobAds.map((ad): FeaturedJobAd => {
+      const posting = ad.jobPostingId ? byId.get(ad.jobPostingId) : undefined;
+      if (posting) {
+        return {
+          id: ad.id,
+          jobPostingId: posting.id,
+          mediaType: ad.mediaType,
+          mediaUrl: ad.mediaUrl,
+          companyVerified: ad.companyVerified,
           jobTitle: posting.title,
           companyName: posting.company,
           companyLogoUrl: posting.logoUrl,
           location: locationLabel(posting.location, t),
           jobType: t(`landing.jobs.employmentType.${posting.employmentType}`),
-        },
-      ];
+        };
+      }
+      return {
+        id: ad.id,
+        jobPostingId: ad.jobPostingId ?? "",
+        mediaType: ad.mediaType,
+        mediaUrl: ad.mediaUrl,
+        companyVerified: ad.companyVerified,
+        jobTitle: ad.jobTitle,
+        companyName: ad.companyName,
+        companyLogoUrl: ad.companyLogoUrl,
+        location: ad.jobLocation ? locationLabel(ad.jobLocation, t) : t("jobDetails.notSpecified"),
+        jobType: EMPLOYMENT_TYPES.has(ad.jobEmploymentType)
+          ? t(`landing.jobs.employmentType.${ad.jobEmploymentType}`)
+          : ad.jobEmploymentType,
+        selectable: false,
+      };
     });
     const samples = sampleJobAdFill(
       real.length,

@@ -1,4 +1,4 @@
-import { accountDeletionRequests, jobseekerProfile, member, user } from "@jobgiga-app/db/schema/auth";
+import { accountDeletionRequests, jobseekerProfile, member, organization, user } from "@jobgiga-app/db/schema/auth";
 import { ORPCError } from "@orpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -8,7 +8,9 @@ import {
 	executeAccountDeletion,
 	resolveDeletionPath,
 } from "../lib/account/deletion";
+import { loadMemberships, pickMembership } from "../lib/employer/memberships";
 import { fileUrl } from "../lib/uploads";
+import { type TeamRole, toTeamRole } from "../shared/team-roles";
 
 // biome-ignore lint: context.db is driver-specific (D1 vs bun-sqlite); both
 // satisfy the same drizzle query shape at runtime, so this stays loosely
@@ -58,6 +60,40 @@ export const authRouter = {
 			.from(member)
 			.where(eq(member.userId, userId))
 			.limit(1);
+		// The redesign's resolveEmployerBadge + per-role name/avatar: on the
+		// employer side the navbar shows the current company's logo with the
+		// person's own photo over its corner, and "position · role" under the
+		// name — for the company picked in the switcher.
+		let employer: {
+			name: string | null;
+			avatarUrl: string | null;
+			companyLogoUrl: string | null;
+			position: string | null;
+			teamRole: TeamRole;
+		} | null = null;
+		const current = pickMembership(await loadMemberships(db, userId), context.activeOrganizationId);
+		if (current) {
+			const [row] = (await db
+				.select({
+					name: member.name,
+					avatarKey: member.avatarKey,
+					position: member.positionTitle,
+					logo: organization.companyLogo,
+				})
+				.from(member)
+				.innerJoin(organization, eq(organization.id, member.organizationId))
+				.where(eq(member.id, current.memberId))
+				.limit(1)) as AnyDb[];
+			// v3 keeps a teammate's own name/photo on their membership row too
+			// (team.saveMyProfile), so the membership comes first either way.
+			employer = {
+				name: (row?.name as string | null) || ((account?.name as string | null) ?? null),
+				avatarUrl: fileUrl(context.origin, row?.avatarKey) ?? ((account?.image as string | null) ?? null),
+				companyLogoUrl: fileUrl(context.origin, row?.logo),
+				position: (row?.position as string | null) ?? null,
+				teamRole: toTeamRole(current.role, current.accessLevel),
+			};
+		}
 		return {
 			name:
 				(profile?.fullName as string | undefined) ||
@@ -69,6 +105,7 @@ export const authRouter = {
 			phoneVerified: Boolean(account?.phoneVerified),
 			// v1's platform admins see the navbar's "Superadmin panel" link.
 			isSuperadmin: (context.session.user as { role?: string | null }).role === "admin",
+			employer,
 		};
 	}),
 

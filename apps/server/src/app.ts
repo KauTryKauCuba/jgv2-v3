@@ -1,5 +1,12 @@
 import { createContext } from "@jobgiga-app/api/context";
-import { canReadPrivateFile, isPrivateFileKey } from "@jobgiga-app/api/lib/storage/file-access";
+import {
+	adForMediaKey,
+	canReadPrivateFile,
+	canSeeUnreviewedAd,
+	isAdMediaKey,
+	isPrivateFileKey,
+	isPublicFileKey,
+} from "@jobgiga-app/api/lib/storage/file-access";
 import type { Storage } from "@jobgiga-app/api/lib/storage/types";
 import { CONTENT_TYPE_BY_EXTENSION } from "@jobgiga-app/api/lib/uploads";
 import { appRouter } from "@jobgiga-app/api/routers/index";
@@ -103,23 +110,53 @@ export function createApp(env: AppEnv) {
 	// TODO(auth): per-file permissions (e.g. only the owner and employers they
 	// applied to can open a resume) once applications exist.
 	app.get("/files/*", async (c) => {
-		const session = await auth.api.getSession({ headers: c.req.raw.headers });
-		if (!session) return c.text("Sign in first.", 401);
 		const key = decodeURIComponent(c.req.path.slice("/files/".length));
 		if (!key || key.includes("..") || !env.storage) return c.text("Not found.", 404);
-		// SSM certificates etc.: only the people allowed to see that file.
-		if (isPrivateFileKey(key) && !(await canReadPrivateFile(env.db, session.user, key))) {
-			return c.text("Not found.", 404);
+
+		// Public without a session: company logos, and approved ads (they show on
+		// the landing pages). Everything else needs a signed-in user.
+		let isPublic = isPublicFileKey(key);
+		const ad = isAdMediaKey(key) ? await adForMediaKey(env.db, key) : null;
+		if (isAdMediaKey(key) && !ad) return c.text("Not found.", 404);
+		if (ad?.approved) isPublic = true;
+		if (!isPublic) {
+			const session = await auth.api.getSession({ headers: c.req.raw.headers });
+			if (!session) return c.text("Sign in first.", 401);
+			// SSM certificates etc.: only the people allowed to see that file.
+			if (isPrivateFileKey(key) && !(await canReadPrivateFile(env.db, session.user, key))) {
+				return c.text("Not found.", 404);
+			}
+			// An ad waiting for review: only its company's team and admins.
+			if (ad && !(await canSeeUnreviewedAd(env.db, session.user, ad.companyId))) {
+				return c.text("Not found.", 404);
+			}
 		}
+
 		const bytes = await env.storage.read(key);
 		if (!bytes) return c.text("Not found.", 404);
 		const extension = key.split(".").pop()?.toLowerCase() ?? "";
-		return new Response(bytes, {
-			headers: {
-				"Content-Type": CONTENT_TYPE_BY_EXTENSION[extension] ?? "application/octet-stream",
-				"Cache-Control": "private, max-age=3600",
-			},
-		});
+		const headers: Record<string, string> = {
+			"Content-Type": CONTENT_TYPE_BY_EXTENSION[extension] ?? "application/octet-stream",
+			"Cache-Control": isPublic ? "public, max-age=3600" : "private, max-age=3600",
+			"Accept-Ranges": "bytes",
+		};
+		// Byte ranges, so videos can seek (Safari won't play a video without them).
+		const range = /^bytes=(\d*)-(\d*)$/.exec(c.req.header("Range") ?? "");
+		if (range && (range[1] || range[2])) {
+			const size = bytes.byteLength;
+			let start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+			let end = range[1] && range[2] ? Number(range[2]) : size - 1;
+			end = Math.min(end, size - 1);
+			if (start > end || start >= size) {
+				return new Response(null, { status: 416, headers: { "Content-Range": `bytes */${size}` } });
+			}
+			start = Math.max(0, start);
+			return new Response(bytes.slice(start, end + 1), {
+				status: 206,
+				headers: { ...headers, "Content-Range": `bytes ${start}-${end}/${size}` },
+			});
+		}
+		return new Response(bytes, { headers });
 	});
 
 	app.get("/", (c) => c.text("OK"));

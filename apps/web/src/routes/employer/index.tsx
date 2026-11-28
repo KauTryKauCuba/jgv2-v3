@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { AnimatedRibbon } from "@/components/landing/animated-ribbon";
@@ -11,15 +12,30 @@ import { Hero } from "@/components/landing/hero";
 import { Navbar } from "@/components/landing/navbar";
 import { ScrollWidthBackground } from "@/components/landing/scroll-width-background";
 import { WelcomeModal } from "@/components/landing/welcome-modal";
+import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/employer/")({
   component: EmployerLandingPage,
 });
 
-// TODO(api): the live card, company cards and spotlight ads show sample data
-// until oRPC procedures for them exist.
+// TODO(api): the live card and company cards show sample data until oRPC
+// procedures for them exist. The spotlight shows the approved company ads
+// running today (ads.live, public), with samples filling the other slots.
 function EmployerLandingPage() {
   const { t } = useTranslation("common");
+  // No toast if it fails — the samples fill the whole row instead.
+  const liveAds = useQuery({ ...orpc.ads.live.queryOptions(), meta: { suppressErrorToast: true } });
+  const companyAds = (liveAds.data?.companyAds ?? []).map((ad) => ({
+    id: ad.id,
+    mediaType: ad.mediaType,
+    mediaUrl: ad.mediaUrl,
+    headline: ad.headline,
+    companyId: ad.companyId,
+    companyName: ad.companyName,
+    companyLogoUrl: ad.companyLogoUrl,
+    companyIndustry: ad.companyIndustry,
+    companyVerified: ad.companyVerified,
+  }));
 
   return (
     <main className="flex min-h-[100svh] flex-col overflow-x-hidden bg-brand-teal-page">
@@ -48,7 +64,7 @@ function EmployerLandingPage() {
         durationMs={1400}
         video={{ src: "/videos/spotlight-bg.mp4", poster: "/videos/spotlight-bg-poster.jpg" }}
       >
-        <CompanyAdsSection className="shell relative z-[1] py-[clamp(56px,9vh,96px)]" />
+        <CompanyAdsSection ads={companyAds} className="shell relative z-[1] py-[clamp(56px,9vh,96px)]" />
       </ScrollWidthBackground>
       <EmployerSteps />
       <Footer accent="teal" />

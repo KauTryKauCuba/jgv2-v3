@@ -18,6 +18,8 @@ import {
 import { Navbar } from "@/components/landing/navbar";
 import { useCenterActiveTab } from "@/hooks/use-center-active-tab";
 import { showComingSoon } from "@/lib/coming-soon";
+import { CompanySwitcher } from "./company-switcher";
+import { SampleDataBanner } from "./sample-data-banner";
 import { orpc } from "@/utils/orpc";
 import { NavLinkIcon } from "./nav-link-icon";
 
@@ -43,7 +45,7 @@ const NAV_ITEMS = [
   { key: "applicants", href: "/employer/applicants", icon: UsersIcon, ready: true },
   { key: "interviews", href: "/employer/interviews", icon: CalendarIcon, ready: true },
   { key: "company", href: "/employer/company", icon: BuildingIcon, ready: true },
-  { key: "advertisement", href: "/employer/advertisement", icon: MegaphoneIcon, ready: false },
+  { key: "advertisement", href: "/employer/advertisement", icon: MegaphoneIcon, ready: true },
   { key: "team", href: "/employer/team", icon: UsersIcon, ready: true },
   { key: "profile", href: "/employer/profile", icon: UserIcon, ready: true },
 ] as const;
@@ -210,6 +212,8 @@ export function EmployerDashboardShell({
         <div className="lg:sticky lg:top-0 lg:z-30 lg:bg-brand-teal-page">
           <Navbar pageRole="employer" appShell />
         </div>
+        {/* The redesign's "Get sample data" bar: below the navbar, not sticky. */}
+        <SampleDataBanner />
 
         <div className="flex flex-1 flex-col">
           <div className="app-shell pt-[20px]">
@@ -223,6 +227,9 @@ export function EmployerDashboardShell({
                 }`}
                 style={{ top: railTop }}
               >
+                {/* Only renders once someone actually belongs to more than one
+                    company — invisible for the common single-company case. */}
+                <CompanySwitcher collapsed={sidebarCollapsed} />
                 <Sidebar
                   active={active}
                   canManage={canManage}

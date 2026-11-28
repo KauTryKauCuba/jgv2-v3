@@ -22,3 +22,5 @@ export * from "./departments";
 // v1's jobs, applications and interviews.
 export * from "./jobs";
 export * from "./interviews";
+// v1's ad tables, with the redesign's booking rules (see ads.ts).
+export * from "./ads";
