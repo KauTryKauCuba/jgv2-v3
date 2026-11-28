@@ -5,9 +5,7 @@
 // redesign's fetch calls and server-loaded props), and every string goes
 // through t().
 //
-// Not in v3 yet (each says "coming soon"): a posting's own page
-// (/employer/jobs/<slug> — the applicants pipeline), Applicants, the Poster
-// generator, and inviting a hiring manager from this form (Team).
+// Not in v3 yet (says "coming soon"): the Poster generator.
 import type { EmployerAddress } from "@jobgiga-app/api/shared/employer-profile";
 import { INDUSTRIES } from "@jobgiga-app/api/shared/industries";
 import { defaultJobAddress } from "@jobgiga-app/api/shared/job-address";
@@ -457,7 +455,60 @@ const PostJobForm = forwardRef<
   const [contactUserId, setContactUserId] = useState(startDefaults.contactUserId);
   // Team-member ids of the Hiring managers covering this posting.
   const [hiringManagerIds, setHiringManagerIds] = useState<string[]>([]);
-  const allHiringManagers = hiringManagerOptions;
+  // Hiring managers invited from this form (quick add), on top of the server's list.
+  const [invitedManagers, setInvitedManagers] = useState<HiringManagerOption[]>([]);
+  const [showQuickInvite, setShowQuickInvite] = useState(false);
+  const [quickEmail, setQuickEmail] = useState("");
+  const [quickPosition, setQuickPosition] = useState("");
+  const [quickError, setQuickError] = useState<string | null>(null);
+  const quickInviteMutation = useMutation(orpc.team.invite.mutationOptions());
+  const quickSending = quickInviteMutation.isPending;
+  const allHiringManagers = [
+    ...hiringManagerOptions,
+    ...invitedManagers.filter((i) => !hiringManagerOptions.some((o) => o.teamMemberId === i.teamMemberId)),
+  ];
+  const closeQuickInvite = () => {
+    setShowQuickInvite(false);
+    setQuickEmail("");
+    setQuickPosition("");
+    setQuickError(null);
+  };
+  async function sendQuickInvite() {
+    const email = quickEmail.trim().toLowerCase();
+    if (!email.includes("@")) {
+      setQuickError(t("employerJobs.quickInvite.invalidEmail"));
+      return;
+    }
+    // Already a hiring manager here — just tick them instead of inviting twice.
+    const existing = allHiringManagers.find((m) => m.email.toLowerCase() === email);
+    if (existing) {
+      setHiringManagerIds((prev) => (prev.includes(existing.teamMemberId) ? prev : [...prev, existing.teamMemberId]));
+      closeQuickInvite();
+      return;
+    }
+    setQuickError(null);
+    try {
+      const data = await quickInviteMutation.mutateAsync({ email, role: "hiring_manager", position: quickPosition.trim() || undefined });
+      const member = data.members.find((m) => m.email.toLowerCase() === email);
+      if (member) {
+        setInvitedManagers((prev) => [
+          ...prev,
+          {
+            teamMemberId: member.id,
+            name: member.name || member.email,
+            email: member.email,
+            position: member.position,
+            avatarUrl: member.avatarUrl,
+            pending: true,
+          },
+        ]);
+        setHiringManagerIds((prev) => [...prev, member.id]);
+      }
+      closeQuickInvite();
+    } catch (err) {
+      setQuickError(errorMessage(err, t("employerJobs.quickInvite.error")));
+    }
+  }
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [salaryPeriod, setSalaryPeriod] = useState<SalaryPeriod>("month");
@@ -2309,11 +2360,9 @@ const PostJobForm = forwardRef<
                 </button>
               );
             })}
-            {/* TODO(route): the redesign's "Invite a hiring manager" modal
-                (POST /api/employer/team) comes with the Team page. */}
             <button
               type="button"
-              onClick={showComingSoon}
+              onClick={() => setShowQuickInvite(true)}
               className="flex items-center gap-[4px] rounded-full border border-dashed border-black/[0.15] py-[6px] pl-[12px] pr-[10px] text-sm text-[#4B5468] hover:border-brand-teal-dark hover:text-brand-teal-dark"
             >
               {t("employerJobs.inviteHiringManager")}
@@ -3045,6 +3094,61 @@ const PostJobForm = forwardRef<
       </div>
     )}
 
+    {showQuickInvite && (
+      <Modal ariaLabel={t("employerJobs.quickInvite.title")} onClose={quickSending ? undefined : closeQuickInvite}>
+        <h2 className="text-lg font-semibold text-[#141B2E]">{t("employerJobs.quickInvite.title")}</h2>
+        <p className="mt-[6px] text-xs text-[#4B5468]">{t("employerJobs.quickInvite.body")}</p>
+        <form
+          noValidate
+          className="mt-[14px] flex flex-col gap-[10px]"
+          onSubmit={(e) => {
+            e.preventDefault();
+            // The modal is portalled, but React still bubbles submit to the posting form.
+            e.stopPropagation();
+            if (!quickSending) void sendQuickInvite();
+          }}
+        >
+          <input
+            type="email"
+            autoFocus
+            value={quickEmail}
+            onChange={(e) => setQuickEmail(e.target.value)}
+            placeholder={t("employerOnboarding.emailAddress")}
+            aria-label={t("employerOnboarding.emailAddress")}
+            maxLength={254}
+            className={inputClass}
+          />
+          <input
+            type="text"
+            value={quickPosition}
+            onChange={(e) => setQuickPosition(e.target.value)}
+            placeholder={t("employerJobs.quickInvite.jobTitle")}
+            aria-label={t("employerJobs.quickInvite.jobTitle")}
+            maxLength={80}
+            className={inputClass}
+          />
+          {quickError && <p className="text-xs text-red-500">{quickError}</p>}
+          <div className="mt-[4px] flex flex-col gap-[8px]">
+            <button
+              type="submit"
+              disabled={quickSending || !quickEmail.trim()}
+              className="flex h-[38px] items-center justify-center rounded-full bg-brand-teal-dark text-sm text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {quickSending ? t("auth.sending") : t("team.invite.send")}
+            </button>
+            <button
+              type="button"
+              disabled={quickSending}
+              onClick={closeQuickInvite}
+              className="flex h-[38px] items-center justify-center rounded-full border border-black/[0.1] text-sm text-[#141B2E] hover:bg-black/[0.03] disabled:opacity-40"
+            >
+              {t("employerJobs.cancel")}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    )}
+
     {showLeaveConfirm && (
       <Modal
         ariaLabel={t("employerOnboarding.leaveWithoutSaving")}
@@ -3497,6 +3601,7 @@ function PostingDetailsModal({
   onResubmit?: (id: string) => Promise<void>;
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
   const color = STATUS_TILE_COLOR[posting.status];
   const [resubmitting, setResubmitting] = useState(false);
   const [resubmitError, setResubmitError] = useState<string | null>(null);
@@ -3581,10 +3686,9 @@ function PostingDetailsModal({
         <div className="flex items-center justify-between gap-[12px]">
           <dt className="text-[#9AA3B2]">{t("employerJobs.applicants")}</dt>
           <dd>
-            {/* TODO(route): /employer/applicants?jobId=<id> (Applicants). */}
             <button
               type="button"
-              onClick={showComingSoon}
+              onClick={() => navigate({ to: "/employer/applicants", search: { jobId: posting.id } })}
               className="text-brand-teal-dark underline-offset-2 hover:underline"
             >
               {posting.applicants}
@@ -3975,9 +4079,8 @@ function JobPostingsPanel({ initialPostings, canManage }: { initialPostings: DbJ
                         key={posting.id}
                         onClick={() => {
                           if (["Active", "Filled", "Closed", "Flagged"].includes(posting.status)) {
-                            // TODO(route): /employer/jobs/<slug> (the posting's
-                            // applicants pipeline — comes with Applicants).
-                            showComingSoon();
+                            // A live (or once-live) posting's own page.
+                            navigate({ to: "/employer/jobs/$slug", params: { slug: posting.slug } });
                           } else if (posting.status === "Draft" && canManage) {
                             // A draft has nothing to "view" yet — go straight to finishing it.
                             navigate({ to: "/employer/jobs/postajob", search: { id: posting.id } });
@@ -4014,12 +4117,11 @@ function JobPostingsPanel({ initialPostings, canManage }: { initialPostings: DbJ
                           <span className="whitespace-nowrap text-[#9AA3B2]">
                             {t("employerJobs.viewCount", { count: posting.views })}
                           </span>
-                          {/* TODO(route): /employer/applicants?jobId=<id> (Applicants). */}
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              showComingSoon();
+                              navigate({ to: "/employer/applicants", search: { jobId: posting.id } });
                             }}
                             className="whitespace-nowrap rounded-full bg-brand-teal-soft px-[10px] py-[3px] text-sm text-brand-teal-dark transition-colors hover:bg-[#D2F3F5]"
                           >

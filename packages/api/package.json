@@ -21,6 +21,7 @@
 		"@orpc/server": "catalog:",
 		"drizzle-orm": "catalog:",
 		"hono": "catalog:",
+		"jszip": "^3.10.2",
 		"malaysia-postcodes": "^3.0.0",
 		"mammoth": "^1.12.2",
 		"sanitize-html": "^2.18.2",

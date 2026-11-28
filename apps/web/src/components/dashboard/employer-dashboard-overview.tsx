@@ -53,7 +53,6 @@ function SectionCard({
   animationDelayMs = 0,
 }: {
   title: string;
-  // TODO(route): every "View all" here but Manage Job's opens a page v3 doesn't have yet.
   viewAllHref?: string;
   children: React.ReactNode;
   animationDelayMs?: number;
@@ -71,6 +70,8 @@ function SectionCard({
               onClick={(e) => {
                 e.preventDefault();
                 if (viewAllHref === "/employer/jobs") navigate({ to: "/employer/jobs" });
+                else if (viewAllHref === "/employer/applicants") navigate({ to: "/employer/applicants" });
+                else if (viewAllHref === "/employer/interviews") navigate({ to: "/employer/interviews" });
                 else showComingSoon();
               }}
               className="text-sm text-brand-teal-dark hover:underline"
@@ -341,20 +342,21 @@ export function EmployerDashboardOverview({
     sublabelColorClass,
     onClick,
   });
-  // TODO(route): the tiles that open another page (Applicants, Interviews,
-  // Manage Job) say "coming soon" until those pages exist.
+  const toApplicants = (status: string) => () => navigate({ to: "/employer/applicants", search: { status } });
+  const toInterviews = (response: "reschedule_requested" | "no_show") => () =>
+    navigate({ to: "/employer/interviews", search: { response } });
   const statTiles = [
     tile("active-postings", data.stats.activePostings, BriefcaseIcon, "#8CE6D9", "text-[#0B6E63]", () => scrollToSection("posting-performance")),
     tile("total-applicants", data.stats.totalApplicants, UsersIcon, "#BBC3D2", "text-[#4B5468]", () => scrollToSection("recent-applicants")),
     tile("interviews-this-week", data.stats.interviewsThisWeek, CalendarIcon, "#C7CBF7", "text-[#7C5CD1]", () => scrollToSection("upcoming-interviews")),
-    tile("needs-evaluation", data.stats.needsEvaluation, PencilIcon, "#FFCFA3", "text-[#B06A2A]", showComingSoon),
-    tile("reschedule-requests", data.stats.rescheduleRequests, CalendarIcon, "#FFCDA1", "text-[#C2600A]", showComingSoon),
+    tile("needs-evaluation", data.stats.needsEvaluation, PencilIcon, "#FFCFA3", "text-[#B06A2A]", toApplicants("evaluation")),
+    tile("reschedule-requests", data.stats.rescheduleRequests, CalendarIcon, "#FFCDA1", "text-[#C2600A]", toInterviews("reschedule_requested")),
     tile("postings-needing-attention", data.stats.postingsNeedingAttention, FlagIcon, "#F9B9B9", "text-red-500", () => navigate({ to: "/employer/jobs" })),
-    tile("no-shows", data.stats.noShows, XCircleIcon, "#D4D7DC", "text-[#4B5468]", showComingSoon),
-    tile("new-applicants", data.stats.newApplicants, StackIcon, "#C9CFDA", "text-[#4B5468]", showComingSoon),
-    tile("kiv", data.stats.kiv, ClockIcon, "#B9C3F9", "text-[#5566B0]", showComingSoon),
-    tile("stale-offers", data.stats.staleOffers, DraftIcon, "#FFCDA1", "text-[#B06A2A]", showComingSoon),
-    tile("interviewed-not-evaluated", data.stats.interviewedNotEvaluated, CheckCircleIcon, "#A5C6F7", "text-[#3B6FBF]", showComingSoon),
+    tile("no-shows", data.stats.noShows, XCircleIcon, "#D4D7DC", "text-[#4B5468]", toInterviews("no_show")),
+    tile("new-applicants", data.stats.newApplicants, StackIcon, "#C9CFDA", "text-[#4B5468]", toApplicants("applied")),
+    tile("kiv", data.stats.kiv, ClockIcon, "#B9C3F9", "text-[#5566B0]", toApplicants("kiv")),
+    tile("stale-offers", data.stats.staleOffers, DraftIcon, "#FFCDA1", "text-[#B06A2A]", toApplicants("offer")),
+    tile("interviewed-not-evaluated", data.stats.interviewedNotEvaluated, CheckCircleIcon, "#A5C6F7", "text-[#3B6FBF]", toApplicants("interviewed")),
   ];
 
   // The saved order first; any tile it doesn't mention keeps its place at the end.

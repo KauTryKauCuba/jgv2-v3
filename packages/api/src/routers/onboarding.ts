@@ -1,5 +1,5 @@
 import { jobseekerProfile, member } from "@jobgiga-app/db/schema/auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { protectedProcedure } from "../index";
 
 // biome-ignore lint: db is driver-specific (D1 vs bun-sqlite), loosely typed
@@ -15,12 +15,23 @@ export const onboardingRouter = {
 	status: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
 		const userId = context.session.user.id;
-		const [memberRow] = await db.select({ id: member.id }).from(member).where(eq(member.userId, userId)).limit(1);
+		// An active membership only — not a removed one, nor an invite not yet accepted.
+		const [memberRow] = await db
+			.select({ id: member.id, invitationId: member.invitationId, profileCompletedAt: member.profileCompletedAt })
+			.from(member)
+			.where(and(eq(member.userId, userId), eq(member.status, "active")))
+			.limit(1);
 		const [profileRow] = await db
 			.select({ id: jobseekerProfile.id })
 			.from(jobseekerProfile)
 			.where(eq(jobseekerProfile.userId, userId))
 			.limit(1);
-		return { employerAccess: Boolean(memberRow), jobseekerProfile: Boolean(profileRow) };
+		return {
+			employerAccess: Boolean(memberRow),
+			jobseekerProfile: Boolean(profileRow),
+			// An invited teammate who hasn't done the redesign's welcome step
+			// ("About you") yet — the employer pages send them there first.
+			needsEmployerWelcome: Boolean(memberRow?.invitationId && !memberRow.profileCompletedAt),
+		};
 	}),
 };

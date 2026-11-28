@@ -10,6 +10,7 @@ import { jobRouter } from "./job";
 import { jobseekerRouter } from "./jobseeker";
 import { onboardingRouter } from "./onboarding";
 import { phoneRouter } from "./phone";
+import { teamRouter } from "./team";
 
 // Every API procedure, grouped by area like v1 (job, application, company, …).
 // Add a file per area in this folder and register it here.
@@ -25,6 +26,7 @@ export const appRouter = {
 	job: jobRouter,
 	application: applicationRouter,
 	admin: adminRouter,
+	team: teamRouter,
 };
 
 export type AppRouter = typeof appRouter;

@@ -3,6 +3,8 @@ import { application, job, JOB_STATUS, savedJob } from "@jobgiga-app/db/schema/j
 import { ORPCError } from "@orpc/server";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { loadEmployerAccess } from "../lib/employer/dashboard";
+import { canViewJob, loadJobHiringManagers, setJobHiringManagers } from "../lib/employer/scope";
 import { protectedProcedure, publicProcedure } from "../index";
 import { hasFullAccess, loadCurrentCompany } from "../lib/employer/access";
 import {
@@ -75,6 +77,18 @@ async function checkContact(db: AnyDb, organizationId: string, contactUserId: st
 	return row ? contactUserId : null;
 }
 
+// The redesign's hiringManagerIds field: undefined = leave as is, an array
+// of team-member ids = set to exactly those (checked in setJobHiringManagers).
+function parseHiringManagerIds(value: unknown): string[] | undefined {
+	if (value === undefined) return undefined;
+	if (!Array.isArray(value) || !value.every((v) => typeof v === "string")) bad("Invalid hiring managers.");
+	return value as string[];
+}
+
+async function hiringManagerIdsOf(db: AnyDb, origin: string, jobId: string) {
+	return ((await loadJobHiringManagers(db, origin, [jobId])).get(jobId) ?? []).map((m) => m.teamMemberId);
+}
+
 function badge(db: AnyDb, organizationId: string, badgeKey: string) {
 	return db.insert(organizationBadge).values({ id: crypto.randomUUID(), organizationId, badgeKey }).onConflictDoNothing();
 }
@@ -144,10 +158,15 @@ export const jobRouter = {
 	// redesign's shape with applicant and view counts.
 	listOrgJobs: protectedProcedure.handler(async ({ context }) => {
 		const db = context.db as AnyDb;
-		const company = await loadCurrentCompany(db, context.session.user.id);
-		if (!company) return { postings: [] };
-		const rows = await db.select().from(job).where(eq(job.organizationId, company.organizationId)).orderBy(desc(job.createdAt));
-		return { postings: await toPostings(db, rows) };
+		const access = await loadEmployerAccess(db, context.session.user.id);
+		if (!access) return { postings: [] };
+		const rows = (await db
+			.select()
+			.from(job)
+			.where(eq(job.organizationId, access.organizationId))
+			.orderBy(desc(job.createdAt))) as AnyDb[];
+		// A Hiring manager sees the postings they're assigned to (the redesign's scope).
+		return { postings: await toPostings(db, rows.filter((r) => canViewJob(access.scope, r.id))) };
 	}),
 
 	// v1's job.getForEdit: one posting, for reopening a draft or editing.
@@ -161,8 +180,7 @@ export const jobRouter = {
 			.limit(1);
 		if (!row) throw new ORPCError("NOT_FOUND", { message: "Not found." });
 		const [posting] = await toPostings(db, [row]);
-		// Hiring managers come with the Team page.
-		return { posting: { ...posting!, hiringManagerIds: [] as string[] } };
+		return { posting: { ...posting!, hiringManagerIds: await hiringManagerIdsOf(db, context.origin, row.id) } };
 	}),
 
 	// v1's job.create: a new posting, saved as a draft or sent for review
@@ -173,6 +191,7 @@ export const jobRouter = {
 		const company = await companyFor(db, userId, { manage: true, message: "Only an owner or admin can post jobs." });
 		const parsed = parsePostingBody(input, { mode: "create" });
 		if (!parsed.ok) bad(parsed.error);
+		const managerIds = parseHiringManagerIds(input.hiringManagerIds);
 		const f = parsed.fields;
 		f.contactUserId = await checkContact(db, company.organizationId, f.contactUserId);
 
@@ -196,9 +215,19 @@ export const jobRouter = {
 			badge(db, company.organizationId, "first_job_posted"),
 			...(f.screeningEnabled ? [badge(db, company.organizationId, "screening_enabled")] : []),
 		]);
+		if (managerIds) {
+			const set = await setJobHiringManagers(db, {
+				organizationId: company.organizationId,
+				jobId: id,
+				jobTitle: f.title as string,
+				memberIds: managerIds,
+				actorUserId: userId,
+			});
+			if (!set.ok) bad(set.error);
+		}
 		const [row] = await db.select().from(job).where(eq(job.id, id)).limit(1);
 		const [posting] = await toPostings(db, [row]);
-		return { posting: posting! };
+		return { posting: { ...posting!, hiringManagerIds: await hiringManagerIdsOf(db, context.origin, id) } };
 	}),
 
 	// v1's job.update: change any fields sent; status can go to draft,
@@ -214,7 +243,8 @@ export const jobRouter = {
 				.where(and(eq(job.id, input.id), eq(job.organizationId, company.organizationId)))
 				.limit(1);
 			if (!existing) throw new ORPCError("NOT_FOUND", { message: "Not found." });
-			const { id, ...body } = input;
+			const { id, hiringManagerIds, ...body } = input;
+			const managerIds = parseHiringManagerIds(hiringManagerIds);
 			const parsed = parsePostingBody(body, { mode: "update", screeningEnabledBefore: Boolean(existing.screeningEnabled) });
 			if (!parsed.ok) bad(parsed.error);
 			const f = parsed.fields;
@@ -232,9 +262,19 @@ export const jobRouter = {
 				...benefitsQ,
 				...(screeningOn ? [badge(db, company.organizationId, "screening_enabled")] : []),
 			]);
+			if (managerIds) {
+				const set = await setJobHiringManagers(db, {
+					organizationId: company.organizationId,
+					jobId: id,
+					jobTitle: (f.title as string | undefined) ?? (existing.title as string),
+					memberIds: managerIds,
+					actorUserId: context.session.user.id,
+				});
+				if (!set.ok) bad(set.error);
+			}
 			const [row] = await db.select().from(job).where(eq(job.id, id)).limit(1);
 			const [posting] = await toPostings(db, [row]);
-			return { posting: { ...posting!, hiringManagerIds: [] as string[] } };
+			return { posting: { ...posting!, hiringManagerIds: await hiringManagerIdsOf(db, context.origin, id) } };
 		}),
 
 	// v1's job.delete: removes the posting (its applications go with it).

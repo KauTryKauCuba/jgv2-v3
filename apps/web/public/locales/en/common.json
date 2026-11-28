@@ -971,6 +971,20 @@
       "underline": "Underline",
       "bulletList": "Bullet list",
       "numberedList": "Numbered list"
+    },
+    "datePicker": {
+      "weekdayInitials": "MTWTFSS",
+      "placeholder": "DD/MM/YYYY",
+      "openCalendar": "Open calendar",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "clear": "Clear",
+      "today": "Today"
+    },
+    "timePicker": {
+      "placeholder": "Select time",
+      "label": "Time",
+      "noMatch": "No matching time"
     }
   },
   "nav": {
@@ -1529,7 +1543,8 @@
       "company": "Company Profile",
       "advertisement": "Advertisement",
       "team": "Team",
-      "profile": "My Profile"
+      "profile": "My Profile",
+      "myJobs": "My jobs"
     },
     "status": {
       "applied": "Applied",
@@ -2173,6 +2188,13 @@
       "d": "D (bus)",
       "da": "DA (bus + trailer)",
       "e": "E (lorry)"
+    },
+    "quickInvite": {
+      "title": "Invite a hiring manager",
+      "body": "They’ll get an email to join your team, and will see only this job’s applicants and interviews. The invite is sent now, not when you publish.",
+      "jobTitle": "Job title (optional)",
+      "invalidEmail": "Enter a valid email.",
+      "error": "Couldn't send the invite."
     }
   },
   "jobDetails": {
@@ -2359,5 +2381,604 @@
       "approvedToast": "Account deleted.",
       "rejectedToast": "Request declined."
     }
+  },
+  "applicants": {
+    "salaryFits": "Fits your range",
+    "salaryAbove": "Above your range",
+    "export": {
+      "failed": "Couldn't export right now. Try again.",
+      "hint_one": "Download {{count}} applicant as an Excel file",
+      "hint_other": "Download {{count}} applicants as an Excel file",
+      "busy": "Exporting…",
+      "button": "Export to Excel"
+    },
+    "wait": {
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days"
+    },
+    "replySpeed": {
+      "title": "Your reply speed",
+      "hint": "Shown to jobseekers on every posting.",
+      "typical_one": "Typical first reply: {{wait}} · you responded to {{rate}}% of {{count}} recent applicant.",
+      "typical_other": "Typical first reply: {{wait}} · you responded to {{rate}}% of {{count}} recent applicants.",
+      "noBadge": "Your badge appears once you’ve responded to a few applicants — screen, shortlist or reject to get started.",
+      "waiting_one": "{{count}} applicant has been waiting over 3 days for a first reply.",
+      "waiting_other": "{{count}} applicants have been waiting over 3 days for a first reply.",
+      "showWaiting": "Show applicants awaiting a reply"
+    },
+    "notSet": "Not set",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "saveChanges": "Save changes",
+    "noticePeriods": {
+      "immediate": "Immediate",
+      "one_week": "1 week notice",
+      "two_weeks": "2 weeks notice",
+      "one_month": "1 month notice",
+      "two_months": "2 months notice",
+      "more_than_two_months": "2+ months notice"
+    },
+    "modal": {
+      "selectMember": "Select a team member",
+      "noMembers": "No team members available",
+      "ariaLabel": "{{name}} — applicant details",
+      "appliedFor": "Applied for {{title}} · {{ago}}",
+      "candidateDetails": "Candidate details",
+      "location": "Location",
+      "experience": "Experience",
+      "years_one": "{{count}} year",
+      "years_other": "{{count}} years",
+      "employmentType": "Employment type",
+      "workArrangement": "Work arrangement",
+      "expectedSalary": "Expected salary",
+      "noticePeriod": "Notice period",
+      "skills": "Skills",
+      "loadingProfile": "Loading full profile…",
+      "profileError": "Couldn't load this applicant's profile.",
+      "about": "About",
+      "contactPersonal": "Contact & personal",
+      "phone": "Phone",
+      "age": "Age",
+      "preferredWorkLocation": "Preferred work location",
+      "gender": "Gender",
+      "maritalStatus": "Marital status",
+      "nationality": "Nationality",
+      "workAuthorization": "Work authorization",
+      "drivingLicense": "Driving license",
+      "links": "Links",
+      "portfolio": "Portfolio",
+      "softSkills": "Soft skills",
+      "workExperience": "Work experience",
+      "education": "Education",
+      "cgpa": "CGPA {{cgpa}}",
+      "certifications": "Certifications",
+      "viewFile": "View file",
+      "languages": "Languages",
+      "languageLevels": "{{language}} — {{spoken}} spoken / {{written}} written",
+      "references": "References",
+      "viewResume": "View resume",
+      "errors": {
+        "pickDateTime": "Pick a date and time for the interview.",
+        "invalidDateTime": "That date and time isn't valid.",
+        "addLocation": "Add the interview location.",
+        "addMeetingLink": "Add the meeting link."
+      }
+    },
+    "interviewForm": {
+      "title": "Set up the interview",
+      "round": "Round",
+      "format": "Format",
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration (minutes)",
+      "location": "Location",
+      "useSavedAddress": "Use a saved address",
+      "useSavedAddressOption": "Use a saved address...",
+      "locationPlaceholder": "Office address",
+      "meetingLink": "Meeting link",
+      "interviewers": "Interviewers (optional)",
+      "interviewersHint": "Each interviewer will be asked to submit their own evaluation.",
+      "you": "You",
+      "removeInterviewer": "Remove interviewer",
+      "addInterviewer": "Add interviewer",
+      "addAnother": "Add another (panel)",
+      "notes": "Notes for candidate (optional)",
+      "notesPlaceholder": "What to bring, parking, dress code…",
+      "confirmUpdate": "Update {{name}}'s interview?",
+      "confirmInvite": "Invite {{name}} to an interview?",
+      "confirmUpdateHint": "They'll be notified of the new details straight away and asked to confirm they can still attend.",
+      "confirmInviteHint": "They'll be notified straight away with the date, time and details, and asked to confirm they can attend.",
+      "yesUpdate": "Yes, update and notify",
+      "yesInvite": "Yes, send invite",
+      "goBack": "Go back",
+      "schedule": "Schedule interview"
+    },
+    "interview": {
+      "roundMode": "Round {{round}} interview · {{mode}}",
+      "response": {
+        "pending": "Waiting for response",
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "reschedule_requested": "Reschedule requested",
+        "attended": "Attended",
+        "no_show": "No-show"
+      },
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min",
+      "interviewers_one": "Interviewer: {{names}}",
+      "interviewers_other": "Interviewers: {{names}}",
+      "candidateConfirmed": "✓ Candidate confirmed attendance",
+      "candidateNotConfirmed": "Candidate hasn't confirmed attendance yet",
+      "reschedule": "Reschedule interview",
+      "nextRound": "Schedule next round"
+    },
+    "evaluation": {
+      "title": "Interview evaluation",
+      "waitingConfirm": "Waiting for the candidate to confirm their attendance too.",
+      "markToUnlock": "Mark the candidate as attended or no-show after the round {{round}} interview to unlock this.",
+      "opensWhenAttended": "Opens for your scorecard once the round {{round}} interview is marked as attended.",
+      "panelWait": "The interview’s done. You’ll be notified when the evaluation starts and your scorecard is due.",
+      "completeTitle": "Interview complete — evaluate now",
+      "completeBody": "Don’t leave this candidate sitting as just “Interviewed” — start the evaluation so it’s not forgotten.",
+      "start": "Start evaluation",
+      "interviewer": "Interviewer",
+      "earlier": "Earlier evaluation",
+      "panelTitle": "Interview evaluations",
+      "panelAverage": "Panel average",
+      "allSubmitted": "Every interviewer has submitted.",
+      "submittedCount_one": "{{submitted}} of {{count}} interviewer evaluated",
+      "submittedCount_other": "{{submitted}} of {{count}} interviewers evaluated",
+      "you": "(you)",
+      "pending": "Pending",
+      "onlyPanel": "Only interviewers on this panel (or an Owner) can submit an evaluation.",
+      "editMine": "Edit my evaluation",
+      "ownerClose": "Not everyone has evaluated yet. As an Owner you can close this out now with the scorecards submitted so far.",
+      "markComplete": "Mark evaluation complete",
+      "yours": "Your evaluation",
+      "yoursHint": "Rate the candidate on round {{round}} and give your recommendation.",
+      "recommendation": "Recommendation",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Strengths, concerns, anything worth flagging…",
+      "submit": "Submit my evaluation",
+      "errors": {
+        "rateOne": "Rate at least one criterion.",
+        "pickRecommendation": "Pick a recommendation."
+      },
+      "criteria": {
+        "communication": "Communication",
+        "technicalSkill": "Technical skill",
+        "problemSolving": "Problem solving",
+        "cultureFit": "Culture fit",
+        "roleKnowledge": "Role knowledge"
+      },
+      "recommendations": {
+        "strong_hire": "Strong hire",
+        "hire": "Hire",
+        "no_hire": "No hire",
+        "strong_no_hire": "Strong no hire"
+      }
+    },
+    "stage": {
+      "title": "Hiring stage",
+      "panelOnly": "You’re on this candidate’s interview panel. The job’s hiring manager or an admin moves them along — your evaluation helps them decide.",
+      "hint": "Click a stage to move this applicant forward — or backward, if needed.",
+      "currently": "Currently: {{status}}",
+      "markAttendanceFirst": "Mark attendance above first",
+      "evaluatedHint": "Moves here once every interviewer has submitted their evaluation",
+      "backToEvaluated": "Move back to Evaluated",
+      "keepInView": "Keep in view (KIV)",
+      "shortlistConfirm": "Shortlist this candidate?",
+      "shortlistHint": "This tells your team they’re a serious contender for the role.",
+      "notMovingForward": "Not moving forward",
+      "reject": "Reject",
+      "withdrawnByCandidate": "Withdrawn by candidate"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "attended": "Mark as attended",
+      "noShow": "Mark as no-show",
+      "notYet": "Attendance can be marked once the scheduled interview time arrives."
+    },
+    "heading": "Applicants",
+    "subheading": "See who's applied, and where they stand, across every job posting.",
+    "loadError": "Couldn’t load your applicants right now. Try refreshing the page.",
+    "howStagesWork": {
+      "title": "How the hiring stages work",
+      "step1": {
+        "title": "Applied → Screened → Shortlisted",
+        "detail": "Click through an applicant's Hiring stage list to move them forward one step at a time."
+      },
+      "step2": {
+        "title": "Schedule an interview",
+        "detail": "Clicking Interview opens the scheduling form — round, mode, date, time."
+      },
+      "step3": {
+        "title": "Attend, then evaluate",
+        "detail": "Mark attended/no-show after the interview, then score the candidate to reach Evaluated."
+      },
+      "step4": {
+        "title": "Decide",
+        "detail": "Move to Offer → Hired, keep them on hold (KIV), or Reject — available at any stage."
+      }
+    },
+    "atAGlance": "Applicants at a glance",
+    "totalApplicants": "Total applicants",
+    "postingsWithApplicants": "Job postings with applicants",
+    "groupedByPosting": "Applicants, grouped by job posting",
+    "clearFilter": "Clear filter",
+    "exportTitleStatus": "{{status}} applicants",
+    "searchPlaceholder": "Search applicants by name...",
+    "searchLabel": "Search applicants by name",
+    "showingOnlyBefore": "Showing only ",
+    "showingOnlyAfter": " applicants.",
+    "noMatch": "No applicants match this filter.",
+    "empty": "No one’s applied yet — applicants will show up here as jobseekers apply to your postings.",
+    "yearsExperience_one": "{{count}} yr experience",
+    "yearsExperience_other": "{{count}} yrs experience",
+    "appliedAgo": "Applied {{ago}}",
+    "passedScreening": "Passed screening",
+    "viewDetails": "View details →",
+    "errors": {
+      "updateStatus": "Couldn't update this applicant's status.",
+      "saveEvaluation": "Couldn't save this evaluation.",
+      "completeEvaluation": "Couldn't complete this evaluation."
+    },
+    "subheadingHiringManager": "See who's applied to the jobs you're the hiring manager for, and where they stand."
+  },
+  "jobPosting": {
+    "jobPosting": "Job posting",
+    "editPosting": "Edit posting",
+    "subheading": "Everything about this posting — details, applicants, and interviews, in one place.",
+    "notFound": "This posting isn’t available — it may have been deleted, or it isn’t live yet.",
+    "loadError": "Couldn’t load this posting right now. Try refreshing the page.",
+    "salaryHidden": "{{salary}} (hidden from jobseekers)",
+    "noApplicants": "No one’s applied yet — applicants will show up here as jobseekers apply.",
+    "interviews": "Interviews",
+    "noInterviews": "No one’s at the interview stage for this posting yet.",
+    "analytics": {
+      "title": "Analytics",
+      "funnel": "Hiring funnel",
+      "stages": {
+        "applied": "Applied",
+        "screened": "Screened",
+        "shortlisted": "Shortlisted",
+        "interview": "Interview",
+        "interviewed": "Interviewed",
+        "evaluation": "Evaluation",
+        "evaluated": "Evaluated",
+        "offer": "Offer",
+        "hired": "Hired"
+      },
+      "avgTimeToHire": "Avg. time to hire",
+      "noHires": "No hires yet",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "acrossHires_one": "Across {{count}} hire",
+      "acrossHires_other": "Across {{count}} hires",
+      "locations": "Where applicants are from",
+      "noApplicants": "No applicants yet.",
+      "applicantsWord_one": "applicant",
+      "applicantsWord_other": "applicants",
+      "ages": "Applicant ages",
+      "noAges": "No date of birth on file for these applicants yet.",
+      "withoutAge_one": "{{count}} applicant without a date of birth on file",
+      "withoutAge_other": "{{count}} applicants without a date of birth on file",
+      "matchDistribution": "Match score distribution",
+      "noScores": "No match scores available yet.",
+      "bands": {
+        "strong": "Strong (80+)",
+        "good": "Good (60-79)",
+        "possible": "Possible (<60)"
+      },
+      "last14Days": "Applications, last 14 days",
+      "postedDaysAgo_one": "(posted {{count}}d ago)",
+      "postedDaysAgo_other": "(posted {{count}}d ago)",
+      "total_one": "{{count}} total",
+      "total_other": "{{count}} total",
+      "perDay": "{{avg}} / day avg",
+      "peak_one": "peak {{count}} on {{day}}",
+      "peak_other": "peak {{count}} on {{day}}"
+    },
+    "backToMyJobs": "Back to My jobs",
+    "hiringManagers": {
+      "title": "Hiring managers",
+      "hint": "They see this job’s applicants and interviews, and are notified when someone applies.",
+      "invited": "Invited",
+      "invitedNotJoined": "Invited · hasn't joined yet",
+      "noneOnTeam": "No hiring managers on your team yet — invite one from Team with the Hiring manager role.",
+      "noneOnJob": "No hiring managers on this job.",
+      "noneYet": "None yet — click Edit to pick who covers this job.",
+      "error": "Couldn't save the hiring managers."
+    }
+  },
+  "interviews": {
+    "heading": "Interviews",
+    "subheading": "Everyone currently scheduled for an interview, across every job posting.",
+    "subheadingPanel": "The interviews you're on the panel for — open one to see the candidate and submit your evaluation.",
+    "loadError": "Couldn’t load your interviews right now. Try refreshing the page.",
+    "views": {
+      "list": "List",
+      "kanban": "Kanban",
+      "calendar": "Calendar"
+    },
+    "roundMode": "Round {{round}} · {{mode}}",
+    "noTimeYet": "No interview time set yet.",
+    "howItWorks": {
+      "title": "How scheduling interviews works",
+      "step1": {
+        "title": "Pick a shortlisted applicant",
+        "detail": "\"Schedule interview\" → pick a job posting → pick who to interview."
+      },
+      "step2": {
+        "title": "Or start from the calendar",
+        "detail": "Click \"+\" on a calendar day to schedule with that date already filled in."
+      },
+      "step3": {
+        "title": "Set round, mode, date & time",
+        "detail": "Onsite, online, or phone — with location or meeting link as needed."
+      },
+      "step4": {
+        "title": "Track through to evaluation",
+        "detail": "Mark attendance after the interview, then evaluate from the Applicants page."
+      }
+    },
+    "statusTitle": "Interview status",
+    "searchPlaceholder": "Search interviews by applicant name...",
+    "searchLabel": "Search interviews by applicant name",
+    "showingOnlyBefore": "Showing only ",
+    "showingOnlyAfter": " interviews.",
+    "noMatch": "No one matches that search.",
+    "sections": {
+      "interview": "Scheduled",
+      "interviewed": "Interviewed",
+      "evaluation": "Evaluation",
+      "evaluated": "Evaluated"
+    },
+    "empty": {
+      "interview": "No one’s scheduled for an interview right now — move an applicant to the Interview stage from the Applicants page to see them here.",
+      "interviewed": "No one’s completed an interview yet — once you mark attendance, they’ll show up here awaiting evaluation.",
+      "evaluation": "No one’s mid-evaluation right now — starting an evaluation from Interviewed will show them here.",
+      "evaluated": "No one’s been evaluated yet — save an evaluation on an interviewed candidate to see them here, ready for an offer or reject decision."
+    },
+    "calendar": {
+      "title": "Calendar",
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "schedule": "+ Schedule",
+      "noneOnDay": "No interviews scheduled on this day.",
+      "scheduleOn": "Schedule an interview on {{date}}",
+      "more_one": "+{{count}} more",
+      "more_other": "+{{count}} more",
+      "showLess": "Show less"
+    },
+    "picker": {
+      "title": "Schedule an interview",
+      "titleOn": "Schedule an interview on {{date}}",
+      "pickPosting": "Pick a job posting to see its shortlisted applicants.",
+      "noneShortlisted": "No shortlisted applicants yet — shortlist someone from a job posting’s Applicants tab first.",
+      "shortlistedCount_one": "{{count}} shortlisted",
+      "shortlistedCount_other": "{{count}} shortlisted",
+      "pickApplicantLabel": "Pick a shortlisted applicant",
+      "backToPostings": "Back to job postings",
+      "shortlistedApplicants": "Shortlisted applicants",
+      "pickApplicant": "Pick an applicant to set up their interview — round, date, time, and mode."
+    },
+    "subheadingHiringManager": "Interviews for the jobs you're the hiring manager for, and any panel you're on."
+  },
+  "team": {
+    "heading": "Team",
+    "subheading": "Everyone with access to this company account, and what each of them can do.",
+    "loadError": "Couldn’t load your team right now. Try refreshing the page.",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "hiring_manager": "Hiring manager",
+      "panel": "Panel member"
+    },
+    "rolesWithArticle": {
+      "owner": "an Owner",
+      "admin": "an Admin",
+      "hiring_manager": "a Hiring manager",
+      "panel": "a Panel member"
+    },
+    "roleDescriptions": {
+      "owner": "Full access, including managing other owners.",
+      "admin": "Post jobs, review applicants, schedule interviews and invite teammates.",
+      "hiring_manager": "Reviews and moves applicants for the jobs they're assigned to, and joins their interviews.",
+      "panel": "Joins the interviews they're added to and submits their evaluation."
+    },
+    "tabs": {
+      "all": "All",
+      "admins": "Owners & admins",
+      "hiring_manager": "Hiring managers",
+      "panel": "Interview panel"
+    },
+    "tabsLabel": "Filter team by role",
+    "tabEmpty": {
+      "all": "No one on the team yet.",
+      "admins": "No owners or admins yet.",
+      "hiring_manager": "No hiring managers yet. Invite a department head as a Hiring manager — they'll see only the jobs you assign them, and get notified when someone applies.",
+      "panel": "No panel members yet. Invite someone as a Panel member — they'll see only the interviews they're added to, and submit their evaluation."
+    },
+    "jobStatus": {
+      "draft": "Draft",
+      "pending": "In review",
+      "active": "Active",
+      "flagged": "Flagged",
+      "filled": "Filled",
+      "closed": "Closed"
+    },
+    "ago": {
+      "justNow": "just now",
+      "minutes_one": "{{count}}m ago",
+      "minutes_other": "{{count}}m ago",
+      "hours_one": "{{count}}h ago",
+      "hours_other": "{{count}}h ago"
+    },
+    "activity": {
+      "invited": "{{actor}} invited {{email}} as {{toRole}}",
+      "resent_invite": "{{actor}} resent the invite to {{email}}",
+      "role_changed": "{{actor}} changed {{email}}'s role from {{fromRole}} to {{toRole}}",
+      "removed": "{{actor}} removed {{email}} (was {{fromRole}})",
+      "joined": "{{email}} accepted the invite and joined as {{toRole}}",
+      "declined": "{{email}} declined the invite",
+      "job_assigned": "{{actor}} made {{email}} hiring manager for {{job}}",
+      "job_unassigned": "{{actor}} removed {{email}} as hiring manager for {{job}}",
+      "updated": "{{actor}} updated {{email}}",
+      "aJob": "a job"
+    },
+    "activityTitle": "Activity",
+    "howItWorks": {
+      "title": "How your team works",
+      "step1": {
+        "title": "Invite a teammate",
+        "detail": "Enter their email and pick a role. For a Hiring manager, also pick the jobs they'll handle."
+      },
+      "step2": {
+        "title": "They accept by email",
+        "detail": "The invite link works for 7 days. They sign in with that email to join; \"Resend\" sends a fresh link."
+      },
+      "step3": {
+        "title": "Each role sees its part",
+        "detail": "Owners and Admins see everything. Hiring managers see their assigned jobs. Panel members see only interviews they're on."
+      },
+      "step4": {
+        "title": "Adjust anytime",
+        "detail": "Change roles, reassign jobs, or remove people below. A company always keeps at least one Owner."
+      }
+    },
+    "invite": {
+      "title": "Invite a teammate",
+      "hint": "They’ll need to sign up or log in with this email to join.",
+      "emailPlaceholder": "teammate@company.com",
+      "positionOptional": "Position (optional)",
+      "positionOtherPlaceholder": "Their position, e.g. Senior Graphic Designer",
+      "send": "Send invite",
+      "theirJobs": "Their jobs (optional)",
+      "theirJobsHint": "They’ll see these jobs’ applicants and be notified when someone applies. You can change this any time, or from Post a job."
+    },
+    "role": "Role",
+    "noJobsYet": "No job postings yet — you can assign them from Post a job once you create one.",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members",
+    "memberCountOf_one": "{{shown}} of {{count}} member",
+    "memberCountOf_other": "{{shown}} of {{count}} members",
+    "searchPlaceholder": "Search team by name, email or position...",
+    "searchLabel": "Search team members",
+    "noSearchMatch": "No team members match “{{query}}”.",
+    "inviteExpired": "Invite expired",
+    "pending": "Pending",
+    "resend": "Resend",
+    "sent": "Sent!",
+    "removeLabel": "Remove {{name}}",
+    "changeRoleLabel": "Change {{name}}'s role",
+    "lastOwner": "A company needs at least one owner.",
+    "onlyOwnerRemoves": "Only an owner can remove an owner.",
+    "noJobsAssigned": "No jobs assigned yet — they won’t see any applicants.",
+    "assignJobs": "Assign jobs",
+    "editJobs": "Edit jobs",
+    "panelNote": "Add them to an interview’s panel when you schedule it — they’ll see only those interviews.",
+    "jobsFor": "{{name}}’s jobs",
+    "jobsForHint": "As hiring manager they see these jobs’ applicants and interviews, move candidates along, and are notified when someone applies.",
+    "confirm": {
+      "makeTitle": "Make {{name}} {{role}}?",
+      "removeTitle": "Remove {{name}} from the team?",
+      "removePending": "Their invite will be cancelled and the link in their email will stop working.",
+      "removeActive": "They'll lose access to this company straight away — its job postings, applicants and interviews.",
+      "fullAccessBold": "This gives {{name}} full access",
+      "fullAccessRest": "— every job posting, all applicants, the company profile, ads and the team.",
+      "loseAccess": "{{name}} will lose access to the company profile, ads and team, and to anything outside what a {{role}} can see.",
+      "ownRoleBold": "This is your own role",
+      "ownRoleRest": "— your dashboard changes straight away, and you may not be able to change it back.",
+      "stopJobs_one": "They’ll stop being hiring manager for {{count}} job.",
+      "stopJobs_other": "They’ll stop being hiring manager for {{count}} jobs.",
+      "stopJobsFull_one": "They’ll stop being hiring manager for {{count}} job — as {{role}} they'll see every job anyway.",
+      "stopJobsFull_other": "They’ll stop being hiring manager for {{count}} jobs — as {{role}} they'll see every job anyway.",
+      "registrantBefore": "{{name}} registered this company, so",
+      "registrantBold": "you’ll become its main contact",
+      "registrantAfter": "— your name, email and photo replace theirs on the company. Add your phone number and hiring role on My Profile afterwards.",
+      "yesMake": "Yes, make {{role}}",
+      "yesRemove": "Yes, remove"
+    },
+    "errors": {
+      "resend": "Couldn't resend that invite.",
+      "invite": "Couldn't send that invite.",
+      "changeRole": "Couldn't change that role.",
+      "remove": "Couldn't remove them.",
+      "saveJobs": "Couldn't save their jobs."
+    },
+    "deletions": {
+      "subtitle": "From teammates asking to close their account. Approving closes it; the company, its postings and applicants stay.",
+      "approveBody": "They'll be signed out and can't sign in with this email again. The company, its postings and applicants stay.",
+      "error": "Couldn't review that request. Try again."
+    }
+  },
+  "teamProfile": {
+    "welcomeIntro": "You've joined {{company}} as {{role}}. Tell your team who you are — this is how you'll appear to them, and as an interviewer or a posting's contact.",
+    "editIntro": "How you appear to your team at {{company}}, and as an interviewer or a posting's contact.",
+    "continue": "Continue to dashboard",
+    "checklistDone": "All required fields are complete.",
+    "checklistTodo": "Complete these required fields to continue:",
+    "errors": {
+      "name": "Enter your full name.",
+      "role": "Choose your role.",
+      "position": "Choose your position.",
+      "phone": "Enter your phone number.",
+      "photoType": "Use a JPG or PNG photo.",
+      "photoSize": "That photo is over 3 MB — try a smaller one.",
+      "save": "Couldn't save your profile. Try again."
+    }
+  },
+  "teamWelcome": {
+    "heading": "Welcome to",
+    "subheading": "One quick step, then you're in.",
+    "loadError": "Couldn’t load your invite right now. Try refreshing the page.",
+    "yourInvite": "Your invite",
+    "employees": "{{size}} employees",
+    "invitedBy": "Invited by",
+    "yourRole": "Your role",
+    "basedIn": "Based in",
+    "mainContact": "Main contact",
+    "roleNote": {
+      "owner": "As an Owner you can post jobs, manage applicants and interviews, and manage the team — including other owners.",
+      "admin": "As an Admin you can post jobs, manage applicants and interviews, and invite teammates.",
+      "hiring_manager": "As a Hiring manager you'll see the jobs you're assigned to — review and move their applicants, join their interviews, and get notified when someone applies.",
+      "panel": "As a Panel member you'll see the interviews you're added to — the candidate, the time and place — and submit your evaluation afterwards."
+    }
+  },
+  "invite": {
+    "subheading": "Hiring together on JobGiga.",
+    "goToJobGiga": "Go to JobGiga",
+    "declinedHeading": "Invite declined.",
+    "declinedBody": "You won't be added to the team. If that was a mistake, ask them to invite you again.",
+    "invalidHeading1": "This invite link",
+    "invalidHeading2": "isn’t valid.",
+    "invalidBody": "It may have been cancelled, or replaced by a newer invite email. Ask your team to send you a new one.",
+    "expiredHeading1": "This invite",
+    "expiredHeading2": "has expired.",
+    "expiredBody": "Invite links work for {{days}} days. Ask {{company}} to resend your invite — you'll get a fresh link by email.",
+    "joinedHeading": "You've joined",
+    "invitedHeading": "You're invited to",
+    "alreadyAccepted": "This invite has already been accepted.",
+    "invitedBy": "{{name}} invited you",
+    "youveBeenInvited": "You've been invited",
+    "toJoinAs": "to join as",
+    "inviteFor": "Invite for {{email}}",
+    "wrongAccountBefore": "You’re signed in as",
+    "wrongAccountMiddle": ", but this invite is for",
+    "wrongAccountAfter": ". Switch account to continue — you’ll be signed out of {{email}} first.",
+    "goToDashboard": "Go to dashboard",
+    "signInToContinue": "Sign in to continue",
+    "switchAccount": "Switch account to {{email}}",
+    "accept": "Accept invite",
+    "acceptAndSignIn": "Accept and sign in",
+    "decline": "Decline",
+    "signInHint": "Sign in with {{email}} to join — no account yet? One is created when you sign in.",
+    "signInHintSwitch": "After switching, sign in with {{email}} to join — no account yet? One is created when you sign in.",
+    "signInNotice": "Sign in with {{email}} to join {{company}}.",
+    "error": "Something went wrong. Try again."
   }
 }

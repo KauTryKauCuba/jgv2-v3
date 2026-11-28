@@ -1,7 +1,9 @@
+import { hasFullAccess } from "@jobgiga-app/api/shared/team-roles";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { authClient } from "@/lib/auth-client";
+import { useTeamRole } from "@/lib/team/use-team-role";
 import { orpc } from "@/utils/orpc";
 import { EmployerDashboardOverview } from "./employer-dashboard-overview";
 import { EmployerDashboardShell } from "./employer-dashboard-shell";
@@ -16,7 +18,10 @@ export function EmployerDashboard() {
   const { data: session } = authClient.useSession();
   const me = useQuery({ ...orpc.auth.me.queryOptions(), meta: { suppressErrorToast: true } });
   const dashboardQuery = useQuery({ ...orpc.employer.dashboard.queryOptions(), meta: { suppressErrorToast: true } });
-  const canManage = dashboardQuery.data?.canManage ?? true;
+  // Owners and Admins (the redesign's hasFullAccess); a Hiring manager gets
+  // the limited wording and no "Post a job", a Panel member likewise.
+  const teamRole = useTeamRole();
+  const canManage = teamRole ? hasFullAccess(teamRole) : (dashboardQuery.data?.canManage ?? true);
   const name = me.data?.name || session?.user.name;
   const firstName = name?.split(" ")[0] || t("dashboard.there");
 

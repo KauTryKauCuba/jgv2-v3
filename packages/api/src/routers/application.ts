@@ -6,15 +6,18 @@ import { desc, eq } from "drizzle-orm";
 import { protectedProcedure } from "../index";
 import { jobLocation, loadApplicationEvents } from "../lib/jobs/queries";
 import { toIso, toPipelineStatus } from "../shared/application-status";
+import { applicationEmployerProcedures } from "./application-employer";
 
 // biome-ignore lint: db is driver-specific (D1 vs bun-sqlite), loosely typed
 // here, same as the other routers.
 type AnyDb = any;
 
 // v1's application router (packages/api/src/routers/application.ts), the
-// parts the dashboards use so far, under v1's names. apply, withdraw and the
-// employer-side pipeline calls come with the Apply and Applicants pages.
+// parts the dashboards use so far, under v1's names, plus the employer's
+// Applicants and posting pages (application-employer.ts). apply and withdraw
+// come with the jobseeker's Apply page.
 export const applicationRouter = {
+	...applicationEmployerProcedures,
 	// The signed-in jobseeker's applications, newest first, each with its
 	// history (for the progress steps). Status comes back as the redesign's
 	// pipeline step (see shared/application-status.ts).

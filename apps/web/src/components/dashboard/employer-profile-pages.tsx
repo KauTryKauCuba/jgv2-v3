@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { EmployerOnboardingForm } from "@/components/onboarding/employer-onboarding-form";
+import { EmployerMemberProfileForm } from "@/components/team/employer-member-profile-form";
 import { showComingSoon } from "@/lib/coming-soon";
 import { orpc } from "@/utils/orpc";
 import { AiUsageCard } from "./ai-usage-card";
@@ -96,12 +97,21 @@ export function EmployerCompanyProfilePage() {
  * permanent delete (see delete-account-card.tsx).
  *
  * Not in v3 yet: the "Sample data" card (it fills Manage Job, Team and
- * Interviews, which come next). Invited teammates get their own form with Team.
+ * Interviews, which come next). An invited teammate gets their own About you
+ * (EmployerMemberProfileForm), as in the redesign.
  */
 export function EmployerMyProfilePage() {
   const { t } = useTranslation("common");
   const query = useEmployerProfile();
   const meQuery = useQuery({ ...orpc.auth.me.queryOptions(), meta: { suppressErrorToast: true } });
+  const membershipQuery = useQuery({ ...orpc.team.myMembership.queryOptions(), meta: { suppressErrorToast: true } });
+  const membership = membershipQuery.data;
+  const sidebar = (
+    <div className="flex flex-col gap-[20px]">
+      <AiUsageCard />
+      {meQuery.data?.email && <DeleteAccountCard email={meQuery.data.email} />}
+    </div>
+  );
 
   return (
     <EmployerDashboardShell
@@ -110,10 +120,26 @@ export function EmployerMyProfilePage() {
       heading={t("dashboard.myProfile.heading")}
       subheading={t("dashboard.myProfile.subheading")}
     >
-      {query.isPending ? (
+      {query.isPending || membershipQuery.isPending ? (
         <PageMessage>{t("nav.loading")}</PageMessage>
       ) : query.isError || !query.data ? (
         <PageMessage error>{t("dashboard.company.loadError")}</PageMessage>
+      ) : membership && !membership.isRegistrant ? (
+        // The company's contact details belong to whoever registered it. An
+        // invited teammate gets their own details instead — never a form that
+        // would show, or overwrite, the registrant's.
+        <EmployerMemberProfileForm
+          key={query.data.profile.id}
+          initialName={membership.profile.name}
+          initialAvatarUrl={membership.profile.avatarUrl}
+          initialPosition={membership.profile.position}
+          initialHiringRole={membership.profile.hiringRole}
+          initialPhone={membership.profile.phone}
+          email={membership.profile.email}
+          companyName={membership.company.name}
+          teamRole={membership.role}
+          sidebarSlot={sidebar}
+        />
       ) : (
         <EmployerOnboardingForm
           key={query.data.profile.id}
@@ -121,12 +147,7 @@ export function EmployerMyProfilePage() {
           initialProfile={query.data.profile}
           initialAddresses={query.data.addresses}
           only="contact"
-          sidebarSlot={
-            <div className="flex flex-col gap-[20px]">
-              <AiUsageCard />
-              {meQuery.data?.email && <DeleteAccountCard email={meQuery.data.email} />}
-            </div>
-          }
+          sidebarSlot={sidebar}
           initialPhoneStatus={query.data.phoneStatus}
         />
       )}

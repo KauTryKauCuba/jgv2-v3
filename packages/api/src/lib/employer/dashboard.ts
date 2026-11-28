@@ -1,7 +1,7 @@
 import { jobseekerProfile, member, organization, user } from "@jobgiga-app/db/schema/auth";
 import { cities } from "@jobgiga-app/db/schema/cities";
 import { industries } from "@jobgiga-app/db/schema/industries";
-import { CANDIDATE_RESPONSE, INTERVIEW_RESULT, interviews } from "@jobgiga-app/db/schema/interviews";
+import { CANDIDATE_RESPONSE, INTERVIEW_RESULT, interviewPanel, interviews } from "@jobgiga-app/db/schema/interviews";
 import { application, applicationStages, job } from "@jobgiga-app/db/schema/jobs";
 import { states } from "@jobgiga-app/db/schema/states";
 import { and, asc, eq, inArray, ne } from "drizzle-orm";
@@ -28,6 +28,8 @@ import {
 import { inChunks, jobLocation, loadSkillNames } from "../jobs/queries";
 import { canonicalizeSkill } from "../matching/skills-taxonomy";
 import { fileUrl } from "../uploads";
+import { hasFullAccess, toTeamRole } from "../../shared/team-roles";
+import { canViewJob, type HiringScope, loadHiringScope } from "./scope";
 
 // biome-ignore lint: db is driver-specific (D1 vs bun-sqlite), loosely typed
 // here, same as the routers.
@@ -55,9 +57,18 @@ export async function loadEmployerAccess(db: AnyDb, userId: string) {
 		.orderBy(asc(member.createdAt))
 		.limit(1);
 	if (!row) return null;
-	const canManage = row.accessLevel !== "panel" && row.role !== "panelist";
+	// The redesign's roles (see shared/team-roles.ts). A Panel member only
+	// sits on interviews; everyone else can move applicants (a Hiring
+	// manager only on their own jobs — see `scope`).
+	const teamRole = toTeamRole(row.role, row.accessLevel);
+	const canManage = teamRole !== "panel";
 	return {
 		organizationId: row.organizationId as string,
+		memberId: row.memberId as string,
+		accessLevel: row.accessLevel as string,
+		teamRole,
+		fullAccess: hasFullAccess(teamRole),
+		scope: await loadHiringScope(db, userId, row.memberId as string, teamRole),
 		canManage,
 		smartMatchEnabled: Boolean(row.smartMatchEnabled),
 		criteria: withCriteriaDefaults(row.smartMatchCriteria as Partial<CriteriaFlags> | null),
@@ -73,6 +84,17 @@ type InterviewDetails = {
 	// and result.
 	response: string;
 };
+
+/** Applications whose (any) interview panel includes this limited teammate. */
+export async function panelApplicationIds(db: AnyDb, scope: HiringScope): Promise<Set<string>> {
+	if (scope.kind === "all") return new Set();
+	const rows = (await db
+		.select({ applicationId: interviews.applicationId })
+		.from(interviewPanel)
+		.innerJoin(interviews, eq(interviews.id, interviewPanel.interviewId))
+		.where(eq(interviewPanel.interviewerId, scope.userId))) as { applicationId: string | null }[];
+	return new Set(rows.map((r) => r.applicationId).filter((id): id is string => !!id));
+}
 
 /** Every application to the company's jobs, newest first, in the redesign's shape. */
 async function loadCompanyApplications(db: AnyDb, origin: string, jobIds: string[]) {
@@ -120,7 +142,7 @@ async function loadCompanyApplications(db: AnyDb, origin: string, jobIds: string
 		const response =
 			i.result === INTERVIEW_RESULT.NO_SHOW
 				? "no_show"
-				: i.result === INTERVIEW_RESULT.PASSED || i.result === INTERVIEW_RESULT.FAILED
+				: i.result === INTERVIEW_RESULT.ATTENDED || i.result === INTERVIEW_RESULT.PASSED || i.result === INTERVIEW_RESULT.FAILED
 					? "attended"
 					: (i.candidateResponse ?? CANDIDATE_RESPONSE.PENDING);
 		latestInterview.set(i.applicationId, {
@@ -177,17 +199,28 @@ const DAY = 1000 * 60 * 60 * 24;
  * tables. Month labels come back as month numbers (0–11) so the page can
  * show them in the reader's language.
  */
-export async function buildDashboardData(db: AnyDb, origin: string, organizationId: string) {
-	const postings = (await db
+export async function buildDashboardData(
+	db: AnyDb,
+	origin: string,
+	organizationId: string,
+	scope: HiringScope = { kind: "all" },
+) {
+	const allPostings = (await db
 		.select({ id: job.id, title: job.title, status: job.status, views: job.views })
 		.from(job)
 		.where(and(eq(job.organizationId, organizationId), ne(job.status, "archived")))) as AnyDb[];
-	const titles = new Map(postings.map((p) => [p.id as string, p.title as string]));
-	const applications = await loadCompanyApplications(
-		db,
-		origin,
-		postings.map((p) => p.id),
-	);
+	const titles = new Map(allPostings.map((p) => [p.id as string, p.title as string]));
+	// The redesign's hiring scope: a Hiring manager's own jobs, plus any
+	// interview a limited teammate sits on.
+	const postings = allPostings.filter((p) => canViewJob(scope, p.id));
+	const onPanel = await panelApplicationIds(db, scope);
+	const applications = (
+		await loadCompanyApplications(
+			db,
+			origin,
+			allPostings.map((p) => p.id),
+		)
+	).filter((a) => canViewJob(scope, a.jobId) || onPanel.has(a.id));
 	const now = Date.now();
 
 	// Calendar week, Monday 00:00 to the next Monday.
@@ -309,7 +342,13 @@ function acceptedWorkAuthorizations(workEligibility: string): string[] {
  * soft skills, nice-to-have skills or driving licence, so those parts are left
  * out of their score (and reweighted), as the redesign does for any missing signal.
  */
-export async function computeMatchResults(db: AnyDb, origin: string, organizationId: string, criteria: CriteriaFlags) {
+export async function computeMatchResults(
+	db: AnyDb,
+	origin: string,
+	organizationId: string,
+	criteria: CriteriaFlags,
+	scope: HiringScope = { kind: "all" },
+) {
 	const postings = (await db
 		.select({
 			id: job.id,
@@ -415,5 +454,6 @@ export async function computeMatchResults(db: AnyDb, origin: string, organizatio
 		});
 
 	results.sort((a, b) => Number(b.eligible) - Number(a.eligible) || b.score - a.score);
-	return results;
+	// A Hiring manager's own jobs only (the redesign's scoped matching).
+	return results.filter((r) => canViewJob(scope, r.jobPostingId));
 }

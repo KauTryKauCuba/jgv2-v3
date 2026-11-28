@@ -8,6 +8,7 @@ import { lookupCompany } from "../lib/employer/company-lookup";
 import { hasFullAccess, loadCurrentCompany } from "../lib/employer/access";
 import { getSalaryInsight, suggestJobPosting, suggestPostingSkills, suggestSalary } from "../lib/employer/job-ai";
 import { buildDashboardData, computeMatchResults, loadEmployerAccess } from "../lib/employer/dashboard";
+import { loadHiringManagerOptions } from "../lib/employer/scope";
 import { sanitizeDescriptionHtml } from "../lib/sanitize-html";
 import type { Storage } from "../lib/storage/types";
 import {
@@ -777,8 +778,12 @@ export const employerRouter = {
 		const access = await loadEmployerAccess(db, context.session.user.id);
 		if (!access) throw new ORPCError("FORBIDDEN", { message: "Not signed in as an employer." });
 		return {
-			data: await buildDashboardData(db, context.origin, access.organizationId),
+			data: await buildDashboardData(db, context.origin, access.organizationId, access.scope),
+			// canManage = can move applicants (anyone but a Panel member);
+			// fullAccess = Owner or Admin (posting jobs, Team, company settings).
 			canManage: access.canManage,
+			fullAccess: access.fullAccess,
+			teamRole: access.teamRole,
 			smartMatchEnabled: access.smartMatchEnabled,
 			criteria: access.criteria,
 		};
@@ -790,7 +795,7 @@ export const employerRouter = {
 		const db = context.db as AnyDb;
 		const access = await loadEmployerAccess(db, context.session.user.id);
 		if (!access) return { results: [] };
-		return { results: await computeMatchResults(db, context.origin, access.organizationId, access.criteria) };
+		return { results: await computeMatchResults(db, context.origin, access.organizationId, access.criteria, access.scope) };
 	}),
 
 	// The redesign's PATCH /api/employer/smart-match-settings: the on/off
@@ -805,7 +810,7 @@ export const employerRouter = {
 		.handler(async ({ input, context }) => {
 			const db = context.db as AnyDb;
 			const access = await loadEmployerAccess(db, context.session.user.id);
-			if (!access?.canManage) {
+			if (!access?.fullAccess) {
 				throw new ORPCError("FORBIDDEN", { message: "Only an owner or admin can change match settings." });
 			}
 			const set: Record<string, unknown> = {};
@@ -911,8 +916,8 @@ export const employerRouter = {
 					position: (m.positionTitle as string | null) ?? null,
 					avatarUrl: fileUrl(context.origin, m.avatarKey),
 				})),
-			// Hiring managers come with the Team page.
-			hiringManagerOptions: [] as { teamMemberId: string; name: string; email: string; position: string | null; avatarUrl: string | null; pending: boolean }[],
+			// The team's Hiring managers (joined or invited), for "Hiring managers" on the form.
+			hiringManagerOptions: await loadHiringManagerOptions(db, context.origin, current.organizationId),
 		};
 	}),
 };

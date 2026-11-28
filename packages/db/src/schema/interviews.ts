@@ -26,6 +26,8 @@ export const INTERVIEW_RESULT = {
 	PASSED: "passed",
 	FAILED: "failed",
 	NO_SHOW: "no_show",
+	// v3: the redesign's "attended" mark — they came, no decision yet.
+	ATTENDED: "attended",
 } as const;
 
 export const CANDIDATE_RESPONSE = {
@@ -69,6 +71,11 @@ export const interviews = sqliteTable(
 		result: text("result").notNull().default(INTERVIEW_RESULT.PENDING),
 		candidateResponse: text("candidate_response").notNull().default(CANDIDATE_RESPONSE.PENDING),
 		evaluationScore: integer("overall_score"),
+		// v3: the redesign's jobseekerConfirmedAttendance — the candidate's own
+		// "I attended", separate from the employer's attended/no-show mark.
+		jobseekerConfirmedAttendance: integer("jobseeker_confirmed_attendance", { mode: "boolean" })
+			.notNull()
+			.default(false),
 		createdAt: text("created_at")
 			.default(sql`(datetime('now', '+8 hours'))`)
 			.notNull(),

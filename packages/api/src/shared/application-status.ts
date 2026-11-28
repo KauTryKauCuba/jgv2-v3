@@ -47,6 +47,31 @@ export function toPipelineStatus(v1Status: string): PipelineStatus {
 	return FROM_V1[v1Status] ?? "applied";
 }
 
+// Redesign step → the v1 value v3 writes (the Applicants page's moves).
+const TO_V1: Record<PipelineStatus, string> = {
+	applied: "received",
+	screened: "screened",
+	shortlisted: "shortlisted",
+	interview: "scheduled",
+	interviewed: "interviewed",
+	evaluation: "evaluation",
+	evaluated: "reviewed",
+	kiv: "kiv",
+	offer: "offer",
+	hired: "passed",
+	rejected: "rejected",
+	withdrawn: "withdrawn",
+};
+
+export function toV1ApplicationStatus(step: PipelineStatus): string {
+	return TO_V1[step];
+}
+
+// The redesign's interview mode → v1's interview_type.
+export function toV1InterviewType(mode: "onsite" | "online" | "phone"): string {
+	return mode === "onsite" ? "physical" : mode;
+}
+
 /** Every v1 value that shows as this redesign step — for filtering in SQL. */
 export function v1StatusesFor(step: PipelineStatus): string[] {
 	return Object.entries(FROM_V1)

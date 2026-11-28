@@ -961,6 +961,20 @@
       "underline": "Garis bawah",
       "bulletList": "Senarai titik",
       "numberedList": "Senarai bernombor"
+    },
+    "datePicker": {
+      "weekdayInitials": "ISRKJSA",
+      "placeholder": "HH/BB/TTTT",
+      "openCalendar": "Buka kalendar",
+      "previousMonth": "Bulan sebelumnya",
+      "nextMonth": "Bulan seterusnya",
+      "clear": "Kosongkan",
+      "today": "Hari ini"
+    },
+    "timePicker": {
+      "placeholder": "Pilih masa",
+      "label": "Masa",
+      "noMatch": "Tiada masa yang sepadan"
     }
   },
   "nav": {
@@ -1517,7 +1531,8 @@
       "company": "Profil Syarikat",
       "advertisement": "Iklan",
       "team": "Pasukan",
-      "profile": "Profil Saya"
+      "profile": "Profil Saya",
+      "myJobs": "Kerja saya"
     },
     "status": {
       "applied": "Dimohon",
@@ -2149,6 +2164,13 @@
       "d": "D (bas)",
       "da": "DA (bas + treler)",
       "e": "E (lori)"
+    },
+    "quickInvite": {
+      "title": "Jemput pengurus pengambilan",
+      "body": "Mereka akan menerima e-mel untuk menyertai pasukan anda, dan hanya akan melihat pemohon dan temu duga jawatan ini. Jemputan dihantar sekarang, bukan semasa anda menyiarkan.",
+      "jobTitle": "Jawatan (pilihan)",
+      "invalidEmail": "Masukkan e-mel yang sah.",
+      "error": "Tidak dapat menghantar jemputan."
     }
   },
   "jobDetails": {
@@ -2325,5 +2347,579 @@
       "approvedToast": "Akaun dipadam.",
       "rejectedToast": "Permintaan ditolak."
     }
+  },
+  "applicants": {
+    "salaryFits": "Dalam julat anda",
+    "salaryAbove": "Melebihi julat anda",
+    "export": {
+      "failed": "Tidak dapat dieksport sekarang. Cuba lagi.",
+      "hint_other": "Muat turun {{count}} pemohon sebagai fail Excel",
+      "busy": "Mengeksport…",
+      "button": "Eksport ke Excel"
+    },
+    "wait": {
+      "hours_other": "{{count}} jam",
+      "days_other": "{{count}} hari"
+    },
+    "replySpeed": {
+      "title": "Kelajuan balasan anda",
+      "hint": "Ditunjukkan kepada pencari kerja pada setiap iklan jawatan.",
+      "typical_other": "Balasan pertama biasa: {{wait}} · anda telah membalas {{rate}}% daripada {{count}} pemohon terkini.",
+      "noBadge": "Lencana anda akan muncul setelah anda membalas beberapa pemohon — saring, senarai pendek atau tolak untuk bermula.",
+      "waiting_other": "{{count}} pemohon telah menunggu lebih 3 hari untuk balasan pertama.",
+      "showWaiting": "Tunjukkan pemohon yang menunggu balasan"
+    },
+    "notSet": "Belum ditetapkan",
+    "cancel": "Batal",
+    "confirm": "Sahkan",
+    "saveChanges": "Simpan perubahan",
+    "noticePeriods": {
+      "immediate": "Serta-merta",
+      "one_week": "Notis 1 minggu",
+      "two_weeks": "Notis 2 minggu",
+      "one_month": "Notis 1 bulan",
+      "two_months": "Notis 2 bulan",
+      "more_than_two_months": "Notis lebih 2 bulan"
+    },
+    "modal": {
+      "selectMember": "Pilih ahli pasukan",
+      "noMembers": "Tiada ahli pasukan tersedia",
+      "ariaLabel": "{{name}} — butiran pemohon",
+      "appliedFor": "Memohon untuk {{title}} · {{ago}}",
+      "candidateDetails": "Butiran calon",
+      "location": "Lokasi",
+      "experience": "Pengalaman",
+      "years_other": "{{count}} tahun",
+      "employmentType": "Jenis pekerjaan",
+      "workArrangement": "Susunan kerja",
+      "expectedSalary": "Gaji dijangka",
+      "noticePeriod": "Tempoh notis",
+      "skills": "Kemahiran",
+      "loadingProfile": "Memuatkan profil penuh…",
+      "profileError": "Tidak dapat memuatkan profil pemohon ini.",
+      "about": "Tentang",
+      "contactPersonal": "Hubungan & peribadi",
+      "phone": "Telefon",
+      "age": "Umur",
+      "preferredWorkLocation": "Lokasi kerja pilihan",
+      "gender": "Jantina",
+      "maritalStatus": "Status perkahwinan",
+      "nationality": "Kewarganegaraan",
+      "workAuthorization": "Kebenaran bekerja",
+      "drivingLicense": "Lesen memandu",
+      "links": "Pautan",
+      "portfolio": "Portfolio",
+      "softSkills": "Kemahiran insaniah",
+      "workExperience": "Pengalaman kerja",
+      "education": "Pendidikan",
+      "cgpa": "PNGK {{cgpa}}",
+      "certifications": "Pensijilan",
+      "viewFile": "Lihat fail",
+      "languages": "Bahasa",
+      "languageLevels": "{{language}} — lisan {{spoken}} / tulisan {{written}}",
+      "references": "Rujukan",
+      "viewResume": "Lihat resume",
+      "errors": {
+        "pickDateTime": "Pilih tarikh dan masa untuk temu duga.",
+        "invalidDateTime": "Tarikh dan masa itu tidak sah.",
+        "addLocation": "Tambah lokasi temu duga.",
+        "addMeetingLink": "Tambah pautan mesyuarat."
+      }
+    },
+    "interviewForm": {
+      "title": "Sediakan temu duga",
+      "round": "Pusingan",
+      "format": "Format",
+      "date": "Tarikh",
+      "time": "Masa",
+      "duration": "Tempoh (minit)",
+      "location": "Lokasi",
+      "useSavedAddress": "Guna alamat yang disimpan",
+      "useSavedAddressOption": "Guna alamat yang disimpan...",
+      "locationPlaceholder": "Alamat pejabat",
+      "meetingLink": "Pautan mesyuarat",
+      "interviewers": "Penemu duga (pilihan)",
+      "interviewersHint": "Setiap penemu duga akan diminta menghantar penilaian masing-masing.",
+      "you": "Anda",
+      "removeInterviewer": "Buang penemu duga",
+      "addInterviewer": "Tambah penemu duga",
+      "addAnother": "Tambah lagi (panel)",
+      "notes": "Nota untuk calon (pilihan)",
+      "notesPlaceholder": "Apa yang perlu dibawa, tempat letak kereta, kod pakaian…",
+      "confirmUpdate": "Kemas kini temu duga {{name}}?",
+      "confirmInvite": "Jemput {{name}} ke temu duga?",
+      "confirmUpdateHint": "Mereka akan dimaklumkan tentang butiran baharu dengan segera dan diminta mengesahkan mereka masih boleh hadir.",
+      "confirmInviteHint": "Mereka akan dimaklumkan dengan segera tentang tarikh, masa dan butiran, dan diminta mengesahkan kehadiran.",
+      "yesUpdate": "Ya, kemas kini dan maklumkan",
+      "yesInvite": "Ya, hantar jemputan",
+      "goBack": "Kembali",
+      "schedule": "Jadualkan temu duga"
+    },
+    "interview": {
+      "roundMode": "Temu duga pusingan {{round}} · {{mode}}",
+      "response": {
+        "pending": "Menunggu jawapan",
+        "accepted": "Diterima",
+        "declined": "Ditolak",
+        "reschedule_requested": "Minta jadual semula",
+        "attended": "Hadir",
+        "no_show": "Tidak hadir"
+      },
+      "minutes_other": "{{count}} minit",
+      "interviewers_other": "Penemu duga: {{names}}",
+      "candidateConfirmed": "✓ Calon telah mengesahkan kehadiran",
+      "candidateNotConfirmed": "Calon belum mengesahkan kehadiran",
+      "reschedule": "Jadual semula temu duga",
+      "nextRound": "Jadualkan pusingan seterusnya"
+    },
+    "evaluation": {
+      "title": "Penilaian temu duga",
+      "waitingConfirm": "Menunggu calon mengesahkan kehadiran mereka juga.",
+      "markToUnlock": "Tandakan calon sebagai hadir atau tidak hadir selepas temu duga pusingan {{round}} untuk membuka bahagian ini.",
+      "opensWhenAttended": "Dibuka untuk kad skor anda setelah temu duga pusingan {{round}} ditandakan sebagai hadir.",
+      "panelWait": "Temu duga telah selesai. Anda akan dimaklumkan apabila penilaian bermula dan kad skor anda perlu dihantar.",
+      "completeTitle": "Temu duga selesai — nilai sekarang",
+      "completeBody": "Jangan biarkan calon ini sekadar “Sudah ditemu duga” — mulakan penilaian supaya tidak terlupa.",
+      "start": "Mulakan penilaian",
+      "interviewer": "Penemu duga",
+      "earlier": "Penilaian terdahulu",
+      "panelTitle": "Penilaian temu duga",
+      "panelAverage": "Purata panel",
+      "allSubmitted": "Semua penemu duga telah menghantar.",
+      "submittedCount_other": "{{submitted}} daripada {{count}} penemu duga telah menilai",
+      "you": "(anda)",
+      "pending": "Belum dihantar",
+      "onlyPanel": "Hanya penemu duga dalam panel ini (atau Pemilik) boleh menghantar penilaian.",
+      "editMine": "Sunting penilaian saya",
+      "ownerClose": "Belum semua orang membuat penilaian. Sebagai Pemilik, anda boleh menutupnya sekarang dengan kad skor yang telah dihantar setakat ini.",
+      "markComplete": "Tandakan penilaian selesai",
+      "yours": "Penilaian anda",
+      "yoursHint": "Nilai calon bagi pusingan {{round}} dan berikan cadangan anda.",
+      "recommendation": "Cadangan",
+      "notes": "Nota (pilihan)",
+      "notesPlaceholder": "Kekuatan, kebimbangan, apa-apa yang patut diketengahkan…",
+      "submit": "Hantar penilaian saya",
+      "errors": {
+        "rateOne": "Nilai sekurang-kurangnya satu kriteria.",
+        "pickRecommendation": "Pilih satu cadangan."
+      },
+      "criteria": {
+        "communication": "Komunikasi",
+        "technicalSkill": "Kemahiran teknikal",
+        "problemSolving": "Penyelesaian masalah",
+        "cultureFit": "Kesesuaian budaya",
+        "roleKnowledge": "Pengetahuan peranan"
+      },
+      "recommendations": {
+        "strong_hire": "Sangat disyorkan",
+        "hire": "Disyorkan",
+        "no_hire": "Tidak disyorkan",
+        "strong_no_hire": "Sangat tidak disyorkan"
+      }
+    },
+    "stage": {
+      "title": "Peringkat pengambilan",
+      "panelOnly": "Anda berada dalam panel temu duga calon ini. Pengurus pengambilan atau pentadbir jawatan ini akan menggerakkan mereka — penilaian anda membantu mereka membuat keputusan.",
+      "hint": "Klik satu peringkat untuk menggerakkan pemohon ini ke hadapan — atau ke belakang, jika perlu.",
+      "currently": "Kini: {{status}}",
+      "markAttendanceFirst": "Tandakan kehadiran di atas dahulu",
+      "evaluatedHint": "Beralih ke sini setelah semua penemu duga menghantar penilaian mereka",
+      "backToEvaluated": "Kembalikan ke Sudah dinilai",
+      "keepInView": "Simpan dalam pertimbangan (KIV)",
+      "shortlistConfirm": "Senarai pendekkan calon ini?",
+      "shortlistHint": "Ini memberitahu pasukan anda bahawa mereka pesaing serius untuk jawatan ini.",
+      "notMovingForward": "Tidak diteruskan",
+      "reject": "Tolak",
+      "withdrawnByCandidate": "Ditarik balik oleh calon"
+    },
+    "attendance": {
+      "title": "Kehadiran",
+      "attended": "Tandakan sebagai hadir",
+      "noShow": "Tandakan sebagai tidak hadir",
+      "notYet": "Kehadiran boleh ditandakan setelah tiba masa temu duga yang dijadualkan."
+    },
+    "heading": "Pemohon",
+    "subheading": "Lihat siapa yang telah memohon, dan kedudukan mereka, merentasi setiap iklan jawatan.",
+    "loadError": "Tidak dapat memuatkan pemohon anda sekarang. Cuba muat semula halaman.",
+    "howStagesWork": {
+      "title": "Cara peringkat pengambilan berfungsi",
+      "step1": {
+        "title": "Dimohon → Disaring → Disenarai pendek",
+        "detail": "Klik senarai Peringkat pengambilan pemohon untuk menggerakkan mereka ke hadapan satu langkah demi satu langkah."
+      },
+      "step2": {
+        "title": "Jadualkan temu duga",
+        "detail": "Klik Temu duga untuk membuka borang penjadualan — pusingan, mod, tarikh, masa."
+      },
+      "step3": {
+        "title": "Hadir, kemudian nilai",
+        "detail": "Tandakan hadir/tidak hadir selepas temu duga, kemudian beri skor kepada calon untuk mencapai Sudah dinilai."
+      },
+      "step4": {
+        "title": "Buat keputusan",
+        "detail": "Gerakkan ke Tawaran → Diambil bekerja, tangguhkan mereka (KIV), atau Tolak — boleh dibuat pada sebarang peringkat."
+      }
+    },
+    "atAGlance": "Sekilas pandang pemohon",
+    "totalApplicants": "Jumlah pemohon",
+    "postingsWithApplicants": "Iklan jawatan yang ada pemohon",
+    "groupedByPosting": "Pemohon, dikumpulkan mengikut iklan jawatan",
+    "clearFilter": "Kosongkan penapis",
+    "exportTitleStatus": "Pemohon {{status}}",
+    "searchPlaceholder": "Cari pemohon mengikut nama...",
+    "searchLabel": "Cari pemohon mengikut nama",
+    "showingOnlyBefore": "Hanya menunjukkan pemohon ",
+    "showingOnlyAfter": ".",
+    "noMatch": "Tiada pemohon yang sepadan dengan penapis ini.",
+    "empty": "Belum ada yang memohon — pemohon akan muncul di sini apabila pencari kerja memohon iklan jawatan anda.",
+    "yearsExperience_other": "{{count}} tahun pengalaman",
+    "appliedAgo": "Memohon {{ago}}",
+    "passedScreening": "Lulus saringan",
+    "viewDetails": "Lihat butiran →",
+    "errors": {
+      "updateStatus": "Tidak dapat mengemas kini status pemohon ini.",
+      "saveEvaluation": "Tidak dapat menyimpan penilaian ini.",
+      "completeEvaluation": "Tidak dapat melengkapkan penilaian ini."
+    },
+    "subheadingHiringManager": "Lihat siapa yang telah memohon jawatan yang anda uruskan sebagai pengurus pengambilan, dan kedudukan mereka."
+  },
+  "jobPosting": {
+    "jobPosting": "Iklan jawatan",
+    "editPosting": "Sunting iklan",
+    "subheading": "Segala-galanya tentang iklan ini — butiran, pemohon dan temu duga, di satu tempat.",
+    "notFound": "Iklan ini tidak tersedia — mungkin telah dipadam, atau belum disiarkan.",
+    "loadError": "Tidak dapat memuatkan iklan ini sekarang. Cuba muat semula halaman.",
+    "salaryHidden": "{{salary}} (disembunyikan daripada pencari kerja)",
+    "noApplicants": "Belum ada yang memohon — pemohon akan muncul di sini apabila pencari kerja memohon.",
+    "interviews": "Temu duga",
+    "noInterviews": "Belum ada sesiapa di peringkat temu duga untuk iklan ini.",
+    "analytics": {
+      "title": "Analitik",
+      "funnel": "Corong pengambilan",
+      "stages": {
+        "applied": "Dimohon",
+        "screened": "Disaring",
+        "shortlisted": "Senarai pendek",
+        "interview": "Temu duga",
+        "interviewed": "Ditemu duga",
+        "evaluation": "Penilaian",
+        "evaluated": "Dinilai",
+        "offer": "Tawaran",
+        "hired": "Diambil"
+      },
+      "avgTimeToHire": "Purata masa untuk mengambil",
+      "noHires": "Belum ada pengambilan",
+      "days_other": "{{count}} hari",
+      "acrossHires_other": "Merentasi {{count}} pengambilan",
+      "locations": "Asal pemohon",
+      "noApplicants": "Belum ada pemohon.",
+      "applicantsWord_other": "pemohon",
+      "ages": "Umur pemohon",
+      "noAges": "Belum ada tarikh lahir dalam rekod untuk pemohon ini.",
+      "withoutAge_other": "{{count}} pemohon tanpa tarikh lahir dalam rekod",
+      "matchDistribution": "Taburan skor padanan",
+      "noScores": "Belum ada skor padanan.",
+      "bands": {
+        "strong": "Kukuh (80+)",
+        "good": "Baik (60-79)",
+        "possible": "Mungkin (<60)"
+      },
+      "last14Days": "Permohonan, 14 hari lepas",
+      "postedDaysAgo_other": "(disiarkan {{count}} hari lalu)",
+      "total_other": "jumlah {{count}}",
+      "perDay": "purata {{avg}} / hari",
+      "peak_other": "puncak {{count}} pada {{day}}"
+    },
+    "backToMyJobs": "Kembali ke Kerja saya",
+    "hiringManagers": {
+      "title": "Pengurus pengambilan",
+      "hint": "Mereka melihat pemohon dan temu duga jawatan ini, dan dimaklumkan apabila seseorang memohon.",
+      "invited": "Dijemput",
+      "invitedNotJoined": "Dijemput · belum menyertai",
+      "noneOnTeam": "Belum ada pengurus pengambilan dalam pasukan anda — jemput seorang dari Pasukan dengan peranan Pengurus pengambilan.",
+      "noneOnJob": "Tiada pengurus pengambilan untuk jawatan ini.",
+      "noneYet": "Belum ada — klik Sunting untuk memilih siapa yang menguruskan jawatan ini.",
+      "error": "Tidak dapat menyimpan pengurus pengambilan."
+    }
+  },
+  "interviews": {
+    "heading": "Temu duga",
+    "subheading": "Semua yang kini dijadualkan untuk temu duga, merentasi setiap iklan jawatan.",
+    "subheadingPanel": "Temu duga yang anda sertai sebagai panel — buka satu untuk melihat calon dan menghantar penilaian anda.",
+    "loadError": "Tidak dapat memuatkan temu duga anda sekarang. Cuba muat semula halaman.",
+    "views": {
+      "list": "Senarai",
+      "kanban": "Kanban",
+      "calendar": "Kalendar"
+    },
+    "roundMode": "Pusingan {{round}} · {{mode}}",
+    "noTimeYet": "Masa temu duga belum ditetapkan.",
+    "howItWorks": {
+      "title": "Cara menjadualkan temu duga",
+      "step1": {
+        "title": "Pilih pemohon senarai pendek",
+        "detail": "\"Jadualkan temu duga\" → pilih iklan jawatan → pilih siapa yang hendak ditemu duga."
+      },
+      "step2": {
+        "title": "Atau mulakan dari kalendar",
+        "detail": "Klik \"+\" pada satu hari di kalendar untuk menjadualkan dengan tarikh itu sudah diisi."
+      },
+      "step3": {
+        "title": "Tetapkan pusingan, mod, tarikh & masa",
+        "detail": "Bersemuka, dalam talian atau telefon — dengan lokasi atau pautan mesyuarat mengikut keperluan."
+      },
+      "step4": {
+        "title": "Ikuti hingga ke penilaian",
+        "detail": "Tandakan kehadiran selepas temu duga, kemudian buat penilaian dari halaman Pemohon."
+      }
+    },
+    "statusTitle": "Status temu duga",
+    "searchPlaceholder": "Cari temu duga mengikut nama pemohon...",
+    "searchLabel": "Cari temu duga mengikut nama pemohon",
+    "showingOnlyBefore": "Hanya menunjukkan temu duga ",
+    "showingOnlyAfter": ".",
+    "noMatch": "Tiada sesiapa yang sepadan dengan carian itu.",
+    "sections": {
+      "interview": "Dijadualkan",
+      "interviewed": "Sudah ditemu duga",
+      "evaluation": "Penilaian",
+      "evaluated": "Sudah dinilai"
+    },
+    "empty": {
+      "interview": "Tiada sesiapa dijadualkan untuk temu duga sekarang — gerakkan pemohon ke peringkat Temu duga dari halaman Pemohon untuk melihat mereka di sini.",
+      "interviewed": "Belum ada yang selesai ditemu duga — setelah anda menandakan kehadiran, mereka akan muncul di sini menunggu penilaian.",
+      "evaluation": "Tiada sesiapa sedang dinilai sekarang — memulakan penilaian dari Sudah ditemu duga akan memaparkan mereka di sini.",
+      "evaluated": "Belum ada yang dinilai — simpan penilaian bagi calon yang sudah ditemu duga untuk melihat mereka di sini, sedia untuk keputusan tawaran atau penolakan."
+    },
+    "calendar": {
+      "title": "Kalendar",
+      "today": "Hari ini",
+      "thisWeek": "Minggu ini",
+      "thisMonth": "Bulan ini",
+      "schedule": "+ Jadualkan",
+      "noneOnDay": "Tiada temu duga dijadualkan pada hari ini.",
+      "scheduleOn": "Jadualkan temu duga pada {{date}}",
+      "more_other": "+{{count}} lagi",
+      "showLess": "Tunjuk kurang"
+    },
+    "picker": {
+      "title": "Jadualkan temu duga",
+      "titleOn": "Jadualkan temu duga pada {{date}}",
+      "pickPosting": "Pilih iklan jawatan untuk melihat pemohon senarai pendeknya.",
+      "noneShortlisted": "Belum ada pemohon senarai pendek — senarai pendekkan seseorang dari tab Pemohon sesuatu iklan jawatan dahulu.",
+      "shortlistedCount_other": "{{count}} disenarai pendek",
+      "pickApplicantLabel": "Pilih pemohon senarai pendek",
+      "backToPostings": "Kembali ke iklan jawatan",
+      "shortlistedApplicants": "Pemohon senarai pendek",
+      "pickApplicant": "Pilih pemohon untuk menyediakan temu duga mereka — pusingan, tarikh, masa dan mod."
+    },
+    "subheadingHiringManager": "Temu duga bagi jawatan yang anda uruskan sebagai pengurus pengambilan, dan mana-mana panel yang anda sertai."
+  },
+  "team": {
+    "heading": "Pasukan",
+    "subheading": "Semua yang mempunyai akses ke akaun syarikat ini, dan apa yang setiap seorang boleh lakukan.",
+    "loadError": "Tidak dapat memuatkan pasukan anda sekarang. Cuba muat semula halaman.",
+    "roles": {
+      "owner": "Pemilik",
+      "admin": "Pentadbir",
+      "hiring_manager": "Pengurus pengambilan",
+      "panel": "Ahli panel"
+    },
+    "rolesWithArticle": {
+      "owner": "Pemilik",
+      "admin": "Pentadbir",
+      "hiring_manager": "Pengurus pengambilan",
+      "panel": "Ahli panel"
+    },
+    "roleDescriptions": {
+      "owner": "Akses penuh, termasuk mengurus pemilik lain.",
+      "admin": "Siarkan jawatan, semak pemohon, jadualkan temu duga dan jemput rakan sepasukan.",
+      "hiring_manager": "Menyemak dan menggerakkan pemohon bagi jawatan yang ditugaskan kepada mereka, dan menyertai temu duga jawatan itu.",
+      "panel": "Menyertai temu duga yang mereka ditambah ke dalamnya dan menghantar penilaian mereka."
+    },
+    "tabs": {
+      "all": "Semua",
+      "admins": "Pemilik & pentadbir",
+      "hiring_manager": "Pengurus pengambilan",
+      "panel": "Panel temu duga"
+    },
+    "tabsLabel": "Tapis pasukan mengikut peranan",
+    "tabEmpty": {
+      "all": "Belum ada sesiapa dalam pasukan.",
+      "admins": "Belum ada pemilik atau pentadbir.",
+      "hiring_manager": "Belum ada pengurus pengambilan. Jemput ketua jabatan sebagai Pengurus pengambilan — mereka hanya akan melihat jawatan yang anda tugaskan, dan dimaklumkan apabila seseorang memohon.",
+      "panel": "Belum ada ahli panel. Jemput seseorang sebagai Ahli panel — mereka hanya akan melihat temu duga yang mereka ditambah ke dalamnya, dan menghantar penilaian mereka."
+    },
+    "jobStatus": {
+      "draft": "Draf",
+      "pending": "Dalam semakan",
+      "active": "Aktif",
+      "flagged": "Dibenderakan",
+      "filled": "Diisi",
+      "closed": "Ditutup"
+    },
+    "ago": {
+      "justNow": "sebentar tadi",
+      "minutes_other": "{{count}} minit lalu",
+      "hours_other": "{{count}} jam lalu"
+    },
+    "activity": {
+      "invited": "{{actor}} menjemput {{email}} sebagai {{toRole}}",
+      "resent_invite": "{{actor}} menghantar semula jemputan kepada {{email}}",
+      "role_changed": "{{actor}} menukar peranan {{email}} daripada {{fromRole}} kepada {{toRole}}",
+      "removed": "{{actor}} mengeluarkan {{email}} (dahulu {{fromRole}})",
+      "joined": "{{email}} menerima jemputan dan menyertai sebagai {{toRole}}",
+      "declined": "{{email}} menolak jemputan",
+      "job_assigned": "{{actor}} menjadikan {{email}} pengurus pengambilan untuk {{job}}",
+      "job_unassigned": "{{actor}} mengeluarkan {{email}} sebagai pengurus pengambilan untuk {{job}}",
+      "updated": "{{actor}} mengemas kini {{email}}",
+      "aJob": "satu jawatan"
+    },
+    "activityTitle": "Aktiviti",
+    "howItWorks": {
+      "title": "Cara pasukan anda berfungsi",
+      "step1": {
+        "title": "Jemput rakan sepasukan",
+        "detail": "Masukkan e-mel mereka dan pilih peranan. Bagi Pengurus pengambilan, pilih juga jawatan yang akan mereka uruskan."
+      },
+      "step2": {
+        "title": "Mereka menerima melalui e-mel",
+        "detail": "Pautan jemputan sah selama 7 hari. Mereka log masuk dengan e-mel itu untuk menyertai; \"Hantar semula\" menghantar pautan baharu."
+      },
+      "step3": {
+        "title": "Setiap peranan melihat bahagiannya",
+        "detail": "Pemilik dan Pentadbir melihat semuanya. Pengurus pengambilan melihat jawatan yang ditugaskan. Ahli panel hanya melihat temu duga yang mereka sertai."
+      },
+      "step4": {
+        "title": "Ubah bila-bila masa",
+        "detail": "Tukar peranan, tugaskan semula jawatan, atau keluarkan orang di bawah. Syarikat sentiasa mempunyai sekurang-kurangnya seorang Pemilik."
+      }
+    },
+    "invite": {
+      "title": "Jemput rakan sepasukan",
+      "hint": "Mereka perlu mendaftar atau log masuk dengan e-mel ini untuk menyertai.",
+      "emailPlaceholder": "rakan@syarikat.com",
+      "positionOptional": "Jawatan (pilihan)",
+      "positionOtherPlaceholder": "Jawatan mereka, cth. Pereka Grafik Kanan",
+      "send": "Hantar jemputan",
+      "theirJobs": "Jawatan mereka (pilihan)",
+      "theirJobsHint": "Mereka akan melihat pemohon jawatan ini dan dimaklumkan apabila seseorang memohon. Anda boleh mengubahnya bila-bila masa, atau dari Siarkan jawatan."
+    },
+    "role": "Peranan",
+    "noJobsYet": "Belum ada iklan jawatan — anda boleh menugaskannya dari Siarkan jawatan setelah anda menciptanya.",
+    "memberCount_other": "{{count}} ahli",
+    "memberCountOf_other": "{{shown}} daripada {{count}} ahli",
+    "searchPlaceholder": "Cari pasukan mengikut nama, e-mel atau jawatan...",
+    "searchLabel": "Cari ahli pasukan",
+    "noSearchMatch": "Tiada ahli pasukan yang sepadan dengan “{{query}}”.",
+    "inviteExpired": "Jemputan tamat tempoh",
+    "pending": "Belum diterima",
+    "resend": "Hantar semula",
+    "sent": "Dihantar!",
+    "removeLabel": "Keluarkan {{name}}",
+    "changeRoleLabel": "Tukar peranan {{name}}",
+    "lastOwner": "Syarikat memerlukan sekurang-kurangnya seorang pemilik.",
+    "onlyOwnerRemoves": "Hanya pemilik boleh mengeluarkan pemilik.",
+    "noJobsAssigned": "Belum ada jawatan ditugaskan — mereka tidak akan melihat sebarang pemohon.",
+    "assignJobs": "Tugaskan jawatan",
+    "editJobs": "Sunting jawatan",
+    "panelNote": "Tambah mereka ke panel temu duga semasa anda menjadualkannya — mereka hanya akan melihat temu duga itu.",
+    "jobsFor": "Jawatan {{name}}",
+    "jobsForHint": "Sebagai pengurus pengambilan, mereka melihat pemohon dan temu duga jawatan ini, menggerakkan calon, dan dimaklumkan apabila seseorang memohon.",
+    "confirm": {
+      "makeTitle": "Jadikan {{name}} {{role}}?",
+      "removeTitle": "Keluarkan {{name}} daripada pasukan?",
+      "removePending": "Jemputan mereka akan dibatalkan dan pautan dalam e-mel mereka tidak akan berfungsi lagi.",
+      "removeActive": "Mereka akan kehilangan akses ke syarikat ini dengan serta-merta — iklan jawatan, pemohon dan temu duganya.",
+      "fullAccessBold": "Ini memberi {{name}} akses penuh",
+      "fullAccessRest": "— setiap iklan jawatan, semua pemohon, profil syarikat, iklan dan pasukan.",
+      "loseAccess": "{{name}} akan kehilangan akses ke profil syarikat, iklan dan pasukan, serta apa-apa di luar apa yang boleh dilihat oleh {{role}}.",
+      "ownRoleBold": "Ini peranan anda sendiri",
+      "ownRoleRest": "— papan pemuka anda berubah serta-merta, dan anda mungkin tidak dapat menukarnya semula.",
+      "stopJobs_other": "Mereka tidak lagi menjadi pengurus pengambilan untuk {{count}} jawatan.",
+      "stopJobsFull_other": "Mereka tidak lagi menjadi pengurus pengambilan untuk {{count}} jawatan — sebagai {{role}} mereka tetap akan melihat setiap jawatan.",
+      "registrantBefore": "{{name}} mendaftarkan syarikat ini, jadi",
+      "registrantBold": "anda akan menjadi hubungan utamanya",
+      "registrantAfter": "— nama, e-mel dan foto anda menggantikan milik mereka pada syarikat. Tambah nombor telefon dan peranan pengambilan anda di Profil Saya selepas itu.",
+      "yesMake": "Ya, jadikan {{role}}",
+      "yesRemove": "Ya, keluarkan"
+    },
+    "errors": {
+      "resend": "Tidak dapat menghantar semula jemputan itu.",
+      "invite": "Tidak dapat menghantar jemputan itu.",
+      "changeRole": "Tidak dapat menukar peranan itu.",
+      "remove": "Tidak dapat mengeluarkan mereka.",
+      "saveJobs": "Tidak dapat menyimpan jawatan mereka."
+    },
+    "deletions": {
+      "subtitle": "Daripada rakan sepasukan yang meminta akaun mereka ditutup. Meluluskan akan menutupnya; syarikat, iklan jawatan dan pemohonnya kekal.",
+      "approveBody": "Mereka akan dilog keluar dan tidak boleh log masuk dengan e-mel ini lagi. Syarikat, iklan jawatan dan pemohonnya kekal.",
+      "error": "Tidak dapat menyemak permintaan itu. Cuba lagi."
+    }
+  },
+  "teamProfile": {
+    "welcomeIntro": "Anda telah menyertai {{company}} sebagai {{role}}. Beritahu pasukan anda siapa anda — beginilah anda akan dilihat oleh mereka, dan sebagai penemu duga atau orang hubungan sesuatu iklan jawatan.",
+    "editIntro": "Cara anda dilihat oleh pasukan anda di {{company}}, dan sebagai penemu duga atau orang hubungan sesuatu iklan jawatan.",
+    "continue": "Teruskan ke papan pemuka",
+    "checklistDone": "Semua medan wajib telah lengkap.",
+    "checklistTodo": "Lengkapkan medan wajib ini untuk meneruskan:",
+    "errors": {
+      "name": "Masukkan nama penuh anda.",
+      "role": "Pilih peranan anda.",
+      "position": "Pilih jawatan anda.",
+      "phone": "Masukkan nombor telefon anda.",
+      "photoType": "Gunakan foto JPG atau PNG.",
+      "photoSize": "Foto itu melebihi 3 MB — cuba yang lebih kecil.",
+      "save": "Tidak dapat menyimpan profil anda. Cuba lagi."
+    }
+  },
+  "teamWelcome": {
+    "heading": "Selamat datang ke",
+    "subheading": "Satu langkah ringkas, kemudian anda boleh mula.",
+    "loadError": "Tidak dapat memuatkan jemputan anda sekarang. Cuba muat semula halaman.",
+    "yourInvite": "Jemputan anda",
+    "employees": "{{size}} pekerja",
+    "invitedBy": "Dijemput oleh",
+    "yourRole": "Peranan anda",
+    "basedIn": "Berpangkalan di",
+    "mainContact": "Hubungan utama",
+    "roleNote": {
+      "owner": "Sebagai Pemilik, anda boleh menyiarkan jawatan, mengurus pemohon dan temu duga, serta mengurus pasukan — termasuk pemilik lain.",
+      "admin": "Sebagai Pentadbir, anda boleh menyiarkan jawatan, mengurus pemohon dan temu duga, serta menjemput rakan sepasukan.",
+      "hiring_manager": "Sebagai Pengurus pengambilan, anda akan melihat jawatan yang ditugaskan kepada anda — menyemak dan menggerakkan pemohonnya, menyertai temu duganya, dan dimaklumkan apabila seseorang memohon.",
+      "panel": "Sebagai Ahli panel, anda akan melihat temu duga yang anda ditambah ke dalamnya — calon, masa dan tempat — dan menghantar penilaian anda selepas itu."
+    }
+  },
+  "invite": {
+    "subheading": "Mengambil pekerja bersama di JobGiga.",
+    "goToJobGiga": "Pergi ke JobGiga",
+    "declinedHeading": "Jemputan ditolak.",
+    "declinedBody": "Anda tidak akan ditambah ke dalam pasukan. Jika itu satu kesilapan, minta mereka menjemput anda semula.",
+    "invalidHeading1": "Pautan jemputan ini",
+    "invalidHeading2": "tidak sah.",
+    "invalidBody": "Ia mungkin telah dibatalkan, atau digantikan dengan e-mel jemputan yang lebih baharu. Minta pasukan anda menghantar yang baharu.",
+    "expiredHeading1": "Jemputan ini",
+    "expiredHeading2": "telah tamat tempoh.",
+    "expiredBody": "Pautan jemputan sah selama {{days}} hari. Minta {{company}} menghantar semula jemputan anda — anda akan menerima pautan baharu melalui e-mel.",
+    "joinedHeading": "Anda telah menyertai",
+    "invitedHeading": "Anda dijemput ke",
+    "alreadyAccepted": "Jemputan ini telah pun diterima.",
+    "invitedBy": "{{name}} menjemput anda",
+    "youveBeenInvited": "Anda telah dijemput",
+    "toJoinAs": "untuk menyertai sebagai",
+    "inviteFor": "Jemputan untuk {{email}}",
+    "wrongAccountBefore": "Anda log masuk sebagai",
+    "wrongAccountMiddle": ", tetapi jemputan ini untuk",
+    "wrongAccountAfter": ". Tukar akaun untuk meneruskan — anda akan dilog keluar daripada {{email}} dahulu.",
+    "goToDashboard": "Pergi ke papan pemuka",
+    "signInToContinue": "Log masuk untuk meneruskan",
+    "switchAccount": "Tukar akaun ke {{email}}",
+    "accept": "Terima jemputan",
+    "acceptAndSignIn": "Terima dan log masuk",
+    "decline": "Tolak",
+    "signInHint": "Log masuk dengan {{email}} untuk menyertai — belum ada akaun? Akaun akan dicipta apabila anda log masuk.",
+    "signInHintSwitch": "Selepas bertukar, log masuk dengan {{email}} untuk menyertai — belum ada akaun? Akaun akan dicipta apabila anda log masuk.",
+    "signInNotice": "Log masuk dengan {{email}} untuk menyertai {{company}}.",
+    "error": "Berlaku ralat. Cuba lagi."
   }
 }

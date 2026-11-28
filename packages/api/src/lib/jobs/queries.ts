@@ -5,7 +5,7 @@ import { application, applicationStages, job, jobSkills } from "@jobgiga-app/db/
 import { salaryTypes } from "@jobgiga-app/db/schema/salaryTypes";
 import { skills } from "@jobgiga-app/db/schema/skills";
 import { states } from "@jobgiga-app/db/schema/states";
-import { and, asc, desc, eq, inArray, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql, type SQL } from "drizzle-orm";
 import {
 	type PipelineStatus,
 	toIso,
@@ -141,7 +141,8 @@ export async function loadApplicationEvents(db: AnyDb, applicationIds: string[])
 			})
 			.from(applicationStages)
 			.where(inArray(applicationStages.applicationId, chunk))
-			.orderBy(asc(applicationStages.createdAt)),
+			// rowid keeps moves made in the same second in order.
+			.orderBy(asc(applicationStages.createdAt), asc(sql`rowid`)),
 	);
 	const out = new Map<string, ApplicationEvent[]>();
 	for (const row of rows as { applicationId: string; stageName: string; createdAt: string }[]) {

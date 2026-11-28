@@ -71,6 +71,20 @@
       "when": 1795740167566,
       "tag": "0009_wonderful_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1795837855270,
+      "tag": "0010_tough_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1795840717244,
+      "tag": "0011_cute_hitman",
+      "breakpoints": true
     }
   ]
 }

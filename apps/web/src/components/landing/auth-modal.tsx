@@ -49,6 +49,8 @@ export function AuthModal({
 	onClose,
 	onAuthenticated,
 	onSwitchToGetStarted,
+	initialEmail,
+	notice,
 }: {
 	mode: AuthMode;
 	role: AuthRole;
@@ -58,13 +60,17 @@ export function AuthModal({
 	// flow, not that they mistyped something — offered as a direct "Get
 	// started" button instead, same as the redesign's AuthModal.
 	onSwitchToGetStarted?: () => void;
+	// Opened from a team-invite link: the invited email, pre-filled, and a
+	// line saying which company signing in joins.
+	initialEmail?: string;
+	notice?: string | null;
 }) {
 	const { t } = useTranslation("common");
 	const navigate = useNavigate();
 	const accountExistsMutation = useMutation(orpc.auth.accountExists.mutationOptions());
 	const isSignIn = mode === "sign-in";
 	const [step, setStep] = useState<"email" | "otp">("email");
-	const [email, setEmail] = useState("");
+	const [email, setEmail] = useState(initialEmail ?? "");
 	const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
 	const [sending, setSending] = useState(false);
 	const [verifying, setVerifying] = useState(false);
@@ -188,9 +194,9 @@ export function AuthModal({
 			if (requestId !== verifyRequestId.current) return;
 			if (verifyError) throw new Error(verifyError.message ?? t("auth.verifyCodeError"));
 			onAuthenticated();
-			// The redesign's getPostAuthRedirect: onboarding first if it's not
-			// done yet, otherwise that role's dashboard. Doesn't yet cover the
-			// invited-teammate "/employer/welcome" case (team invites aren't built).
+			// The redesign's getPostAuthRedirect: team invites joined first, then
+			// onboarding (or an invited teammate's welcome step) if it's not done
+			// yet, otherwise that role's dashboard.
 			try {
 				navigate({ to: await postAuthRedirect(role) });
 			} catch {
@@ -230,6 +236,12 @@ export function AuthModal({
 							? t("auth.enterEmailToContinue")
 							: t("auth.createAccountSubtitle", { role: t(`landing.roles.${role}`) })}
 					</p>
+
+					{notice && (
+						<p className="mt-[12px] rounded-[12px] border border-[#FBE7B3] bg-brand-gold-soft p-[10px] text-xs leading-[18px] text-[#141B2E]">
+							{notice}
+						</p>
+					)}
 
 					<form onSubmit={handleEmailSubmit} noValidate className="mt-[24px] flex flex-col gap-[12px]">
 						<button

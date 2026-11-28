@@ -20,14 +20,19 @@ import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies/$companyId'
 import { Route as EmployerIndexRouteImport } from './routes/employer/index'
 import { Route as EmployerAboutRouteImport } from './routes/employer/about'
+import { Route as EmployerApplicantsRouteImport } from './routes/employer/applicants'
 import { Route as EmployerCompanyRouteImport } from './routes/employer/company'
 import { Route as EmployerDashboardRouteImport } from './routes/employer/dashboard'
+import { Route as EmployerInterviewsRouteImport } from './routes/employer/interviews'
 import { Route as EmployerOnboardingRouteImport } from './routes/employer/onboarding'
 import { Route as EmployerPrivacyRouteImport } from './routes/employer/privacy'
 import { Route as EmployerProfileRouteImport } from './routes/employer/profile'
 import { Route as EmployerReleaseNotesRouteImport } from './routes/employer/release-notes'
 import { Route as EmployerSecurityRouteImport } from './routes/employer/security'
+import { Route as EmployerTeamRouteImport } from './routes/employer/team'
 import { Route as EmployerTermsRouteImport } from './routes/employer/terms'
+import { Route as EmployerWelcomeRouteImport } from './routes/employer/welcome'
+import { Route as InviteTokenRouteImport } from './routes/invite/$token'
 import { Route as JobseekerIndexRouteImport } from './routes/jobseeker/index'
 import { Route as JobseekerAboutRouteImport } from './routes/jobseeker/about'
 import { Route as JobseekerDashboardRouteImport } from './routes/jobseeker/dashboard'
@@ -41,6 +46,7 @@ import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/das
 import { Route as SuperadminEmployersRouteImport } from './routes/superadmin/employers'
 import { Route as SuperadminJobPostingsRouteImport } from './routes/superadmin/job-postings'
 import { Route as EmployerJobsIndexRouteImport } from './routes/employer/jobs/index'
+import { Route as EmployerJobsSlugRouteImport } from './routes/employer/jobs/$slug'
 import { Route as EmployerJobsPostajobRouteImport } from './routes/employer/jobs/postajob'
 
 const IndexRoute = IndexRouteImport.update({
@@ -98,6 +104,11 @@ const EmployerAboutRoute = EmployerAboutRouteImport.update({
   path: '/employer/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployerApplicantsRoute = EmployerApplicantsRouteImport.update({
+  id: '/employer/applicants',
+  path: '/employer/applicants',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmployerCompanyRoute = EmployerCompanyRouteImport.update({
   id: '/employer/company',
   path: '/employer/company',
@@ -106,6 +117,11 @@ const EmployerCompanyRoute = EmployerCompanyRouteImport.update({
 const EmployerDashboardRoute = EmployerDashboardRouteImport.update({
   id: '/employer/dashboard',
   path: '/employer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerInterviewsRoute = EmployerInterviewsRouteImport.update({
+  id: '/employer/interviews',
+  path: '/employer/interviews',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployerOnboardingRoute = EmployerOnboardingRouteImport.update({
@@ -133,9 +149,24 @@ const EmployerSecurityRoute = EmployerSecurityRouteImport.update({
   path: '/employer/security',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployerTeamRoute = EmployerTeamRouteImport.update({
+  id: '/employer/team',
+  path: '/employer/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmployerTermsRoute = EmployerTermsRouteImport.update({
   id: '/employer/terms',
   path: '/employer/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployerWelcomeRoute = EmployerWelcomeRouteImport.update({
+  id: '/employer/welcome',
+  path: '/employer/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JobseekerIndexRoute = JobseekerIndexRouteImport.update({
@@ -203,6 +234,11 @@ const EmployerJobsIndexRoute = EmployerJobsIndexRouteImport.update({
   path: '/employer/jobs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployerJobsSlugRoute = EmployerJobsSlugRouteImport.update({
+  id: '/employer/jobs/$slug',
+  path: '/employer/jobs/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmployerJobsPostajobRoute = EmployerJobsPostajobRouteImport.update({
   id: '/employer/jobs/postajob',
   path: '/employer/jobs/postajob',
@@ -219,14 +255,19 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/interviews': typeof EmployerInterviewsRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
+  '/employer/team': typeof EmployerTeamRoute
   '/employer/terms': typeof EmployerTermsRoute
+  '/employer/welcome': typeof EmployerWelcomeRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
   '/jobseeker/dashboard': typeof JobseekerDashboardRoute
   '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
@@ -241,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
   '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs/': typeof EmployerJobsIndexRoute
 }
@@ -253,14 +295,19 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/interviews': typeof EmployerInterviewsRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
+  '/employer/team': typeof EmployerTeamRoute
   '/employer/terms': typeof EmployerTermsRoute
+  '/employer/welcome': typeof EmployerWelcomeRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
   '/jobseeker/dashboard': typeof JobseekerDashboardRoute
   '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
@@ -275,6 +322,7 @@ export interface FileRoutesByTo {
   '/employer': typeof EmployerIndexRoute
   '/jobseeker': typeof JobseekerIndexRoute
   '/superadmin': typeof SuperadminIndexRoute
+  '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs': typeof EmployerJobsIndexRoute
 }
@@ -289,14 +337,19 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/employer/about': typeof EmployerAboutRoute
+  '/employer/applicants': typeof EmployerApplicantsRoute
   '/employer/company': typeof EmployerCompanyRoute
   '/employer/dashboard': typeof EmployerDashboardRoute
+  '/employer/interviews': typeof EmployerInterviewsRoute
   '/employer/onboarding': typeof EmployerOnboardingRoute
   '/employer/privacy': typeof EmployerPrivacyRoute
   '/employer/profile': typeof EmployerProfileRoute
   '/employer/release-notes': typeof EmployerReleaseNotesRoute
   '/employer/security': typeof EmployerSecurityRoute
+  '/employer/team': typeof EmployerTeamRoute
   '/employer/terms': typeof EmployerTermsRoute
+  '/employer/welcome': typeof EmployerWelcomeRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/jobseeker/about': typeof JobseekerAboutRoute
   '/jobseeker/dashboard': typeof JobseekerDashboardRoute
   '/jobseeker/onboarding': typeof JobseekerOnboardingRoute
@@ -311,6 +364,7 @@ export interface FileRoutesById {
   '/employer/': typeof EmployerIndexRoute
   '/jobseeker/': typeof JobseekerIndexRoute
   '/superadmin/': typeof SuperadminIndexRoute
+  '/employer/jobs/$slug': typeof EmployerJobsSlugRoute
   '/employer/jobs/postajob': typeof EmployerJobsPostajobRoute
   '/employer/jobs/': typeof EmployerJobsIndexRoute
 }
@@ -326,14 +380,19 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
+    | '/employer/interviews'
     | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
+    | '/employer/team'
     | '/employer/terms'
+    | '/employer/welcome'
+    | '/invite/$token'
     | '/jobseeker/about'
     | '/jobseeker/dashboard'
     | '/jobseeker/onboarding'
@@ -348,6 +407,7 @@ export interface FileRouteTypes {
     | '/employer/'
     | '/jobseeker/'
     | '/superadmin/'
+    | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs/'
   fileRoutesByTo: FileRoutesByTo
@@ -360,14 +420,19 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
+    | '/employer/interviews'
     | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
+    | '/employer/team'
     | '/employer/terms'
+    | '/employer/welcome'
+    | '/invite/$token'
     | '/jobseeker/about'
     | '/jobseeker/dashboard'
     | '/jobseeker/onboarding'
@@ -382,6 +447,7 @@ export interface FileRouteTypes {
     | '/employer'
     | '/jobseeker'
     | '/superadmin'
+    | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs'
   id:
@@ -395,14 +461,19 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companies/$companyId'
     | '/employer/about'
+    | '/employer/applicants'
     | '/employer/company'
     | '/employer/dashboard'
+    | '/employer/interviews'
     | '/employer/onboarding'
     | '/employer/privacy'
     | '/employer/profile'
     | '/employer/release-notes'
     | '/employer/security'
+    | '/employer/team'
     | '/employer/terms'
+    | '/employer/welcome'
+    | '/invite/$token'
     | '/jobseeker/about'
     | '/jobseeker/dashboard'
     | '/jobseeker/onboarding'
@@ -417,6 +488,7 @@ export interface FileRouteTypes {
     | '/employer/'
     | '/jobseeker/'
     | '/superadmin/'
+    | '/employer/jobs/$slug'
     | '/employer/jobs/postajob'
     | '/employer/jobs/'
   fileRoutesById: FileRoutesById
@@ -431,14 +503,19 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   EmployerAboutRoute: typeof EmployerAboutRoute
+  EmployerApplicantsRoute: typeof EmployerApplicantsRoute
   EmployerCompanyRoute: typeof EmployerCompanyRoute
   EmployerDashboardRoute: typeof EmployerDashboardRoute
+  EmployerInterviewsRoute: typeof EmployerInterviewsRoute
   EmployerOnboardingRoute: typeof EmployerOnboardingRoute
   EmployerPrivacyRoute: typeof EmployerPrivacyRoute
   EmployerProfileRoute: typeof EmployerProfileRoute
   EmployerReleaseNotesRoute: typeof EmployerReleaseNotesRoute
   EmployerSecurityRoute: typeof EmployerSecurityRoute
+  EmployerTeamRoute: typeof EmployerTeamRoute
   EmployerTermsRoute: typeof EmployerTermsRoute
+  EmployerWelcomeRoute: typeof EmployerWelcomeRoute
+  InviteTokenRoute: typeof InviteTokenRoute
   JobseekerAboutRoute: typeof JobseekerAboutRoute
   JobseekerDashboardRoute: typeof JobseekerDashboardRoute
   JobseekerOnboardingRoute: typeof JobseekerOnboardingRoute
@@ -449,6 +526,7 @@ export interface RootRouteChildren {
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   EmployerIndexRoute: typeof EmployerIndexRoute
   JobseekerIndexRoute: typeof JobseekerIndexRoute
+  EmployerJobsSlugRoute: typeof EmployerJobsSlugRoute
   EmployerJobsPostajobRoute: typeof EmployerJobsPostajobRoute
   EmployerJobsIndexRoute: typeof EmployerJobsIndexRoute
 }
@@ -532,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployerAboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employer/applicants': {
+      id: '/employer/applicants'
+      path: '/employer/applicants'
+      fullPath: '/employer/applicants'
+      preLoaderRoute: typeof EmployerApplicantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/employer/company': {
       id: '/employer/company'
       path: '/employer/company'
@@ -544,6 +629,13 @@ declare module '@tanstack/react-router' {
       path: '/employer/dashboard'
       fullPath: '/employer/dashboard'
       preLoaderRoute: typeof EmployerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/interviews': {
+      id: '/employer/interviews'
+      path: '/employer/interviews'
+      fullPath: '/employer/interviews'
+      preLoaderRoute: typeof EmployerInterviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employer/onboarding': {
@@ -581,11 +673,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployerSecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employer/team': {
+      id: '/employer/team'
+      path: '/employer/team'
+      fullPath: '/employer/team'
+      preLoaderRoute: typeof EmployerTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/employer/terms': {
       id: '/employer/terms'
       path: '/employer/terms'
       fullPath: '/employer/terms'
       preLoaderRoute: typeof EmployerTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employer/welcome': {
+      id: '/employer/welcome'
+      path: '/employer/welcome'
+      fullPath: '/employer/welcome'
+      preLoaderRoute: typeof EmployerWelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jobseeker/': {
@@ -679,6 +792,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployerJobsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employer/jobs/$slug': {
+      id: '/employer/jobs/$slug'
+      path: '/employer/jobs/$slug'
+      fullPath: '/employer/jobs/$slug'
+      preLoaderRoute: typeof EmployerJobsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/employer/jobs/postajob': {
       id: '/employer/jobs/postajob'
       path: '/employer/jobs/postajob'
@@ -717,14 +837,19 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   EmployerAboutRoute: EmployerAboutRoute,
+  EmployerApplicantsRoute: EmployerApplicantsRoute,
   EmployerCompanyRoute: EmployerCompanyRoute,
   EmployerDashboardRoute: EmployerDashboardRoute,
+  EmployerInterviewsRoute: EmployerInterviewsRoute,
   EmployerOnboardingRoute: EmployerOnboardingRoute,
   EmployerPrivacyRoute: EmployerPrivacyRoute,
   EmployerProfileRoute: EmployerProfileRoute,
   EmployerReleaseNotesRoute: EmployerReleaseNotesRoute,
   EmployerSecurityRoute: EmployerSecurityRoute,
+  EmployerTeamRoute: EmployerTeamRoute,
   EmployerTermsRoute: EmployerTermsRoute,
+  EmployerWelcomeRoute: EmployerWelcomeRoute,
+  InviteTokenRoute: InviteTokenRoute,
   JobseekerAboutRoute: JobseekerAboutRoute,
   JobseekerDashboardRoute: JobseekerDashboardRoute,
   JobseekerOnboardingRoute: JobseekerOnboardingRoute,
@@ -735,6 +860,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompaniesIndexRoute: CompaniesIndexRoute,
   EmployerIndexRoute: EmployerIndexRoute,
   JobseekerIndexRoute: JobseekerIndexRoute,
+  EmployerJobsSlugRoute: EmployerJobsSlugRoute,
   EmployerJobsPostajobRoute: EmployerJobsPostajobRoute,
   EmployerJobsIndexRoute: EmployerJobsIndexRoute,
 }

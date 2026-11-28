@@ -306,7 +306,10 @@ export const member = sqliteTable(
 		hasSeenDashboardTour: integer("has_seen_dashboard_tour", {
 			mode: "boolean",
 		}).default(false),
-		status: text("status").notNull().default("active"), // active | deleted
+		// v3: "pending" = invited on the Team page, not joined yet. Access level
+		// for the redesign's roles: owner | admin | hiring_manager (v3) | panel —
+		// see packages/api/src/shared/team-roles.ts.
+		status: text("status").notNull().default("active"), // active | deleted | pending
 		// The redesign's "About you" on employer_profiles (contact*): this
 		// person's own details at the company. name/email above are reused.
 		contactRole: text("contact_role"), // one of CONTACT_ROLES
@@ -314,6 +317,9 @@ export const member = sqliteTable(
 		positionTitle: text("position_title"),
 		phoneNumber: text("phone_number"),
 		avatarKey: text("avatar_key"),
+		// v3: when an invited teammate finished the redesign's welcome step
+		// ("About you"). Null for them until then; never needed for the registrant.
+		profileCompletedAt: text("profile_completed_at"),
 		deletedAt: text("deleted_at"),
 		createdAt: text("created_at")
 			.default(sql`(datetime('now'))`)
@@ -347,10 +353,15 @@ export const invitation = sqliteTable(
 			.references(() => organization.id, { onDelete: "cascade" }),
 		email: text("email").notNull(),
 		name: text("name"),
-		role: text("role").notNull(), // admin, member
+		role: text("role").notNull(), // admin, member — v3: the redesign's team role (owner | admin | hiring_manager | panel)
 		// TODO(schema): references positions.id once that table exists (Phase 2/3).
 		positionId: integer("position_id"),
 		status: text("status").notNull().default("pending"), // pending, accepted, rejected, canceled
+		// v3: the redesign's invite link — only a SHA-256 hash of the token is
+		// stored; replaced on every resend so older links stop working.
+		tokenHash: text("token_hash"),
+		// v3: the position typed on the invite (the redesign's member.position).
+		position: text("position"),
 		inviterId: text("inviter_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
@@ -612,4 +623,27 @@ export const accountDeletionRequests = sqliteTable(
 		index("account_deletion_requests_userId_status_idx").on(table.userId, table.status),
 		index("account_deletion_requests_org_status_idx").on(table.organizationId, table.status),
 	],
+);
+
+// v3: the redesign's employer_team_activity — the Team page's activity log.
+export const teamActivity = sqliteTable(
+	"team_activity",
+	{
+		id: text("id").primaryKey(),
+		organizationId: text("organization_id")
+			.notNull()
+			.references(() => organization.id, { onDelete: "cascade" }),
+		actorUserId: text("actor_user_id").references(() => user.id, { onDelete: "set null" }),
+		actorLabel: text("actor_label").notNull(),
+		// invited | resent_invite | role_changed | removed | declined | joined | job_assigned | job_unassigned
+		action: text("action").notNull(),
+		targetEmail: text("target_email").notNull(),
+		fromRole: text("from_role"),
+		toRole: text("to_role"),
+		detail: text("detail"),
+		createdAt: text("created_at")
+			.default(sql`(datetime('now'))`)
+			.notNull(),
+	},
+	(table) => [index("team_activity_organization_idx").on(table.organizationId)],
 );

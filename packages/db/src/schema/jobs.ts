@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index, unique } from "drizzle-orm/sqlite-core";
-import { user, organization } from "./auth";
+import { member, organization, user } from "./auth";
 import { departments } from "./departments";
 import { countries } from "./countries";
 import { states } from "./states";
@@ -446,6 +446,11 @@ export const applicationFeedback = sqliteTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		rating: integer("rating").notNull(), // 1-5
 		comment: text("comment"),
+		// v3: the redesign's interview scorecard (interview_evaluations). rating
+		// above holds the rounded average; comment holds its notes.
+		round: integer("round"),
+		scores: text("scores", { mode: "json" }).$type<Record<string, number>>(),
+		recommendation: text("recommendation"), // strong_hire | hire | no_hire | strong_no_hire
 		createdAt: text("created_at")
 			.default(sql`(datetime('now'))`)
 			.notNull(),
@@ -640,3 +645,26 @@ export const likedJobRelations = relations(likedJob, ({ one }) => ({
 		references: [user.id],
 	}),
 }));
+
+// v3: the redesign's job_posting_hiring_managers — which jobs a Hiring
+// manager (member.access_level "hiring_manager") covers.
+export const jobHiringManagers = sqliteTable(
+	"job_hiring_managers",
+	{
+		id: text("id").primaryKey(),
+		jobId: text("job_id")
+			.notNull()
+			.references(() => job.id, { onDelete: "cascade" }),
+		memberId: text("member_id")
+			.notNull()
+			.references(() => member.id, { onDelete: "cascade" }),
+		createdAt: text("created_at")
+			.default(sql`(datetime('now'))`)
+			.notNull(),
+	},
+	(table) => [
+		unique("job_hiring_managers_job_member_unique").on(table.jobId, table.memberId),
+		index("job_hiring_managers_member_idx").on(table.memberId),
+	],
+);
+

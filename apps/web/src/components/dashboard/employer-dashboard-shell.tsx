@@ -1,3 +1,5 @@
+import type { TeamRole } from "@jobgiga-app/api/shared/team-roles";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +18,7 @@ import {
 import { Navbar } from "@/components/landing/navbar";
 import { useCenterActiveTab } from "@/hooks/use-center-active-tab";
 import { showComingSoon } from "@/lib/coming-soon";
+import { orpc } from "@/utils/orpc";
 import { NavLinkIcon } from "./nav-link-icon";
 
 export type EmployerNavKey =
@@ -37,17 +40,20 @@ const NAV_PENDING_TIMEOUT_MS = 10_000;
 const NAV_ITEMS = [
   { key: "overview", href: "/employer/dashboard", icon: HomeIcon, ready: true },
   { key: "jobs", href: "/employer/jobs", icon: BriefcaseIcon, ready: true },
-  { key: "applicants", href: "/employer/applicants", icon: UsersIcon, ready: false },
-  { key: "interviews", href: "/employer/interviews", icon: CalendarIcon, ready: false },
+  { key: "applicants", href: "/employer/applicants", icon: UsersIcon, ready: true },
+  { key: "interviews", href: "/employer/interviews", icon: CalendarIcon, ready: true },
   { key: "company", href: "/employer/company", icon: BuildingIcon, ready: true },
   { key: "advertisement", href: "/employer/advertisement", icon: MegaphoneIcon, ready: false },
-  { key: "team", href: "/employer/team", icon: UsersIcon, ready: false },
+  { key: "team", href: "/employer/team", icon: UsersIcon, ready: true },
   { key: "profile", href: "/employer/profile", icon: UserIcon, ready: true },
 ] as const;
 
-// A panelist only sits on interviews (the redesign's Panel role); the pages
-// themselves will enforce the same.
-const PANEL_NAV: EmployerNavKey[] = ["interviews", "profile"];
+// Hiring managers work on their assigned jobs only; Panel members only on
+// the interviews they're on (the pages themselves enforce the same).
+const LIMITED_NAV: Partial<Record<TeamRole, EmployerNavKey[]>> = {
+  hiring_manager: ["overview", "jobs", "applicants", "interviews", "profile"],
+  panel: ["interviews", "profile"],
+};
 
 const NAV_ITEM =
   "flex shrink-0 items-center gap-[10px] whitespace-nowrap rounded-full px-[16px] py-[10px] text-sm text-[#4B5468] transition-colors hover:bg-black/[0.03] xl:h-[40px] xl:rounded-[10px]";
@@ -78,7 +84,12 @@ function Sidebar({
     return () => clearTimeout(timer);
   }, [clickedKey]);
 
-  const items = canManage ? NAV_ITEMS : NAV_ITEMS.filter((item) => PANEL_NAV.includes(item.key));
+  // The signed-in teammate's role (team.myMembership); until it's loaded,
+  // the page's own canManage decides, as before.
+  const membershipQuery = useQuery({ ...orpc.team.myMembership.queryOptions(), meta: { suppressErrorToast: true } });
+  const teamRole: TeamRole | null = membershipQuery.data?.role ?? (canManage ? null : "panel");
+  const allowed = teamRole ? LIMITED_NAV[teamRole] : undefined;
+  const items = allowed ? NAV_ITEMS.filter((item) => allowed.includes(item.key)) : NAV_ITEMS;
   const itemClass = (selected: boolean) =>
     `${NAV_ITEM} ${selected ? `${NAV_ITEM_SELECTED} animate-fade-in-up` : ""} ${collapsed ? "xl:justify-center xl:px-0" : ""}`;
 
@@ -88,7 +99,8 @@ function Sidebar({
       className="scrollbar-hide flex shrink-0 flex-row gap-[4px] overflow-x-auto rounded-full bg-[#F1F4F8] p-[4px] xl:flex-col xl:gap-[2px] xl:rounded-[14px] xl:border xl:border-[#EAEDF2] xl:bg-white xl:p-[10px]"
     >
       {items.map((item) => {
-        const label = t(`dashboard.employerNav.${item.key}`);
+        // A Hiring manager's "Manage Job" is just their own jobs.
+        const label = allowed && item.key === "jobs" ? t("dashboard.employerNav.myJobs") : t(`dashboard.employerNav.${item.key}`);
         return (
           <a
             key={item.key}
