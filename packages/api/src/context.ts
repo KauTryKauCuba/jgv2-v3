@@ -4,7 +4,6 @@ import type { Context as HonoContext } from "hono";
 import type { Storage } from "./lib/storage/types";
 
 export type AiKeys = {
-	deepseekKey: string | null;
 	mimoKey: string | null;
 	perplexityKey: string | null;
 	logoDevKey?: string | null;
@@ -60,7 +59,7 @@ export async function createContext({ context, db, ai, auth, storage, phone }: C
 		// the browser-facing URLs of stored files (see lib/uploads.ts).
 		origin: new URL(context.req.url).origin,
 		db,
-		ai: ai ?? { deepseekKey: null, mimoKey: null, perplexityKey: null },
+		ai: ai ?? { mimoKey: null, perplexityKey: null },
 		session,
 		activeOrganizationId,
 		storage,

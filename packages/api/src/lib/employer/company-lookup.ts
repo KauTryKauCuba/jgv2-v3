@@ -1,6 +1,6 @@
 // The redesign's src/app/api/employer/lookup-company/route.ts, ported: the
 // prompt, searches, filters and validation are verbatim. Changed for v3:
-// - the DeepSeek/MiMo race reuses lib/ai/provider-race.ts (same race, same
+// - the MiMo call reuses lib/ai/provider-race.ts (same race, same
 //   per-attempt usage logging) instead of the route's own copy;
 // - keys and db are passed in (no process.env / global db), and Buffer is
 //   replaced by a portable base64 helper so it runs on Workers too;
@@ -621,7 +621,6 @@ function formatSnippets(results: PerplexityResult[] | undefined, maxChars: numbe
 
 export type CompanyLookupKeys = {
   perplexityKey: string | null;
-  deepseekKey: string | null;
   mimoKey: string | null;
   logoDevKey: string | null;
 };
@@ -660,7 +659,7 @@ function stubLookup(companyName: string): LookupResult {
 
 /**
  * The redesign's POST handler body: searches the web for the company, has
- * DeepSeek/MiMo structure the results, then adds the logo, news and social
+ * MiMo structures the results, then adds the logo, news and social
  * links found deterministically. Logs every Perplexity call and every
  * provider attempt to ai_usage.
  */
@@ -672,13 +671,13 @@ export async function lookupCompany(
 ): Promise<CompanyLookupResponse> {
   const trimmedName = companyName.trim();
   if (!trimmedName) return { ok: false, error: "Enter a company name first.", status: 400 };
-  const { perplexityKey, deepseekKey, mimoKey, logoDevKey } = keys;
+  const { perplexityKey, mimoKey, logoDevKey } = keys;
 
   if (!perplexityKey) {
     console.log(`[ai] STUB company lookup for "${trimmedName}" (no Perplexity key configured)`);
     return { ok: true, result: stubLookup(trimmedName), sources: [], usage: null, provider: "stub", durationMs: 0 };
   }
-  if (!deepseekKey && !mimoKey) {
+  if (!mimoKey) {
     return { ok: false, error: "Company lookup is not configured.", status: 500 };
   }
 
@@ -746,7 +745,6 @@ export async function lookupCompany(
       const structured = await raceChatProviders({
         systemPrompt: structureSystemPrompt(),
         userContent,
-        deepseekKey,
         mimoKey,
         temperature: 0,
         // Room for the awards/leaders/facilities arrays on top of the rest.

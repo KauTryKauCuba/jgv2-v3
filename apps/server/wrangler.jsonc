@@ -13,7 +13,6 @@
 		// Left blank for local dev — missing keys fall back to dev-mode stub
 		// responses (see packages/api/src/lib/ai/). Use
 		// `wrangler secret put <NAME>` once real keys exist.
-		"DEEPSEEK_API_KEY": "",
 		"MIMO_API_KEY": "",
 		"PERPLEXITY_API_KEY": "",
 		"LOGO_DEV_API_KEY": "",

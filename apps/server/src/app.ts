@@ -20,10 +20,9 @@ export type AppEnv = {
 	CORS_ORIGIN?: string;
 	BETTER_AUTH_SECRET?: string;
 	BETTER_AUTH_URL?: string;
-	// AI provider keys (DeepSeek/MiMo/Perplexity), for onboarding's company
+	// AI provider keys (MiMo/Perplexity), for onboarding's company
 	// lookup and resume parsing. Missing keys fall back to dev-mode stubs —
 	// see packages/api/src/lib/ai/.
-	DEEPSEEK_API_KEY?: string;
 	MIMO_API_KEY?: string;
 	PERPLEXITY_API_KEY?: string;
 	// Company logos for the employer AI lookup (logo.dev); optional — falls back to the site favicon.
@@ -82,7 +81,6 @@ export function createApp(env: AppEnv) {
 				context: c,
 				db: env.db,
 				ai: {
-					deepseekKey: env.DEEPSEEK_API_KEY ?? null,
 					mimoKey: env.MIMO_API_KEY ?? null,
 					perplexityKey: env.PERPLEXITY_API_KEY ?? null,
 					logoDevKey: env.LOGO_DEV_API_KEY ?? null,

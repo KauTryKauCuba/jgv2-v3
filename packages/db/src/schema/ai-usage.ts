@@ -3,7 +3,7 @@ import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core
 
 // Merges v1's ai_usage table (packages/db/src/schema/ai-usage.ts) with the
 // richer fields the redesign's ai_usage_logs needs for the race between
-// DeepSeek/MiMo, plus Perplexity's call-count-only billing. `feature` stays
+// MiMo, plus Perplexity's call-count-only billing. `feature` stays
 // plain text (as in v1) rather than a Postgres enum — SQLite has no native
 // enum type; valid values mirror the redesign's ai_usage_feature list, e.g.
 // "company_lookup", "resume_parse", "skill_suggestion", "assistant_chat".
@@ -12,10 +12,10 @@ export const aiUsage = sqliteTable(
 	{
 		id: text("id").primaryKey(),
 		feature: text("feature").notNull(),
-		// Which upstream LLM actually answered ("deepseek" | "mimo" |
+		// Which upstream LLM actually answered ("mimo" |
 		// "perplexity") — null where a route doesn't propagate it.
 		provider: text("provider"),
-		// The specific model string sent (e.g. "deepseek-chat",
+		// The specific model string sent (e.g. "mimo-v2.6-flash",
 		// "mimo-v2.6-flash") — a provider can serve more than one model/price
 		// point, so this is tracked separately from `provider`.
 		model: text("model"),

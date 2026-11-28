@@ -642,7 +642,6 @@ export const jobseekerRouter = {
 		if (!isSupportedResumeFileName(file.name)) bad("Only PDF or DOCX resumes are supported.");
 
 		const result = await parseResumeBytes(new Uint8Array(await file.arrayBuffer()), file.name, {
-			deepseekKey: context.ai.deepseekKey,
 			mimoKey: context.ai.mimoKey,
 		});
 		if (!result.ok) throw new ORPCError(result.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: result.error });
@@ -681,7 +680,6 @@ export const jobseekerRouter = {
 
 		const bytes = new Uint8Array(await file.arrayBuffer());
 		const result = await parseResumeBytes(bytes, file.name, {
-			deepseekKey: context.ai.deepseekKey,
 			mimoKey: context.ai.mimoKey,
 		});
 		if (!result.ok) throw new ORPCError(result.status >= 500 ? "BAD_GATEWAY" : "BAD_REQUEST", { message: result.error });
@@ -852,7 +850,6 @@ export const jobseekerRouter = {
 		const result = await raceChatProviders({
 			systemPrompt: SKILLS_SYSTEM_PROMPT,
 			userContent: `Target role: ${targetRole}`,
-			deepseekKey: context.ai.deepseekKey,
 			mimoKey: context.ai.mimoKey,
 			temperature: 0.3,
 			maxTokens: 900,

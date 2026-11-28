@@ -136,7 +136,6 @@ export async function suggestJobPosting(
 	const result = await raceChatProviders({
 		systemPrompt: postingSystemPrompt(),
 		userContent: `Job title: ${params.jobTitle.trim()}${context.length ? `\n${context.join("\n")}` : ""}`,
-		deepseekKey: ai.deepseekKey,
 		mimoKey: ai.mimoKey,
 		temperature: 0.4,
 		maxTokens: 700,
@@ -214,7 +213,6 @@ export async function suggestSalary(
 	const result = await raceChatProviders({
 		systemPrompt: SALARY_PROMPT,
 		userContent,
-		deepseekKey: ai.deepseekKey,
 		mimoKey: ai.mimoKey,
 		temperature: 0.3,
 		maxTokens: 200,
@@ -286,7 +284,6 @@ export async function suggestPostingSkills(
 	const result = await raceChatProviders({
 		systemPrompt: SKILLS_PROMPT,
 		userContent: `Job title: ${jobTitle.trim()}`,
-		deepseekKey: ai.deepseekKey,
 		mimoKey: ai.mimoKey,
 		temperature: 0.3,
 		maxTokens: 900,

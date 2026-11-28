@@ -1,21 +1,15 @@
 // Ported from the redesign's src/lib/ai-provider-race.ts. Shared by every
-// route that races DeepSeek and MiMo for a single JSON-mode chat completion
-// — each provider is genuinely called (not just whichever answers first), so
-// the caller can log every attempt's real usage/cost afterward rather than
-// only the winner's.
+// route that asks the chat model for a single JSON-mode completion. The
+// redesign raced DeepSeek against MiMo; v3 uses MiMo only (the user's choice,
+// 2026-11-28), so the "race" has one runner. Every attempt is still collected
+// so the caller can log its real usage/cost.
 //
-// Added for v3 (not in the redesign): when neither provider has a key
+// Added for v3 (not in the redesign): when MiMo has no key
 // configured, and the caller passes `devStub`, this returns that canned
 // response instead of failing — same dev-mode pattern as the OTP email
 // console-print, so the onboarding UI can be built and tested before real
 // API keys exist. Drop `devStub` once keys are wired up for a given task.
-import {
-	DEEPSEEK_CHAT_MODEL,
-	DEEPSEEK_ENDPOINT,
-	MIMO_CHAT_MODEL,
-	MIMO_ENDPOINT,
-	chatRequestExtras,
-} from "./models";
+import { MIMO_CHAT_MODEL, MIMO_ENDPOINT, chatRequestExtras } from "./models";
 
 const RETRY_ATTEMPTS = 3;
 const REQUEST_TIMEOUT_MS = 15_000;
@@ -108,20 +102,18 @@ async function callProvider(
 export async function raceChatProviders(params: {
 	systemPrompt: string;
 	userContent: string;
-	deepseekKey: string | null;
 	mimoKey: string | null;
 	temperature: number;
 	maxTokens: number;
 	taskLabel: string;
 	notConfiguredError: string;
 	collectedAttempts: Promise<ProviderRaceAttempt>[];
-	// Dev-mode only (see file header): returned when neither key is set.
+	// Dev-mode only (see file header): returned when the MiMo key isn't set.
 	devStub?: () => string;
 }): Promise<({ ok: true } & ProviderRaceAttempt) | { ok: false; error: string; status: number }> {
 	const {
 		systemPrompt,
 		userContent,
-		deepseekKey,
 		mimoKey,
 		temperature,
 		maxTokens,
@@ -150,27 +142,9 @@ export async function raceChatProviders(params: {
 			}),
 		);
 	}
-	if (deepseekKey) {
-		attempts.push(
-			callProvider(
-				DEEPSEEK_ENDPOINT,
-				DEEPSEEK_CHAT_MODEL,
-				deepseekKey,
-				systemPrompt,
-				userContent,
-				temperature,
-				maxTokens,
-				"DeepSeek",
-				taskLabel,
-			).then((r) => {
-				if (!r.ok) throw new ProviderRaceError(r.error, r.status);
-				return { ...r, provider: "deepseek", model: DEEPSEEK_CHAT_MODEL };
-			}),
-		);
-	}
 	if (attempts.length === 0) {
 		if (devStub) {
-			console.log(`[ai] STUB completion for "${taskLabel}" (no DeepSeek/MiMo key configured)`);
+			console.log(`[ai] STUB completion for "${taskLabel}" (no MiMo key configured)`);
 			return { ok: true, content: devStub(), usage: null, provider: "stub", model: "dev-stub" };
 		}
 		return { ok: false, error: notConfiguredError, status: 500 };

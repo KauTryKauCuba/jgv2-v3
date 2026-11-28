@@ -72,7 +72,7 @@ export const ONBOARDING: Record<string, DbMapEntry> = {
 		v2: "POST /api/employer/lookup-company → ai_usage_logs",
 		v3: "nothing saved until Finish; each call logged in ai_usage",
 		v3Api: "employer.lookupCompany",
-		note: "Perplexity web search + DeepSeek/MiMo. Returns sample data until the API keys are set.",
+		note: "Perplexity web search + MiMo. Returns sample data until the API keys are set.",
 	},
 
 	// ── Employer: About your company ────────────────────────────────────────

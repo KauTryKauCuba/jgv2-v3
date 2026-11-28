@@ -6,7 +6,6 @@ declare module "cloudflare:workers" {
 			CORS_ORIGIN?: string;
 			BETTER_AUTH_SECRET?: string;
 			BETTER_AUTH_URL?: string;
-			DEEPSEEK_API_KEY?: string;
 			MIMO_API_KEY?: string;
 			PERPLEXITY_API_KEY?: string;
 			TWILIO_API_KEY_SID?: string;

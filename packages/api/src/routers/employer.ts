@@ -355,7 +355,6 @@ export const employerRouter = {
 			context.db,
 			{
 				perplexityKey: context.ai.perplexityKey,
-				deepseekKey: context.ai.deepseekKey,
 				mimoKey: context.ai.mimoKey,
 				logoDevKey: context.ai.logoDevKey ?? null,
 			},

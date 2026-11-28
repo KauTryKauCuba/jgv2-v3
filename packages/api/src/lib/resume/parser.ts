@@ -1,6 +1,6 @@
 // The redesign's src/lib/resume-parser.ts, ported: the same prompt, the same
 // validation of what the AI sends back, PDF/.docx text extraction, and the
-// DeepSeek/MiMo race (via ../ai/provider-race, with a dev stub when no keys
+// MiMo call (via ../ai/provider-race, with a dev stub when no keys
 // are set). Not ported: profile-photo extraction from the resume — it needs
 // `sharp`, a native library that can't run on Cloudflare Workers (backend
 // portability rule #7). `photoUrl` is always null until that moves to a
@@ -297,7 +297,7 @@ export type ResumeParseResult =
     }
   | { ok: false; error: string; status: number };
 
-// Dev stub (no DeepSeek/MiMo key): the resume's first line as the name, the
+// Dev stub (no MiMo key): the resume's first line as the name, the
 // rest left empty for the person to fill in — enough to try the flow locally.
 function devStubProfile(text: string): string {
   const firstLine = text.split("\n").map((l) => l.trim()).find(Boolean) ?? null;
@@ -316,7 +316,7 @@ function devStubProfile(text: string): string {
 export async function parseResumeBytes(
   bytes: Uint8Array,
   fileName: string,
-  keys: { deepseekKey: string | null; mimoKey: string | null },
+  keys: { mimoKey: string | null },
 ): Promise<ResumeParseResult> {
   let text: string;
   try {
@@ -339,7 +339,6 @@ export async function parseResumeBytes(
   const result = await raceChatProviders({
     systemPrompt: SYSTEM_PROMPT,
     userContent: text.slice(0, MAX_TEXT_CHARS),
-    deepseekKey: keys.deepseekKey,
     mimoKey: keys.mimoKey,
     temperature: 0,
     maxTokens: 2000,
